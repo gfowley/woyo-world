@@ -73,20 +73,38 @@ describe Woyo::World do
     it 'accepts a block with arity 0 for new location' do
       world = Woyo::World.new
       result = ''
-      world.location( :home ) { result = 'ok' }
+      home = world.location( :home ) { result = 'ok' }
+      home.should be_instance_of Woyo::Location
       result.should eq 'ok'
     end
 
     it 'accepts a block with arity 1 for new location' do
       world = Woyo::World.new
       result = ''
-      world.location( :home ) { |loc| result = 'ok' }
+      home = world.location( :home ) { |loc| result = 'ok' }
+      home.should be_instance_of Woyo::Location
       result.should eq 'ok'
     end
 
-    it 'accepts a block with arity 0 for existing location'
+    it 'accepts a block with arity 0 for existing location' do
+      world = Woyo::World.new
+      home = world.location( :home ) { |loc| loc._test = 'ok' }
+      home.should be_instance_of Woyo::Location
+      result = ''
+      other = world.location( :home ) { result = @_test }
+      other.should be home
+      result.should eq 'ok'
+    end
 
-    it 'accepts a block with arity 1 for existing location'
+    it 'accepts a block with arity 1 for existing location' do
+      world = Woyo::World.new
+      home = world.location( :home ) { @_test = 'ok' }
+      home.should be_instance_of Woyo::Location
+      result = ''
+      other = world.location( :home ) { |loc| result = loc._test }
+      other.should be home
+      result.should eq 'ok'
+    end
 
   end
 
