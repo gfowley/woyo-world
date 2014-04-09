@@ -39,6 +39,10 @@ class Location
     self
   end
 
+  def here
+    self
+  end
+
   def way way_or_id, &block
     way = way_or_id.kind_of?( Way ) ? way_or_id : nil
     id = way ? way.id : way_or_id
@@ -53,8 +57,6 @@ class Location
     when !way && !known &&  block_given? then @ways[id] = Way.new id, &block
     when !way && !known && !block_given? then @ways[id] = Way.new id
     end
-    @ways[id].from = self
-    @ways[id]
   end
 
 end

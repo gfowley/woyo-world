@@ -111,4 +111,9 @@ describe Woyo::Location do
 
   end
 
+  it '#here' do
+    home = Woyo::Location.new( :home )
+    home.here.should be home
+  end
+
 end
