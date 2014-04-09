@@ -81,8 +81,55 @@ describe 'DSL' do
         away.title.should eq 'Away'
         away.description.should eq 'Okay'
       end
-    end
 
+      context 'way' do
+
+        it 'new' do
+          world = Woyo::World.new do
+            location :home do
+              way :door do
+                name 'Large Wooden Door'
+                description "Big, real big!"
+                to :away
+              end
+            end
+          end
+          home = world.locations[:home]
+          home.ways.count.should eq 1
+          door = home.ways[:door]
+          door.should be_instance_of Woyo::Way
+          door.name.should eq 'Large Wooden Door'
+          door.description.should eq "Big, real big!"
+          door.to.should eq :away
+          door.from.should eq home
+        end
+
+        it 'existing' do
+          pending 'Figure out DRY bi-directional ways'
+          world = Woyo::World.new do
+            location :home do
+              way :door do
+                name 'Large Wooden Door'
+                description "Big, real big!"
+                to :away
+              end
+            end
+            location :away do
+              way :door do
+                name 'Same door'
+                to :home
+              end
+            end
+          end
+          away = world.locations[:away]
+          away.ways.count.should eq 1
+          door = away.ways[:door]
+          door.to.should eq :home
+          door.from.should eq away
+        end
+      end
+
+    end
 
   end
 
