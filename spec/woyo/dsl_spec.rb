@@ -29,7 +29,7 @@ describe 'DSL' do
       it 'new with attributes' do
         world = Woyo::World.new do
           location :home do
-            title 'Home'
+            name 'Home'
             description 'Sweet'
           end
         end
@@ -37,14 +37,14 @@ describe 'DSL' do
         world.locations.count.should eq 1
         home = world.locations[:home]
         home.id.should eq :home
-        home.title.should eq 'Home'
+        home.name.should eq 'Home'
         home.description.should eq 'Sweet'
       end
 
       it 'existing with attributes' do
         world = Woyo::World.new do
           location :home do
-            title 'Home'
+            name 'Home'
             description 'Okay'
           end
           location :home do
@@ -55,18 +55,18 @@ describe 'DSL' do
         world.locations.count.should eq 1
         home = world.locations[:home]
         home.id.should eq :home
-        home.title.should eq 'Home'
+        home.name.should eq 'Home'
         home.description.should eq 'Sweet'
       end
 
       it 'multiple with attributes' do
         world = Woyo::World.new do
           location :home do
-            title 'Home'
+            name 'Home'
             description 'Sweet'
           end
           location :away do
-            title 'Away'
+            name 'Away'
             description 'Okay'
           end
         end
@@ -74,11 +74,11 @@ describe 'DSL' do
         world.locations.count.should eq 2
         home = world.locations[:home]
         home.id.should eq :home
-        home.title.should eq 'Home'
+        home.name.should eq 'Home'
         home.description.should eq 'Sweet'
         away = world.locations[:away]
         away.id.should eq :away
-        away.title.should eq 'Away'
+        away.name.should eq 'Away'
         away.description.should eq 'Okay'
       end
 

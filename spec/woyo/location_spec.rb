@@ -112,8 +112,18 @@ describe Woyo::Location do
   end
 
   it '#here' do
-    home = Woyo::Location.new( :home )
+    home = Woyo::Location.new :home 
     home.here.should be home
+  end
+
+  it '#ways' do
+    home = Woyo::Location.new :home do
+      way( :up   ) { to :roof   }
+      way( :down ) { to :cellar }
+      way( :out  ) { to :garden }
+    end
+    home.ways.count.should eq 3
+    home.ways.keys.should eq [ :up, :down, :out ]
   end
 
 end

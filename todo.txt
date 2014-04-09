@@ -42,8 +42,8 @@ DSL:
       # standard ways map to directions and movements
       #   north,south,east,west,up,down,forward,back,left,right 
 
-      way north: "location name"
-      way do
+      way north:, "location name"
+      ways do
         east :far_east
         west :wild_west
         up   :sky

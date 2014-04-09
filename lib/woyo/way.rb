@@ -3,7 +3,7 @@ module Woyo
 
 class Way
   
-  @@attributes = [ :name, :from, :to, :description ]
+  @@attributes = [ :name, :to, :description ]
 
   @@attributes.each do |attr|
     self.class_eval("
@@ -25,6 +25,7 @@ class Way
   end
 
   attr_reader :id, :attributes
+  attr_accessor :from
   attr_accessor :_test
 
   def initialize id, &block

@@ -1,4 +1,5 @@
 require_relative 'location'
+require_relative 'way'
 
 module Woyo
 

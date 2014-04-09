@@ -102,4 +102,14 @@ describe Woyo::Way do
 
   end
 
+  it '#from' do
+    home = Woyo::Location.new :home do
+      way :door do
+        to :away
+      end
+    end
+    door = home.ways[:door]
+    door.from.should eq home
+  end
+
 end
