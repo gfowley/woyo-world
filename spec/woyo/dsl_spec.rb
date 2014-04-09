@@ -111,18 +111,17 @@ describe 'DSL' do
                 description "Big, real big!"
                 to :away
               end
-            end
-            location :away do
               way :door do
                 name 'Same door'
-                to :home
               end
             end
           end
-          away = world.locations[:away]
-          away.ways.count.should eq 1
-          door = away.ways[:door]
-          door.to.should eq :home
+          home = world.locations[:home]
+          home.ways.count.should eq 1
+          door = home.ways[:door]
+          door.name.should eq 'Same door'
+          door.description.should eq "Big, real big!"
+          door.to.should eq :away
         end
       end
 
