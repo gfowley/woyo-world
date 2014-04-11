@@ -24,11 +24,12 @@ class Location
     @@attributes
   end
 
-  attr_reader :id, :attributes, :ways
+  attr_reader :id, :attributes, :ways, :world
   attr_accessor :_test
 
-  def initialize id, &block
+  def initialize id, world: nil, &block
     @id = id.to_s.downcase.to_sym
+    @world = world
     @attributes = {}
     @ways = {}
     evaluate &block
@@ -53,23 +54,17 @@ class Location
     when  way &&  known && !block_given? 
       way
     when  way && !known &&  block_given?
-      way.from = here
       @ways[id] = way.evaluate &block
     when  way && !known && !block_given? 
-      way.from = here
       @ways[id] = way
     when !way &&  known &&  block_given? 
       @ways[id].evaluate &block
     when !way &&  known && !block_given? 
       @ways[id]
     when !way && !known &&  block_given? 
-      @ways[id] = Way.new id
-      @ways[id].from = here
-      @ways[id].evaluate &block
+      @ways[id] = Way.new id, location: here, &block
     when !way && !known && !block_given? 
-      @ways[id] = Way.new id
-      @ways[id].from = here
-      @ways[id]
+      @ways[id] = Way.new id, location: here
     end
   end
 

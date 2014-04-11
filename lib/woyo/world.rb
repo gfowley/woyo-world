@@ -30,8 +30,8 @@ class World
     when  location && !known && !block_given? then @locations[id] = location
     when !location &&  known &&  block_given? then @locations[id].evaluate &block
     when !location &&  known && !block_given? then @locations[id]
-    when !location && !known &&  block_given? then @locations[id] = Location.new id, &block
-    when !location && !known && !block_given? then @locations[id] = Location.new id
+    when !location && !known &&  block_given? then @locations[id] = Location.new id, world: self, &block
+    when !location && !known && !block_given? then @locations[id] = Location.new id, world: self
     end
   end
 

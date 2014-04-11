@@ -1,4 +1,6 @@
+require 'woyo/world'
 require 'woyo/location'
+require 'woyo/way'
 
 describe Woyo::Location do
 
@@ -23,6 +25,10 @@ describe Woyo::Location do
     it 'converts id to lowercase' do
       Woyo::Location.new('MY_id').id.should eq :my_id
       Woyo::Location.new(:MY_id ).id.should eq :my_id
+    end
+
+    it 'accepts named parameter world:' do
+      expect { Woyo::Location.new(:my_id, world: Woyo::World.new) }.to_not raise_error
     end
 
     it 'accepts a block with arity 0' do
@@ -116,14 +122,45 @@ describe Woyo::Location do
     home.here.should be home
   end
 
-  it '#ways' do
-    home = Woyo::Location.new :home do
-      way( :up   ) { to :roof   }
-      way( :down ) { to :cellar }
-      way( :out  ) { to :garden }
+  it '#world' do
+    world = Woyo::World.new
+    home = Woyo::Location.new :home, world: world
+    home.world.should eq world
+  end
+
+  context 'ways' do
+
+    it 'are listed (#ways)' do
+      home = Woyo::Location.new :home do
+        way( :up   ) { to :roof   }
+        way( :down ) { to :cellar }
+        way( :out  ) { to :garden }
+      end
+      home.ways.count.should eq 3
+      home.ways.keys.should eq [ :up, :down, :out ]
     end
-    home.ways.count.should eq 3
-    home.ways.keys.should eq [ :up, :down, :out ]
+
+    it 'are from here' do
+      home = Woyo::Location.new :home do
+        way :door do
+          to :away
+        end
+      end
+      door = home.ways[:door]
+      door.from.should eq home
+    end
+
+    it 'go to locations' do
+      home = Woyo::Location.new :home do
+        way :door do
+          to :away
+        end
+      end
+      door = home.ways[:door]
+      door.to.should be_instance_of Woyo::Location
+      door.to.id.should eq :away
+    end
+
   end
 
 end
