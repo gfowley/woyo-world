@@ -89,7 +89,6 @@ describe 'DSL' do
             location :home do
               way :door do
                 name 'Large Wooden Door'
-                description "Big, real big!"
                 to :away
               end
             end
@@ -99,7 +98,6 @@ describe 'DSL' do
           door = home.ways[:door]
           door.should be_instance_of Woyo::Way
           door.name.should eq 'Large Wooden Door'
-          door.description.should eq "Big, real big!"
           door.to.should be_instance_of Woyo::Location
           door.to.id.should eq :away
         end
@@ -111,7 +109,6 @@ describe 'DSL' do
             location :home do
               way :door do
                 name 'Large Wooden Door'
-                description "Big, real big!"
                 to :away
               end
             end
@@ -121,12 +118,30 @@ describe 'DSL' do
           door = home.ways[:door]
           door.should be_instance_of Woyo::Way
           door.name.should eq 'Large Wooden Door'
-          door.description.should eq "Big, real big!"
           door.to.should be_instance_of Woyo::Location
           door.to.id.should eq :away
           away = world.locations[:away]
           away.ways.count.should eq 0
           door.to.should eq away
+        end
+
+        it 'to same location' do
+          world = Woyo::World.new do
+            location :home do
+              way :door do
+                name 'Large Wooden Door'
+                to :home
+              end
+            end
+          end
+          home = world.locations[:home]
+          home.ways.count.should eq 1
+          door = home.ways[:door]
+          door.should be_instance_of Woyo::Way
+          door.name.should eq 'Large Wooden Door'
+          door.to.should be_instance_of Woyo::Location
+          door.to.id.should eq :home
+          door.to.should eq home
         end
 
       end
