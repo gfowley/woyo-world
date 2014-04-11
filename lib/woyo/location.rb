@@ -49,22 +49,14 @@ class Location
     id = way ? way.id : way_or_id
     known = @ways[id] ? true : false
     case
-    when  way &&  known &&  block_given? 
-      way.evaluate &block
-    when  way &&  known && !block_given? 
-      way
-    when  way && !known &&  block_given?
-      @ways[id] = way.evaluate &block
-    when  way && !known && !block_given? 
-      @ways[id] = way
-    when !way &&  known &&  block_given? 
-      @ways[id].evaluate &block
-    when !way &&  known && !block_given? 
-      @ways[id]
-    when !way && !known &&  block_given? 
-      @ways[id] = Way.new id, location: here, &block
-    when !way && !known && !block_given? 
-      @ways[id] = Way.new id, location: here
+    when  way &&  known &&  block_given? then way.evaluate &block
+    when  way &&  known && !block_given? then way
+    when  way && !known &&  block_given? then @ways[id] = way.evaluate &block
+    when  way && !known && !block_given? then @ways[id] = way
+    when !way &&  known &&  block_given? then @ways[id].evaluate &block
+    when !way &&  known && !block_given? then @ways[id]
+    when !way && !known &&  block_given? then @ways[id] = Way.new id, from: here, &block
+    when !way && !known && !block_given? then @ways[id] = Way.new id, from: here
     end
   end
 

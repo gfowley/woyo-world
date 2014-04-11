@@ -18,8 +18,8 @@ describe Woyo::Way do
       Woyo::Way.new(:MY_id ).id.should eq :my_id
     end
     
-    it 'accepts named parameter location:' do
-      expect { Woyo::Way.new(:my_id, location: Woyo::Location.new(:here)) }.to_not raise_error
+    it 'accepts named parameter from:' do
+      expect { Woyo::Way.new(:my_id, from: Woyo::Location.new(:here)) }.to_not raise_error
     end
 
     it 'accepts a block with arity 0' do
@@ -110,20 +110,20 @@ describe Woyo::Way do
 
   it '#from' do
     here = Woyo::Location.new(:here)
-    door = Woyo::Way.new :door, location: here
+    door = Woyo::Way.new :door, from: here
     door.from.should eq here
   end
 
   it '#location' do
     here = Woyo::Location.new(:here)
-    door = Woyo::Way.new :door, location: here
-    door.location.should eq here
+    door = Woyo::Way.new :door, from: here
+    door.from.should eq here
   end
 
   it '#world' do
     world = Woyo::World.new
     here = Woyo::Location.new :here, world: world
-    door = Woyo::Way.new :door, location: here
+    door = Woyo::Way.new :door, from: here
     door.world.should eq world
   end
 

@@ -34,13 +34,12 @@ class Way
     @@attributes
   end
 
-  attr_reader :id, :attributes, :location, :world
+  attr_reader :id, :attributes, :from
   attr_accessor :_test
 
-  def initialize id, location: nil, &block
+  def initialize id, from: nil, &block
     @id = id.to_s.downcase.to_sym
-    @location = location
-    @world = location.world if location
+    @from = from
     @attributes = {}
     evaluate &block
   end
@@ -50,8 +49,8 @@ class Way
     self
   end
 
-  def from
-    @location
+  def world
+    @from ? @from.world : nil
   end
 
   def after_set_to arg
@@ -68,8 +67,6 @@ class Way
       end
     end
   end
-  # todo: def world; @location ? @location.world : nil ; end
-  # todo: Location.new ... should add location to world locations list
   
 end
 
