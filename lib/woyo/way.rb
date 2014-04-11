@@ -57,13 +57,13 @@ class Way
     if arg.instance_of? Symbol
       case
       when from && arg == from.id
-        set_to from                            # way loops back to the same location
+        set_to from                        # way loops back to the same location
       when world && world.locations[arg]
-        set_to world.locations[arg]            # destination location already exists
+        set_to world.locations[arg]        # destination location already exists in world
       when world
-        set_to Location.new arg, world: world  # create destination location in world 
+        set_to world.location arg          # create destination location in world 
       else
-        set_to Location.new arg                # create destination location
+        set_to Location.new arg            # create free-standing destination location
       end
     end
   end

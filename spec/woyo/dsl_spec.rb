@@ -100,6 +100,9 @@ describe 'DSL' do
           door.name.should eq 'Large Wooden Door'
           door.to.should be_instance_of Woyo::Location
           door.to.id.should eq :away
+          away = world.locations[:away]
+          away.ways.count.should eq 0
+          door.to.should eq away
         end
 
         it 'to existing location' do
@@ -148,26 +151,79 @@ describe 'DSL' do
 
       context 'existing way' do
 
-        it 'to_new_location' do
+        it 'to new location' do
           world = Woyo::World.new do
             location :home do
               way :door do
                 name 'Large Wooden Door'
                 description "Big, real big!"
-                to :away
               end
               way :door do
-                name 'Same door'
+                description 'Nicer'
+                to :away
               end
             end
           end
           home = world.locations[:home]
           home.ways.count.should eq 1
           door = home.ways[:door]
-          door.name.should eq 'Same door'
-          door.description.should eq "Big, real big!"
+          door.name.should eq 'Large Wooden Door'
+          door.description.should eq "Nicer"
           door.to.should be_instance_of Woyo::Location
           door.to.id.should eq :away
+          away = world.locations[:away]
+          away.ways.count.should eq 0
+          door.to.should eq away
+        end
+
+        it 'to existing location' do
+          world = Woyo::World.new do
+            location :away do
+            end
+            location :home do
+              way :door do
+                name 'Large Wooden Door'
+                description "Big, real big!"
+              end
+              way :door do
+                description 'Nicer'
+                to :away
+              end
+            end
+          end
+          home = world.locations[:home]
+          home.ways.count.should eq 1
+          door = home.ways[:door]
+          door.name.should eq 'Large Wooden Door'
+          door.description.should eq "Nicer"
+          door.to.should be_instance_of Woyo::Location
+          door.to.id.should eq :away
+          away = world.locations[:away]
+          away.ways.count.should eq 0
+          door.to.should eq away
+        end
+
+        it 'to same location' do
+          world = Woyo::World.new do
+            location :home do
+              way :door do
+                name 'Large Wooden Door'
+                description "Big, real big!"
+              end
+              way :door do
+                description 'Nicer'
+                to :home
+              end
+            end
+          end
+          home = world.locations[:home]
+          home.ways.count.should eq 1
+          door = home.ways[:door]
+          door.name.should eq 'Large Wooden Door'
+          door.description.should eq "Nicer"
+          door.to.should be_instance_of Woyo::Location
+          door.to.id.should eq :home
+          door.to.should eq home
         end
 
       end
