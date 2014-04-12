@@ -230,6 +230,19 @@ describe 'DSL' do
 
     end
 
+    context 'character' do
+
+      it 'new with no location' do
+        world = Woyo::World.new do
+          character :jim do
+          end
+        end
+        world.characters.count.should eq 1
+        world.characters[:jim].should be_instance_of Woyo::Character
+      end
+
+    end
+
   end
 
 end

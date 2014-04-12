@@ -108,4 +108,62 @@ describe Woyo::World do
 
   end
 
+  context '#character' do
+
+    it 'creates new character' do
+      world = Woyo::World.new
+      home = world.character :batman
+      away = world.character :robin
+      world.characters.size.should eq 2
+      world.characters[:batman].should be home
+      world.characters[:robin].should be away
+    end
+
+    it 'adds existing character' do
+      world = Woyo::World.new
+      home = world.character Woyo::Character.new :batman
+      away = world.character Woyo::Character.new :robin
+      world.characters.size.should eq 2
+      world.characters[:batman].should be home
+      world.characters[:robin].should be away
+    end
+
+    it 'accepts a block with arity 0 for new character' do
+      world = Woyo::World.new
+      result = ''
+      home = world.character( :batman ) { result = 'ok' }
+      home.should be_instance_of Woyo::Character
+      result.should eq 'ok'
+    end
+
+    it 'accepts a block with arity 1 for new character' do
+      world = Woyo::World.new
+      result = ''
+      home = world.character( :batman ) { |char| result = 'ok' }
+      home.should be_instance_of Woyo::Character
+      result.should eq 'ok'
+    end
+
+    it 'accepts a block with arity 0 for existing character' do
+      world = Woyo::World.new
+      home = world.character( :batman ) { |char| char._test = 'ok' }
+      home.should be_instance_of Woyo::Character
+      result = ''
+      other = world.character( :batman ) { result = @_test }
+      other.should be home
+      result.should eq 'ok'
+    end
+
+    it 'accepts a block with arity 1 for existing character' do
+      world = Woyo::World.new
+      home = world.character( :batman ) { @_test = 'ok' }
+      home.should be_instance_of Woyo::Character
+      result = ''
+      other = world.character( :batman ) { |char| result = char._test }
+      other.should be home
+      result.should eq 'ok'
+    end
+
+  end
+
 end
