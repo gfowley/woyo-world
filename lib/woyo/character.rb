@@ -24,11 +24,13 @@ class Character
     @@attributes
   end
 
-  attr_reader :id, :attributes
+  attr_reader :id, :attributes, :world, :location
   attr_accessor :_test
 
-  def initialize id, &block
+  def initialize id, world: nil, location: nil, &block
     @id = id.to_s.downcase.to_sym
+    @world = world
+    @location = location
     @attributes = {}
     evaluate &block
   end

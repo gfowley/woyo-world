@@ -117,17 +117,6 @@ describe Woyo::Location do
 
   end
 
-  it '#here' do
-    home = Woyo::Location.new :home 
-    home.here.should be home
-  end
-
-  it '#world' do
-    world = Woyo::World.new
-    home = Woyo::Location.new :home, world: world
-    home.world.should eq world
-  end
-
   context 'ways' do
 
     it 'are listed (#ways)' do
@@ -161,6 +150,28 @@ describe Woyo::Location do
       door.to.id.should eq :away
     end
 
+  end
+
+  it '#here' do
+    home = Woyo::Location.new :home 
+    home.here.should be home
+  end
+
+  it '#world' do
+    world = Woyo::World.new
+    home = Woyo::Location.new :home, world: world
+    home.world.should eq world
+  end
+
+  it '#characters' do
+    home = Woyo::Location.new :home do
+      character :peter do
+      end
+    end
+    home.characters.size.should eq 1
+    peter = home.characters[:peter]
+    peter.should be_instance_of Woyo::Character
+    peter.location.should be home
   end
 
 end

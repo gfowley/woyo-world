@@ -46,8 +46,8 @@ class World
     when  character && !known && !block_given? then @characters[id] = character
     when !character &&  known &&  block_given? then @characters[id].evaluate &block
     when !character &&  known && !block_given? then @characters[id]
-    when !character && !known &&  block_given? then @characters[id] = Character.new id, &block
-    when !character && !known && !block_given? then @characters[id] = Character.new id
+    when !character && !known &&  block_given? then @characters[id] = Character.new id, world: self, &block
+    when !character && !known && !block_given? then @characters[id] = Character.new id, world: self
     end
   end
 

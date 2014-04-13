@@ -24,7 +24,7 @@ class Location
     @@attributes
   end
 
-  attr_reader :id, :attributes, :ways, :world
+  attr_reader :id, :attributes, :ways, :world, :characters
   attr_accessor :_test
 
   def initialize id, world: nil, &block
@@ -32,6 +32,7 @@ class Location
     @world = world
     @attributes = {}
     @ways = {}
+    @characters = {}
     evaluate &block
   end
 
@@ -58,6 +59,24 @@ class Location
     when !way && !known &&  block_given? then @ways[id] = Way.new id, from: here, &block
     when !way && !known && !block_given? then @ways[id] = Way.new id, from: here
     end
+  end
+
+  def character char_or_id, &block
+    character = char_or_id.kind_of?( Character ) ? char_or_id : nil
+    id = character ? character.id : char_or_id
+    known = @characters[id] ? true : false
+    case
+    when  character &&  known &&  block_given? then character.evaluate &block
+    when  character &&  known && !block_given? then character
+    when  character && !known &&  block_given? then @characters[id] = character.evaluate &block
+    when  character && !known && !block_given? then @characters[id] = character
+    when !character &&  known &&  block_given? then character = @characters[id].evaluate &block
+    when !character &&  known && !block_given? then character = @characters[id]
+    when !character && !known &&  block_given? then character = @characters[id] = Character.new id, location: here, &block
+    when !character && !known && !block_given? then character = @characters[id] = Character.new id, location: here
+    end
+    @world.characters[id] = character if @world
+    character
   end
 
 end

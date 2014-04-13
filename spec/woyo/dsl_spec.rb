@@ -228,17 +228,80 @@ describe 'DSL' do
 
       end
 
-    end
-
-    context 'character' do
-
-      it 'new with no location' do
+      it 'new character' do
         world = Woyo::World.new do
-          character :jim do
+          location :home do
+            character :jim do
+            end
           end
         end
         world.characters.count.should eq 1
         world.characters[:jim].should be_instance_of Woyo::Character
+        home = world.locations[:home]
+        home.characters.count.should eq 1
+        home.characters[:jim].should be world.characters[:jim]
+        jim = home.characters[:jim]
+        jim.location.should be home
+      end
+
+      it 'existing character' do
+        world = Woyo::World.new do
+          location :home do
+            character :jim do
+              name 'James'
+              description 'Jolly'
+            end
+            character :jim do
+              description 'Jovial'
+            end
+          end
+        end
+        world.characters.count.should eq 1
+        world.characters[:jim].should be_instance_of Woyo::Character
+        home = world.locations[:home]
+        home.characters.count.should eq 1
+        home.characters[:jim].should be world.characters[:jim]
+        jim = home.characters[:jim]
+        jim.location.should be home
+        jim.name.should eq 'James'
+        jim.description.should eq 'Jovial'
+      end
+
+    end
+
+    context 'character' do
+
+      it 'new' do
+        world = Woyo::World.new do
+          character :jim do
+            name 'James'
+            description 'Jolly'
+          end
+        end
+        world.characters.count.should eq 1
+        world.characters[:jim].should be_instance_of Woyo::Character
+        jim = world.characters[:jim]
+        jim.location.should be_nil
+        jim.name.should eq 'James'
+        jim.description.should eq 'Jolly'
+      end
+
+      it 'existing' do
+        world = Woyo::World.new do
+          character :jim do
+            name 'James'
+            description 'Jolly'
+          end
+          character :jim do
+            description 'Jovial'
+          end
+        end
+        world.characters.count.should eq 1
+        world.characters[:jim].should be_instance_of Woyo::Character
+        jim = world.characters[:jim]
+        jim.location.should be_nil
+        jim.name.should eq 'James'
+        jim.description.should eq 'Jovial'
       end
 
     end
