@@ -113,5 +113,26 @@ describe Woyo::Character do
 
   end
 
+  it '#go way' do
+    world = Woyo::World.new do
+      location :home do
+        way :out do
+          to :away
+        end
+        character :tom
+      end
+      location :away do
+      end
+    end
+    home = world.locations[:home]
+    away = world.locations[:away]
+    tom = home.characters[:tom]
+    tom.location.should be home
+    tom.go :out
+    tom.location.should be away
+    home.characters[:tom].should be_nil
+    away.characters[:tom].should eq tom
+  end
+
 end
 

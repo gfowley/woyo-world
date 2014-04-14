@@ -40,6 +40,19 @@ class Character
     self
   end
 
+  def me
+    self
+  end
+
+  def go way_or_id
+    id = way_or_id.kind_of?(Woyo::Way) ? way_or_id.id : way_or_id
+    way = @location.ways[id]
+    @location.characters.delete me.id
+    @location = way.to
+    @location.characters[me.id] = me
+  end
+
 end
 
 end
+
