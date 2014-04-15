@@ -1,36 +1,19 @@
+require_relative 'attributes'
 
 module Woyo
 
 class Location
 
-  @@attributes = [ :name, :description ]
+  include Attributes
 
-  @@attributes.each do |attr|
-    self.class_eval("
-      def #{attr}= arg
-        @attributes[:#{attr}] = @#{attr} = arg
-      end
-      def #{attr}(arg=nil)
-        if arg.nil?
-          @#{attr}
-        else
-          self.#{attr} = arg
-        end
-      end
-    ")
-  end
+  attributes :name, :description
 
-  def self.attributes
-    @@attributes
-  end
-
-  attr_reader :id, :attributes, :ways, :world, :characters
+  attr_reader :id, :ways, :world, :characters
   attr_accessor :_test
 
   def initialize id, world: nil, &block
     @id = id.to_s.downcase.to_sym
     @world = world
-    @attributes = {}
     @ways = {}
     @characters = {}
     evaluate &block
