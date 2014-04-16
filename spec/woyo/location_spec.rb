@@ -28,7 +28,7 @@ describe Woyo::Location do
     end
 
     it 'accepts named parameter world:' do
-      expect { Woyo::Location.new(:my_id, world: Woyo::World.new) }.to_not raise_error
+      expect { Woyo::Location.new(:my_id, context: Woyo::World.new) }.to_not raise_error
     end
 
     it 'accepts a block with arity 0' do
@@ -159,7 +159,7 @@ describe Woyo::Location do
 
   it '#world' do
     world = Woyo::World.new
-    home = Woyo::Location.new :home, world: world
+    home = Woyo::Location.new :home, context: world
     home.world.should eq world
   end
 

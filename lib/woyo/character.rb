@@ -11,10 +11,12 @@ class Character
   attr_reader :id, :world, :location
   attr_accessor :_test
 
-  def initialize id, world: nil, location: nil, &block
+  def initialize id, context: nil, &block
     @id = id.to_s.downcase.to_sym
-    @world = world
-    @location = location
+    case
+    when context.is_a?( Woyo::World )    then @world    = context
+    when context.is_a?( Woyo::Location ) then @location = context
+    end
     evaluate &block
   end
 

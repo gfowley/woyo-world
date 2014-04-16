@@ -11,9 +11,9 @@ class Way
   attr_reader :id, :from
   attr_accessor :_test
 
-  def initialize id, from: nil, &block
+  def initialize id, context: nil, &block
     @id = id.to_s.downcase.to_sym
-    @from = from
+    @from = context
     @attributes = {}
     evaluate &block
   end

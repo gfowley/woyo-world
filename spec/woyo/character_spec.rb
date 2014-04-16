@@ -19,12 +19,12 @@ describe Woyo::Character do
       Woyo::Character.new(:MY_id ).id.should eq :my_id
     end
 
-    it 'accepts named parameter world:' do
-      expect { Woyo::Character.new(:my_id, world: Woyo::World.new) }.to_not raise_error
+    it 'accepts world for parameter context:' do
+      expect { Woyo::Character.new(:my_id, context: Woyo::World.new) }.to_not raise_error
     end
 
-    it 'accepts named parameter location:' do
-      expect { Woyo::Character.new(:my_id, location: Woyo::Location.new(:here)) }.to_not raise_error
+    it 'accepts location for parameter context:' do
+      expect { Woyo::Character.new(:my_id, context: Woyo::Location.new(:here)) }.to_not raise_error
     end
 
     it 'accepts a block with arity 0' do

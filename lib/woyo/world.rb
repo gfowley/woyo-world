@@ -30,8 +30,8 @@ class World
     when  location && !known && !block_given? then @locations[id] = location
     when !location &&  known &&  block_given? then @locations[id].evaluate &block
     when !location &&  known && !block_given? then @locations[id]
-    when !location && !known &&  block_given? then @locations[id] = Location.new id, world: self, &block
-    when !location && !known && !block_given? then @locations[id] = Location.new id, world: self
+    when !location && !known &&  block_given? then @locations[id] = Location.new id, context: self, &block
+    when !location && !known && !block_given? then @locations[id] = Location.new id, context: self
     end
   end
 
@@ -46,8 +46,8 @@ class World
     when  character && !known && !block_given? then @characters[id] = character
     when !character &&  known &&  block_given? then @characters[id].evaluate &block
     when !character &&  known && !block_given? then @characters[id]
-    when !character && !known &&  block_given? then @characters[id] = Character.new id, world: self, &block
-    when !character && !known && !block_given? then @characters[id] = Character.new id, world: self
+    when !character && !known &&  block_given? then @characters[id] = Character.new id, context: self, &block
+    when !character && !known && !block_given? then @characters[id] = Character.new id, context: self
     end
   end
 

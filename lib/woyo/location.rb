@@ -11,9 +11,9 @@ class Location
   attr_reader :id, :ways, :world, :characters
   attr_accessor :_test
 
-  def initialize id, world: nil, &block
+  def initialize id, context: nil, &block
     @id = id.to_s.downcase.to_sym
-    @world = world
+    @world = context
     @ways = {}
     @characters = {}
     evaluate &block
@@ -39,8 +39,8 @@ class Location
     when  way && !known && !block_given? then @ways[id] = way
     when !way &&  known &&  block_given? then @ways[id].evaluate &block
     when !way &&  known && !block_given? then @ways[id]
-    when !way && !known &&  block_given? then @ways[id] = Way.new id, from: here, &block
-    when !way && !known && !block_given? then @ways[id] = Way.new id, from: here
+    when !way && !known &&  block_given? then @ways[id] = Way.new id, context: here, &block
+    when !way && !known && !block_given? then @ways[id] = Way.new id, context: here
     end
   end
 
@@ -55,8 +55,8 @@ class Location
     when  character && !known && !block_given? then @characters[id] = character
     when !character &&  known &&  block_given? then character = @characters[id].evaluate &block
     when !character &&  known && !block_given? then character = @characters[id]
-    when !character && !known &&  block_given? then character = @characters[id] = Character.new id, location: here, &block
-    when !character && !known && !block_given? then character = @characters[id] = Character.new id, location: here
+    when !character && !known &&  block_given? then character = @characters[id] = Character.new id, context: here, &block
+    when !character && !known && !block_given? then character = @characters[id] = Character.new id, context: here
     end
     @world.characters[id] = character if @world
     character
