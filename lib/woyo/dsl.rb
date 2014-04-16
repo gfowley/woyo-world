@@ -34,7 +34,7 @@ module DSL
             when !#{cont} && !known &&  block_given? then #{cont} = self.#{cont}s[id] = Woyo::#{cont.capitalize}.new id, context: self, &block
             when !#{cont} && !known && !block_given? then #{cont} = self.#{cont}s[id] = Woyo::#{cont.capitalize}.new id, context: self
             end
-            # special case for Character... @world.#{cont}s[id] = #{cont} if @world
+            # maybe: god-like lists of everything at world level... would need unique ids... self.world.#{cont}s[id] = #{cont} if !known && self.world
             #{cont}
           end
 

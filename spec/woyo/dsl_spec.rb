@@ -235,11 +235,8 @@ describe 'DSL' do
             end
           end
         end
-        world.characters.count.should eq 1
-        world.characters[:jim].should be_instance_of Woyo::Character
         home = world.locations[:home]
         home.characters.count.should eq 1
-        home.characters[:jim].should be world.characters[:jim]
         jim = home.characters[:jim]
         jim.location.should be home
       end
@@ -256,11 +253,8 @@ describe 'DSL' do
             end
           end
         end
-        world.characters.count.should eq 1
-        world.characters[:jim].should be_instance_of Woyo::Character
         home = world.locations[:home]
         home.characters.count.should eq 1
-        home.characters[:jim].should be world.characters[:jim]
         jim = home.characters[:jim]
         jim.location.should be home
         jim.name.should eq 'James'
