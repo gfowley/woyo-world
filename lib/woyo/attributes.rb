@@ -7,7 +7,7 @@ module Attributes
 
     def attributes *attrs
       return @@attributes if attrs.empty?
-      @@attributes = attrs
+      @@attributes = attrs              # todo: allow additions to existing attributes
       @@attributes.each do |attr|
         class_eval("
           def #{attr}= arg

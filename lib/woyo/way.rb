@@ -25,7 +25,6 @@ class Way
   end
 
   def to= arg
-    #@to = arg
     if arg.instance_of? Symbol
       case
       when from && arg == from.id

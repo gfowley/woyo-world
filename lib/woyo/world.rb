@@ -8,30 +8,14 @@ module Woyo
 class World
 
   include DSL
+  contains :location
 
-  attr_reader :locations, :items, :characters
+  attr_reader :items, :characters
 
   def initialize &block
-    @locations = {} 
     @items = {}
     @characters = {}
     evaluate &block
-  end
-
-  def location loc_or_id, &block
-    location = loc_or_id.kind_of?( Location ) ? loc_or_id : nil
-    id = location ? location.id : loc_or_id
-    known = @locations[id] ? true : false
-    case
-    when  location &&  known &&  block_given? then location.evaluate &block
-    when  location &&  known && !block_given? then location
-    when  location && !known &&  block_given? then @locations[id] = location.evaluate &block
-    when  location && !known && !block_given? then @locations[id] = location
-    when !location &&  known &&  block_given? then @locations[id].evaluate &block
-    when !location &&  known && !block_given? then @locations[id]
-    when !location && !known &&  block_given? then @locations[id] = Location.new id, context: self, &block
-    when !location && !known && !block_given? then @locations[id] = Location.new id, context: self
-    end
   end
 
   def character char_or_id, &block
