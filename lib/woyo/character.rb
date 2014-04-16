@@ -1,15 +1,19 @@
 require_relative 'attributes'
+require_relative 'dsl'
 
 module Woyo
 
 class Character
 
+  include DSL 
   include Attributes
 
   attributes :name, :description
 
-  attr_reader :id, :world, :location
+  attr_reader :world, :location
   attr_accessor :_test
+
+  attr_reader :id
 
   def initialize id, context: nil, &block
     @id = id.to_s.downcase.to_sym
@@ -18,11 +22,6 @@ class Character
     when context.is_a?( Woyo::Location ) then @location = context
     end
     evaluate &block
-  end
-
-  def evaluate &block
-    (block.arity < 1 ? (instance_eval &block) : block.call(self)) if block_given?
-    self
   end
 
   def me

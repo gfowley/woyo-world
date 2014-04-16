@@ -1,9 +1,11 @@
 require_relative 'attributes'
+require_relative 'dsl'
 
 module Woyo
 
 class Way
-  
+
+  include DSL
   include Attributes
 
   attributes :name, :description
@@ -16,11 +18,6 @@ class Way
     @from = context
     @attributes = {}
     evaluate &block
-  end
-
-  def evaluate &block
-    (block.arity < 1 ? (instance_eval &block) : block.call(self)) if block_given?
-    self
   end
 
   def world

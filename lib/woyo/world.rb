@@ -1,10 +1,13 @@
 require_relative 'location'
 require_relative 'way'
 require_relative 'character'
+require_relative 'dsl'
 
 module Woyo
 
 class World
+
+  include DSL
 
   attr_reader :locations, :items, :characters
 
@@ -13,10 +16,6 @@ class World
     @items = {}
     @characters = {}
     evaluate &block
-  end
-
-  def evaluate &block
-    (block.arity < 1 ? (instance_eval &block) : block.call(self)) if block_given?
   end
 
   def location loc_or_id, &block

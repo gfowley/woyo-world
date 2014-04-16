@@ -1,9 +1,11 @@
 require_relative 'attributes'
+require_relative 'dsl'
 
 module Woyo
 
 class Location
 
+  include DSL
   include Attributes
 
   attributes :name, :description
@@ -17,11 +19,6 @@ class Location
     @ways = {}
     @characters = {}
     evaluate &block
-  end
-
-  def evaluate &block
-    (block.arity < 1 ? (instance_eval &block) : block.call(self)) if block_given?
-    self
   end
 
   def here
