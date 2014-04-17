@@ -44,22 +44,6 @@ describe Woyo::Way do
 
   end
 
-  context '#evaluate' do
-
-    it 'instance evals block with arity 0' do
-      door = Woyo::Way.new( :door )
-      result = door.evaluate { self.should == door }
-      result.should be door
-    end
-
-    it 'passes self to block with arity 1' do
-      door = Woyo::Way.new( :door )
-      result = door.evaluate { |loc| loc.should be door }
-      result.should be door
-    end
-
-  end
-
   it '#from' do
     here = Woyo::Location.new(:here)
     door = Woyo::Way.new :door, context: here

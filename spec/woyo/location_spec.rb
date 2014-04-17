@@ -53,22 +53,6 @@ describe Woyo::Location do
 
   end
 
-  context '#evaluate' do
-
-    it 'instance evals block with arity 0' do
-      home = Woyo::Location.new( :home )
-      other = home.evaluate { self.should == home }
-      other.should be home
-    end
-
-    it 'passes self to block with arity 1' do
-      home = Woyo::Location.new( :home )
-      other = home.evaluate { |loc| loc.should be home }
-      other.should be home
-    end
-
-  end
-
   context 'ways' do
 
     it 'are listed (#ways)' do

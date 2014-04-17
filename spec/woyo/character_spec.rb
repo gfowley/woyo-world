@@ -49,22 +49,6 @@ describe Woyo::Character do
 
   end
 
-  context '#evaluate' do
-
-    it 'instance evals block with arity 0' do
-      bilbo = Woyo::Character.new( :bilbo )
-      other = bilbo.evaluate { self.should == bilbo }
-      other.should be bilbo
-    end
-
-    it 'passes self to block with arity 1' do
-      bilbo = Woyo::Character.new( :bilbo )
-      other = bilbo.evaluate { |loc| loc.should be bilbo }
-      other.should be bilbo
-    end
-
-  end
-
   it '#go way' do
     world = Woyo::World.new do
       location :home do

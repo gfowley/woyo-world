@@ -1,4 +1,3 @@
-require 'woyo/location'
 require 'woyo/attributes'
 
 describe Woyo::Attributes do

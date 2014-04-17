@@ -1,4 +1,6 @@
 
+module Woyo
+
 module DSL
   
   def evaluate &block
@@ -51,6 +53,8 @@ module DSL
   def contains
     @contains ||= {}
   end
+
+end
 
 end
 

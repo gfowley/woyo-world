@@ -38,18 +38,6 @@ describe Woyo::World do
 
   end
 
-  context '#evaluate' do
-
-    it 'instance evals block with arity 0' do
-      Woyo::World.new.evaluate { self.class.should == Woyo::World }
-    end
-
-    it 'passes self to block with arity 1' do
-      Woyo::World.new.evaluate { |wor| wor.should be_instance_of Woyo::World }
-    end
-
-  end
-
   context '#location' do
 
     it 'creates new location' do
