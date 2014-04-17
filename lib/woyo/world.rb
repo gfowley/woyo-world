@@ -1,20 +1,19 @@
+require_relative 'world_object'
 require_relative 'location'
 require_relative 'way'
 require_relative 'character'
-require_relative 'dsl'
 
 module Woyo
 
-class World
+class World < WorldObject
 
-  include DSL
   contains :location, :character
 
   attr_reader :items
 
   def initialize &block
     @items = {}
-    evaluate &block
+    super nil, context: nil, &block
   end
 
 end

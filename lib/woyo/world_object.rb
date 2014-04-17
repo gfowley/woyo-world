@@ -4,7 +4,7 @@ require_relative 'dsl'
 
 module Woyo
 
-class DSLObject
+class WorldObject
 
   include Attributes
   include DSL

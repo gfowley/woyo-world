@@ -1,8 +1,8 @@
-require_relative 'dsl_object'
+require_relative 'world_object'
 
 module Woyo
 
-class Location < DSLObject
+class Location < WorldObject
 
   attributes :name, :description
 

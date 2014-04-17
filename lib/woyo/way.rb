@@ -1,26 +1,17 @@
-require_relative 'attributes'
-require_relative 'dsl'
+require_relative 'world_object'
 
 module Woyo
 
-class Way
-
-  include DSL
-  include Attributes
+class Way < WorldObject
 
   attributes :name, :description
 
-  attr_reader :id, :from
-  attr_accessor :_test
-
-  def initialize id, context: nil, &block
-    @id = id.to_s.downcase.to_sym
-    @from = context
-    evaluate &block
+  def from
+    @from ||= context
   end
 
   def world
-    @from ? @from.world : nil
+    from ? from.world : nil
   end
 
   def to= arg
