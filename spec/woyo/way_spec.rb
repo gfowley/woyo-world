@@ -60,54 +60,6 @@ describe Woyo::Way do
 
   end
 
-  context 'attributes' do
-
-    it 'names can be listed for class' do
-      attrs = Woyo::Way.attributes
-      attrs.should be_instance_of Array
-      attrs.all? { |a| a.is_a? Symbol }.should be_true
-    end                       
-
-    it 'names and values can be listed for instance' do
-      door = Woyo::Way.new :door
-      door.attributes.should be_instance_of Hash
-    end
-
-    it 'can be written with =' do
-      door = Woyo::Way.new :door
-      Woyo::Way.attributes.each do |attr|
-        eval "door.#{attr} = '#{attr}'.upcase"
-      end
-      door.attributes.count.should eq Woyo::Way.attributes.count
-      door.attributes.each do |name,value|
-        value.should eq name.to_s.upcase
-      end
-    end
-
-    it 'can be written without =' do
-      door = Woyo::Way.new :door
-      Woyo::Way.attributes.each do |attr|
-        eval "door.#{attr} '#{attr}'.upcase"
-      end
-      door.attributes.count.should eq Woyo::Way.attributes.count
-      door.attributes.each do |name,value|
-        value.should eq name.to_s.upcase
-      end
-    end
-
-    it 'can be read' do
-      door = Woyo::Way.new :door
-      Woyo::Way.attributes.each do |attr|
-        eval "door.#{attr} '#{attr}'.upcase"
-      end
-      door.attributes.count.should eq Woyo::Way.attributes.count
-      door.attributes.each do |name,value|
-        eval("door.#{name}").should eq value
-      end
-    end
-
-  end
-
   it '#from' do
     here = Woyo::Location.new(:here)
     door = Woyo::Way.new :door, context: here

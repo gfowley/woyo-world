@@ -65,54 +65,6 @@ describe Woyo::Character do
 
   end
 
-  context 'attributes' do
-
-    it 'names can be listed for class' do
-      attrs = Woyo::Character.attributes
-      attrs.should be_instance_of Array
-      attrs.all? { |a| a.is_a? Symbol }.should be_true
-    end                       
-
-    it 'names and values can be listed for instance' do
-      bilbo = Woyo::Character.new :bilbo
-      bilbo.attributes.should be_instance_of Hash
-    end
-
-    it 'can be written with =' do
-      bilbo = Woyo::Character.new :bilbo
-      Woyo::Character.attributes.each do |attr|
-        eval "bilbo.#{attr} = '#{attr}'.upcase"
-      end
-      bilbo.attributes.count.should eq Woyo::Character.attributes.count
-      bilbo.attributes.each do |name,value|
-        value.should eq name.to_s.upcase
-      end
-    end
-
-    it 'can be written without =' do
-      bilbo = Woyo::Character.new :bilbo
-      Woyo::Character.attributes.each do |attr|
-        eval "bilbo.#{attr} '#{attr}'.upcase"
-      end
-      bilbo.attributes.count.should eq Woyo::Character.attributes.count
-      bilbo.attributes.each do |name,value|
-        value.should eq name.to_s.upcase
-      end
-    end
-
-    it 'can be read' do
-      bilbo = Woyo::Character.new :bilbo
-      Woyo::Character.attributes.each do |attr|
-        eval "bilbo.#{attr} '#{attr}'.upcase"
-      end
-      bilbo.attributes.count.should eq Woyo::Character.attributes.count
-      bilbo.attributes.each do |name,value|
-        eval("bilbo.#{name}").should eq value
-      end
-    end
-
-  end
-
   it '#go way' do
     world = Woyo::World.new do
       location :home do
