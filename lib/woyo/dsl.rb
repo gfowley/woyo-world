@@ -8,12 +8,12 @@ module DSL
 
   module ClassMethods
 
-    @@contains = []
+    @contains = []   # class instance variable
 
     def contains *conts
-      return @@contains if conts.empty?
-      @@contains = conts              # todo: allow additions to existing @@contains
-      @@contains.each do |cont|
+      return @contains if conts.empty?
+      @contains = conts              # todo: allow additions to existing @@contains
+      @contains.each do |cont|
         class_eval("
 
           def #{cont}s
