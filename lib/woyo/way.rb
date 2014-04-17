@@ -16,7 +16,6 @@ class Way
   def initialize id, context: nil, &block
     @id = id.to_s.downcase.to_sym
     @from = context
-    @attributes = {}
     evaluate &block
   end
 

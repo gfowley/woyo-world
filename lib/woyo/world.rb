@@ -17,10 +17,6 @@ class World
     evaluate &block
   end
 
-  def world
-    self
-  end
-
 end
 
 end

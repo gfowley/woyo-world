@@ -1,23 +1,15 @@
-require_relative 'attributes'
-require_relative 'dsl'
+require_relative 'dsl_object'
 
 module Woyo
 
-class Location
+class Location < DSLObject
 
-  include DSL
-  contains :way, :character
-
-  include Attributes
   attributes :name, :description
 
-  attr_reader :id, :world 
-  attr_accessor :_test
+  contains   :way, :character
 
-  def initialize id, context: nil, &block
-    @id = id.to_s.downcase.to_sym
-    @world = context
-    evaluate &block
+  def world
+    self.context
   end
 
   def here
@@ -27,3 +19,4 @@ class Location
 end
 
 end
+
