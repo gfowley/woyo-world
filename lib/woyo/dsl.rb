@@ -23,7 +23,7 @@ module DSL
           end
 
           def #{cont} cont_or_id, &block
-            #{cont} = cont_or_id.kind_of?( Woyo::#{cont.capitalize} ) ? cont_or_id : nil
+            #{cont} = cont_or_id.kind_of?( #{cont.capitalize} ) ? cont_or_id : nil
             id = #{cont} ? #{cont}.id : cont_or_id
             known = self.#{cont}s[id] ? true : false
             case
@@ -33,8 +33,8 @@ module DSL
             when  #{cont} && !known && !block_given? then self.#{cont}s[id] = #{cont}
             when !#{cont} &&  known &&  block_given? then #{cont} = self.#{cont}s[id].evaluate &block
             when !#{cont} &&  known && !block_given? then #{cont} = self.#{cont}s[id]
-            when !#{cont} && !known &&  block_given? then #{cont} = self.#{cont}s[id] = Woyo::#{cont.capitalize}.new id, context: self, &block
-            when !#{cont} && !known && !block_given? then #{cont} = self.#{cont}s[id] = Woyo::#{cont.capitalize}.new id, context: self
+            when !#{cont} && !known &&  block_given? then #{cont} = self.#{cont}s[id] = #{cont.capitalize}.new id, context: self, &block
+            when !#{cont} && !known && !block_given? then #{cont} = self.#{cont}s[id] = #{cont.capitalize}.new id, context: self
             end
             # maybe: god-like lists of everything at world level... would need unique ids... self.world.#{cont}s[id] = #{cont} if !known && self.world
             #{cont}
