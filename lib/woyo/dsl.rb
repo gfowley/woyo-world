@@ -10,16 +10,15 @@ module DSL
 
   module ClassMethods
 
-    @contains = []   # class instance variable
-
     def contains *conts
+      @contains ||= []                      # class instance variable in ClassMethods scope
       return @contains if conts.empty?
-      @contains = conts              # todo: allow additions to existing @@contains
+      conts.each { |cont| @contains << cont unless @contains.include? cont }
       @contains.each do |cont|
         class_eval("
 
           def #{cont}s
-            @#{cont}s ||= {}
+            ( @contains ||= {} )[:#{cont}] ||= ( @#{cont}s ||= {} )
           end
 
           def #{cont} cont_or_id, &block

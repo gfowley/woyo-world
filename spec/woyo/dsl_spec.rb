@@ -5,11 +5,10 @@ describe Woyo::DSL do
   before :all do
     class DSLTest
       include Woyo::DSL
-      contains :cont1, :cont2, :cont3
+      contains :dog, :cat
     end
-    class Cont1 ; def initialize id, context: nil ; end ; end
-    class Cont2 ; def initialize id, context: nil ; end ; end
-    class Cont3 ; def initialize id, context: nil ; end ; end
+    class Dog ; def initialize id, context: nil ; end ; end
+    class Cat ; def initialize id, context: nil ; end ; end
   end
 
   context '#evaluate' do
@@ -29,27 +28,48 @@ describe Woyo::DSL do
   end
 
   it 'can list classes to contain' do
-    DSLTest.contains.should eq [ :cont1, :cont2, :cont3 ]
+    DSLTest.contains.should eq [ :dog, :cat ]
   end
 
-  it 'can create instances of contained objects' do
+  it 'can add classes to contain' do
+    pending 'fix containment'
+    class DSLTestMore < DSLTest
+      contains :cow
+      contains :duck
+    end
+    # class Cow  ; def initialize id, context: nil ; end ; end
+    # class Duck ; def initialize id, context: nil ; end ; end
+    DSLTestMore.contains.should eq [ :dog, :cat, :cow, :duck ]
+  end
+
+  it 'can create contained objects' do
     dsl = DSLTest.new
-    cont1 = dsl.cont1 :a
-    cont1.should be_instance_of Cont1
-    dsl.cont1(:a).should be cont1
-    dsl.cont1s[:a].should be cont1
+    dog = dsl.dog :brown
+    dog.should be_instance_of Dog
+    dsl.dog(:brown).should be dog
+    dsl.dogs[:brown].should be dog
   end
 
-  it 'can list instances of each contained object by class' do
+  it 'can list each contained object by class' do
     dsl = DSLTest.new
-    cont1a = dsl.cont1 :a
-    cont1b = dsl.cont1 :b
-    cont2c = dsl.cont2 :c
-    cont2d = dsl.cont2 :d
-    dsl.cont1s.should eq Hash[ a: cont1a, b:cont1b ]
-    dsl.cont2s.should eq Hash[ c: cont2c, d:cont2d ]
+    dog_brown = dsl.dog :brown
+    dog_black = dsl.dog :black
+    cat_white = dsl.cat :white
+    cat_black = dsl.cat :black
+    dsl.dogs.should eq Hash[ brown: dog_brown, black: dog_black ]
+    dsl.cats.should eq Hash[ white: cat_white, black: cat_black ]
   end
 
-  it 'can list all contained objects'
+  it 'can list all contained objects' do
+    dsl = DSLTest.new
+    dog_brown = dsl.dog :brown
+    dog_black = dsl.dog :black
+    cat_white = dsl.cat :white
+    cat_black = dsl.cat :black
+    dsl.contains.keys.should eq [ :dog, :cat ]
+    cats = Hash[ white: cat_white, black: cat_black ]
+    dogs = Hash[ brown: dog_brown, black: dog_black ]
+    dsl.contains.should eq Hash[ dog: dogs, cat: cats ] 
+  end
 
 end
