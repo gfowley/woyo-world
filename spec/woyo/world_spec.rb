@@ -2,40 +2,12 @@ require 'woyo/world'
 
 describe Woyo::World do
 
-  context '#new' do
-    
-    it 'initializes' do
-      expect { Woyo::World.new }.to_not raise_error
-    end
+  it 'initializes with no locations' do
+    Woyo::World.new.locations.should be_empty
+  end
 
-    it 'initializes with no locations' do
-      Woyo::World.new.locations.should be_empty
-    end
-
-    it 'initializes with no items' do
-      Woyo::World.new.items.should be_empty
-    end
-
-    it 'accepts a block with arity 0' do
-      result = ''
-      Woyo::World.new { result = 'ok' }
-      result.should eq 'ok'
-    end
-
-    it 'instance evals block with arity 0' do
-      Woyo::World.new { self.class.should == Woyo::World }
-    end
-
-    it 'accepts a block with arity 1' do
-      result = ''
-      Woyo::World.new { |wor| result = 'ok' }
-      result.should eq 'ok'
-    end
-
-    it 'passes self to block with arity 1' do
-      Woyo::World.new { |wor| wor.should be_instance_of Woyo::World }
-    end
-
+  it 'initializes with no characters' do
+    Woyo::World.new.characters.should be_empty
   end
 
   context '#location' do

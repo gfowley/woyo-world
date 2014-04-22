@@ -4,52 +4,20 @@ require 'woyo/location'
 
 describe Woyo::Character do
 
-  context '#new' do
-
-    it 'initializes with symbol id' do
-      expect { Woyo::Character.new :bilbo }.to_not raise_error
-    end
-
-    it 'creates id' do
-      Woyo::Character.new(:my_id).id.should eq :my_id
-    end
-
-    it 'converts id to lowercase' do
-      Woyo::Character.new('MY_id').id.should eq :my_id
-      Woyo::Character.new(:MY_id ).id.should eq :my_id
-    end
-
-    it 'accepts world for parameter context:' do
-      expect { Woyo::Character.new(:my_id, context: Woyo::World.new) }.to_not raise_error
-    end
-
-    it 'accepts location for parameter context:' do
-      expect { Woyo::Character.new(:my_id, context: Woyo::Location.new(:here)) }.to_not raise_error
-    end
-
-    it 'accepts a block with arity 0' do
-      result = ''
-      Woyo::Character.new( :bilbo ) { result = 'ok' }
-      result.should eq 'ok'
-    end
-
-    it 'instance evals block with arity 0' do
-      Woyo::Character.new( :bilbo ) { self.class.should == Woyo::Character }
-    end
-
-    it 'accepts a block with arity 1' do
-      result = ''
-      Woyo::Character.new( :bilbo ) { |loc| result = 'ok' }
-      result.should eq 'ok'
-    end
-
-    it 'passes self to block with arity 1' do
-      Woyo::Character.new( :bilbo ) { |loc| loc.should be_instance_of Woyo::Character }
-    end
-
+  it 'accepts world for parameter context:' do
+    wo = nil
+    expect { wo = Woyo::Character.new(:my_id, context: Woyo::World.new) }.to_not raise_error
+    wo.context.should be_instance_of Woyo::World
   end
 
-  it '#go way' do
+  it 'accepts location for parameter context:' do
+    wo = nil
+    expect { wo = Woyo::Character.new(:my_id, context: Woyo::Location.new(:here)) }.to_not raise_error
+    wo.context.should be_instance_of Woyo::Location
+    wo.context.id.should eq :here
+  end
+
+  it 'can go way' do
     world = Woyo::World.new do
       location :home do
         way :out do

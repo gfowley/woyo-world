@@ -9,10 +9,7 @@ class World < WorldObject
 
   contains :location, :character
 
-  attr_reader :items
-
   def initialize &block
-    @items = {}
     super nil, context: nil, &block
   end
 
