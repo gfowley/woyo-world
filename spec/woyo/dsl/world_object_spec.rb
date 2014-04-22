@@ -1,4 +1,4 @@
-require 'woyo/world_object'
+require 'woyo/dsl/world_object'
 
 describe Woyo::WorldObject do
 

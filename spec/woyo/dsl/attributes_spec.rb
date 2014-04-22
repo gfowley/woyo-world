@@ -1,4 +1,4 @@
-require 'woyo/attributes'
+require 'woyo/dsl/attributes'
 
 describe Woyo::Attributes do
 

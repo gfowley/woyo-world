@@ -1,10 +1,10 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'woyo/version'
+require 'woyo/dsl/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "woyo"
+  spec.name          = "woyo-dsl"
   spec.version       = Woyo::VERSION
   spec.authors       = ["Gerard Fowley"]
   spec.email         = ["gerard.fowley@iqeo.net"]

@@ -1,4 +1,4 @@
-require 'woyo/dsl'
+require 'woyo/dsl/dsl'
 
 describe Woyo::DSL do
 
