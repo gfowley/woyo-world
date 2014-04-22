@@ -5,11 +5,10 @@ module Attributes
 
   module ClassMethods
 
-    @attributes = []    # class instance variable 
-
     def attributes *attrs
+      @attributes ||= []                 # class instance variable in ClassMethods scope
       return @attributes if attrs.empty?
-      @attributes = attrs              # todo: allow additions to existing attributes
+      @attributes = attrs                # todo: allow additions to existing attributes
       @attributes.each do |attr|
         class_eval("
           def #{attr}= arg

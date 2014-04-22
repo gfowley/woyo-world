@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Gerard Fowley"]
   spec.email         = ["gerard.fowley@iqeo.net"]
   spec.summary       = %q{World of Your Own}
-  spec.description   = %q{Game world builder DSL}
+  spec.description   = %q{Game world DSL}
   spec.homepage      = ""
-  spec.license       = "LGPLv3"
+  spec.license       = "GPLv3"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
@@ -23,6 +23,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rack-test", "~> 0.6.2"
 
-  spec.add_runtime_dependency "sinatra", "~> 1.4.5"
+  # spec.add_runtime_dependency "sinatra", "~> 1.4.5"
 
 end
