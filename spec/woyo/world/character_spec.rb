@@ -1,6 +1,6 @@
-require 'woyo/dsl/character'
-require 'woyo/dsl/world'
-require 'woyo/dsl/location'
+require 'woyo/world/character'
+require 'woyo/world/world'
+require 'woyo/world/location'
 
 describe Woyo::Character do
 

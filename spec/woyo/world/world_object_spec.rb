@@ -1,4 +1,4 @@
-require 'woyo/dsl/world_object'
+require 'woyo/world/world_object'
 
 describe Woyo::WorldObject do
 
@@ -46,6 +46,8 @@ describe Woyo::WorldObject do
     wo = Woyo::WorldObject.new(:my_id, context: :just_a_test )
     wo.context.should eq :just_a_test
   end
+
+  it 'name attribute defaults to id'
 
 end
 

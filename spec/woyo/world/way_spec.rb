@@ -1,6 +1,6 @@
-require 'woyo/dsl/world'
-require 'woyo/dsl/location'
-require 'woyo/dsl/way'
+require 'woyo/world/world'
+require 'woyo/world/location'
+require 'woyo/world/way'
 
 describe Woyo::Way do
 

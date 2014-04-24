@@ -1,4 +1,4 @@
-require 'woyo/dsl/dsl'
+require 'woyo/world/dsl'
 
 describe Woyo::DSL do
 
@@ -71,5 +71,9 @@ describe Woyo::DSL do
     dogs = Hash[ brown: dog_brown, black: dog_black ]
     dsl.contains.should eq Hash[ dog: dogs, cat: cats ] 
   end
+
+  it 'accepts string or symbol key for contained object retrieval'
+
+  it 'accepts string of symbol key for contained object assignment'
 
 end

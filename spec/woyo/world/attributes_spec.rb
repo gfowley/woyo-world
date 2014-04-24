@@ -1,4 +1,4 @@
-require 'woyo/dsl/attributes'
+require 'woyo/world/attributes'
 
 describe Woyo::Attributes do
 
@@ -53,6 +53,10 @@ describe Woyo::Attributes do
       eval("attr_test.#{name}").should eq value
     end
   end
+
+  it 'accepts string or symbol key for retrieval'
+
+  it 'accepts string of symbol key for assignment'
 
 end
 
