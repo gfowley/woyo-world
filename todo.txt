@@ -1,119 +1,229 @@
 
 
-Woyo::World is a singleton
+world object features...
 
-DSL:
+# world
 
-  world do
+  location to start in...
+
+  start :location
+
+# attributes
+
+  single...
+
+    attribute :color
+
+  multiple...
+
+    attributes :size, :shape, :color
+
+  opposites / mutually exclusive...
   
-    # some states may be mutually exclusive
-    #   setting one will undo others
-    states do
-      exclusive :dark, :dim, :light, :bright
-      exclusive :cold, :cool, :warm, :hot
-    end
+    attribute :open, :closed
+    attribute :light, :dark
+    attribute :dark, :dim, :light, :bright
+    attribute :cold, :cool, :warm, :hot
 
-    # locations are places a player can be
+  set attribute values via method style...
 
-    location :name do
-      # name is a symbol
+    color 'Blue'
+    size  10
+    open true
 
-      # default title is name.to_s.capitalize
-      title "...."
+  set attribute values via assignment style...
 
-      # default description
-      description "........."
+    color = 'Blue'
+    size  = 10
+    open  = true
 
-      description do
-        # may depend on verbose game setting
-        long  "........."
-        short "...."
-        # may depend on location state ?
-        is :bright, "........."
-        is :cold,  "........."
-      end
+  set boolean attribute values... ?
 
-      # concise hash / named parameters ?
-      description long: "...................", short: "...."
+    is :open
+    is :dark
+    is :warm, :bright
 
-      # locations do NOT contain locations
-      # locations are a graph, linked by ways
-      # ways lead to/from other locations
-      # standard ways map to directions and movements
-      #   north,south,east,west,up,down,forward,back,left,right 
+  test boolean attribute values... ?
 
-      way north:, "location name"
-      ways do
-        east :far_east
-        west :wild_west
-        up   :sky
-        down :pit
-      end
+    if is? :cold
+    if is_cold?
+    if cold
 
-      # 'is' a set of multiple states
-      #   default: nil
+# name
 
-      # symbols or strings
-      is :cold, :dark   
-      is "bright", "hot"
+  if not specified default to id.to_s.capitalize ? 
 
-      # in code:  is? :cold / is_cold?  like rspec ?
-      # here == self ?
-
-    end
-
-    # items are things that may be in a location  
-
-    item "name" do
-     
-      # short description used when seen
-      description "....."
-
-      # longer description when examined
-      detail "....."
-
-      # have aspects
-      aspect :small, :light
-
-      # may be at a location
-      location "location name"
-
-      # this == self ?
-
-    end
-
-    # concise hash
-
-    item "name", description: "...", detail: "...", aspect: [ :small, :light ] 
-
-    # items can relate to other items ?....
-    #   contains / contained
-    #   before / behind
-    #   on / under
-    #   above / below
-    #   near / far
-    # module for this 'Relation' feature ?
-
-  end
-
-  # code can be instance(?) eval'd when defining world, location, items
-  # code for ... triggers, events, handlers, conditions, etc...
-
-  # can locations, items be subclassed ?
-  #   then defined in DSL ?
-
-  item :vase do
-    description "a vase"
-    aspect :small, :light
-  end
+# descriptions
   
-  vase :blue_vase do
-    aspect :blue
+  displayed everytime a location is visited...
+
+    description 'string'
+
+  full description (short + long) displayed first visit
+  short description displayed on subsequent visit + ellipses to expand long description on demand
+
+    description short: "...", long: "..."
+
+  may depend on location state ?
+    
+    description bright: '...', cold: '...'  
+    # is :bright, "........."
+    # is :cold,  "........."
+
+# openable 
+
+  open
+
+    default is open
+    way: player can go
+    container: player can see inside
+
+  closed (!open)
+
+    specify with 'closed' or 'open false / open no'
+    way: player cannot go
+    way: is closed without 'to' (wrong-way)
+    container: player cannot see inside
+
+  condition
+
+    must be true to open
+    a proc/lambda 
+    'locked' is just closed that has a key condition for opening
+    action tests condition to try to open
+    response for condition state/progress
+
+# visiblty
+
+  visible
+
+    default is visible
+    description will be displayed
+
+  invisible (!visible)
+
+    specify with 'invisible' or 'visible false / visible no'
+    description will not be displayed
+    items will not be counted, etc..
+
+# location 
+
+  locations do NOT contain locations
+  locations are a graph, linked by ways
+
+  location :here do
+    name 'Home'
+    description 'Cosy'
   end
 
-  vase :red_vase do
-    aspect :red
+  location :here, name: 'Home', description: 'cosy'
+
+  mass assignment...
+
+  locations do
+    home   name: 'Home',     description: 'Cosy'
+    yard   name: 'Garden',   description: 'Green'
+    cellar name: 'Basement', description: 'Damp'
   end
 
-  # is this more like prototyping than subclassing ?
+# way
+
+  a way leads one-way to a location
+
+  way :out do
+    name 'Door'
+    description 'Big strong'
+    to :garden
+  end
+
+  way :door, to: :other_location, description: 'Big'
+
+  is openable, default open
+
+  mass assignment...  
+
+  ways do
+    east to: :china,     name: 'slow boat'
+    west to: :wild_west, name: 'fast horse'
+    up   to: :sky,       name: 'balloon'
+    down to: :pit,       name: 'hole'
+  end
+
+  standard ways map to directions and movements ?
+  - north,south,east,west,up,down,forward,back,left,right 
+
+# items
+
+  items may be in a location
+
+  item :id do
+    name 'Thing'
+    description 'Useful object'
+  end
+
+  item :id, name: 'Thing', description: "...", detail: "..."
+
+  mass assignment...
+
+    items do
+      thing  name: 'Thing', description: "..."
+      gadget name: 'Device', description: "..."
+      key    name: 'Gold key'
+    end
+
+  may be examined ?
+
+    longer description when examined
+    detail "....."
+
+  have attributes
+
+    attributes :small, :light
+
+  may know their location ?
+
+    if item.location == :home
+
+  may know their relation to other items ?
+
+    if item.contains? :water
+    if item.near? :monster
+    if item.on? :desk
+    if item.in? :box
+
+  # items can relate to other items ?....
+  #   contains / contained
+  #   before / behind
+  #   on / under
+  #   above / below
+  #   near / far
+  # module for this 'Relation' feature ?
+
+end
+
+# code for ... triggers, events, handlers, conditions, etc...
+
+# can locations, items be subclassed in DSL ?
+
+class Vase < Item
+  attributes :small
+end
+
+vase :default do
+  name 'Vase'
+  attributes 
+item :vase do
+  description "a vase"
+  aspect :small, :light
+end
+
+vase :blue_vase do
+  aspect :blue
+end
+
+vase :red_vase do
+  aspect :red
+end
+
+# is this more like prototyping than subclassing ?
 
