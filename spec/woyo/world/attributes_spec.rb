@@ -16,12 +16,12 @@ describe Woyo::Attributes do
     attrs.all? { |a| a.is_a? Symbol }.should be_true
   end                       
 
-  it 'names and values can be retrieved for instance' do
+  it 'hash of names and values can be retrieved for instance' do
     attrs = AttrTest.new.attributes
     attrs.should be_instance_of Hash
   end
 
-  it 'can be written with =' do
+  it 'can be written via method with =' do
     attr_test = AttrTest.new
     AttrTest.attributes.each do |attr|
       eval "attr_test.#{attr} = '#{attr}'.upcase"
@@ -32,7 +32,7 @@ describe Woyo::Attributes do
     end
   end
 
-  it 'can be written without =' do
+  it 'can be written via method without =' do
     attr_test = AttrTest.new
     AttrTest.attributes.each do |attr|
       eval "attr_test.#{attr} '#{attr}'.upcase"
@@ -43,7 +43,7 @@ describe Woyo::Attributes do
     end
   end
 
-  it 'can be read' do
+  it 'can be read via method' do
     attr_test = AttrTest.new
     AttrTest.attributes.each do |attr|
       eval "attr_test.#{attr} '#{attr}'.upcase"
@@ -53,10 +53,6 @@ describe Woyo::Attributes do
       eval("attr_test.#{name}").should eq value
     end
   end
-
-  it 'accepts string or symbol key for retrieval'
-
-  it 'accepts string of symbol key for assignment'
 
 end
 

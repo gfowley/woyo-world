@@ -50,7 +50,7 @@ describe Woyo::DSL do
     dsl.dogs[:brown].should be dog
   end
 
-  it 'can list each contained object by class' do
+  it 'has hashes of each class of contained objects' do
     dsl = DSLTest.new
     dog_brown = dsl.dog :brown
     dog_black = dsl.dog :black
@@ -60,7 +60,7 @@ describe Woyo::DSL do
     dsl.cats.should eq Hash[ white: cat_white, black: cat_black ]
   end
 
-  it 'can list all contained objects' do
+  it 'hash a hash of all classes of contained objects' do
     dsl = DSLTest.new
     dog_brown = dsl.dog :brown
     dog_black = dsl.dog :black
@@ -71,9 +71,5 @@ describe Woyo::DSL do
     dogs = Hash[ brown: dog_brown, black: dog_black ]
     dsl.contains.should eq Hash[ dog: dogs, cat: cats ] 
   end
-
-  it 'accepts string or symbol key for contained object retrieval'
-
-  it 'accepts string of symbol key for contained object assignment'
 
 end
