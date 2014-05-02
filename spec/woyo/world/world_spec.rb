@@ -2,6 +2,11 @@ require 'woyo/world/world'
 
 describe Woyo::World do
 
+  it 'has attributes' do
+    expected_attrs = [:name,:description]
+    Woyo::World.attributes.sort.should eq expected_attrs.sort 
+  end
+
   it 'initializes with no locations' do
     Woyo::World.new.locations.should be_empty
   end

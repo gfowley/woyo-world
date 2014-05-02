@@ -3,6 +3,11 @@ require 'woyo/world/world'
 require 'woyo/world/location'
 
 describe Woyo::Character do
+ 
+  it 'has attributes' do
+    expected_attrs = [:name,:description]
+    Woyo::Character.attributes.sort.should eq expected_attrs.sort 
+  end
 
   it 'accepts world for parameter context:' do
     wo = nil

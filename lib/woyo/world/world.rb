@@ -7,6 +7,8 @@ module Woyo
 
 class World < WorldObject
 
+  attributes :name, :description
+  
   contains :location, :character
 
   def initialize &block

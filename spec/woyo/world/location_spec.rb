@@ -4,6 +4,11 @@ require 'woyo/world/way'
 
 describe Woyo::Location do
 
+  it 'has attributes' do
+    expected_attrs = [:name,:description]
+    Woyo::Location.attributes.sort.should eq expected_attrs.sort 
+  end
+
   it 'accepts world for parameter context:' do
     wo = nil
     expect { wo = Woyo::Location.new(:my_id, context: Woyo::World.new) }.to_not raise_error
