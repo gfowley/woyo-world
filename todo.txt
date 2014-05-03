@@ -18,12 +18,13 @@ world object features...
 
     attributes :size, :shape, :color
 
-  opposites / mutually exclusive...
+  boolean opposites / mutually exclusive...
+  first one will be true
   
-    attribute :open, :closed
-    attribute :light, :dark
-    attribute :dark, :dim, :light, :bright
-    attribute :cold, :cool, :warm, :hot
+    attributes_exclusive :open, :closed
+    attributes_exclusive :light, :dark
+    attributes_exclusive :dark, :dim, :light, :bright
+    attributes_exclusive :cold, :cool, :warm, :hot
 
   set attribute values via method style...
 
@@ -37,6 +38,14 @@ world object features...
     size  = 10
     open  = true
 
+  defaults via hash instead of just symbol
+    # name
+    # if not specified default to id.to_s.capitalize ? 
+    
+    attribute color: :blue
+    attribute size: 10
+    attribute name: proc { id.to_s.capitalize }
+
   set boolean attribute values... ?
 
     is :open
@@ -48,10 +57,6 @@ world object features...
     if is? :cold
     if is_cold?
     if cold
-
-# name
-
-  if not specified default to id.to_s.capitalize ? 
 
 # descriptions
   

@@ -54,5 +54,36 @@ describe Woyo::Attributes do
     end
   end
 
+  it 'can have a default value (static)' do
+    expect { 
+      class AttrTest
+        attributes attr_with_array___default: [ 1, 2, 3 ]
+        attributes attr_with_hash____default: { a: 1, b: 2, c: 3 }
+        attributes attr_with_number__default: 12345
+        attributes attr_with_string__default: "abcde"
+        attributes attr_with_boolean_default: true
+      end
+    }.to_not raise_error
+    attr_test = AttrTest.new
+    attr_test.attr_with_array___default.should eq [ 1, 2, 3 ]
+    attr_test.attr_with_array___default = :array
+    attr_test.attr_with_array___default.should eq :array
+    attr_test.attr_with_hash____default.should eq ( { a: 1, b: 2, c: 3 } )
+    attr_test.attr_with_hash____default = :hash
+    attr_test.attr_with_hash____default.should eq :hash
+    attr_test.attr_with_number__default.should eq 12345
+    attr_test.attr_with_number__default = :number
+    attr_test.attr_with_number__default.should eq :number
+    attr_test.attr_with_string__default.should eq "abcde"
+    attr_test.attr_with_string__default = :string
+    attr_test.attr_with_string__default.should eq :string
+    attr_test.attr_with_boolean_default.should eq true
+    attr_test.attr_with_boolean_default = :boolean
+    attr_test.attr_with_boolean_default.should eq :boolean
+  end
+
+  it 'can have a default proc (dynamic)'
+
+
 end
 
