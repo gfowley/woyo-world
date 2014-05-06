@@ -4,7 +4,7 @@ module Woyo
 
 class Location < WorldObject
 
-  attributes :name, :description
+  attributes :description, name: lambda { |this| this.id.to_s.capitalize }
 
   contains   :way, :character
 

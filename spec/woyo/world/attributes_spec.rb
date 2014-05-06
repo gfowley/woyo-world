@@ -54,7 +54,7 @@ describe Woyo::Attributes do
     end
   end
 
-  it 'can have a default value (static)' do
+  it 'can have a default value' do
     expect { 
       class AttrTest
         attributes attr_with_array___default: [ 1, 2, 3 ]
@@ -82,8 +82,31 @@ describe Woyo::Attributes do
     attr_test.attr_with_boolean_default.should eq :boolean
   end
 
-  it 'can have a default proc (dynamic)'
 
+  it 'can have a default proc' do
+    expect {
+      class AttrTest
+        attributes attr_with_proc_default: proc { Time.now }
+      end
+    }.to_not raise_error
+    attr_test = AttrTest.new
+    attr_test.attr_with_proc_default.should be < Time.now
+  end
+
+  it 'default proc runs in instance scope' do
+    expect {
+      class AttrTest
+        attributes attr_with_proc_default: lambda { |this| this.my_method }
+        def my_method
+          "okay"
+        end
+      end
+    }.to_not raise_error
+    attr_test = AttrTest.new
+    attr_test.attr_with_proc_default.should eq "okay"
+  end
+
+  it 'list can be added to'
 
 end
 

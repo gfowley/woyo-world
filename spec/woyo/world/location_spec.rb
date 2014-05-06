@@ -9,6 +9,11 @@ describe Woyo::Location do
     Woyo::Location.attributes.sort.should eq expected_attrs.sort 
   end
 
+  it 'name attribute defaults to id' do
+    wo = Woyo::Location.new(:home)
+    wo.name.should eq 'Home'
+  end
+
   it 'accepts world for parameter context:' do
     wo = nil
     expect { wo = Woyo::Location.new(:my_id, context: Woyo::World.new) }.to_not raise_error

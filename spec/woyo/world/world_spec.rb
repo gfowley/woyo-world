@@ -3,7 +3,7 @@ require 'woyo/world/world'
 describe Woyo::World do
 
   it 'has attributes' do
-    expected_attrs = [:name,:description]
+    expected_attrs = [:name,:description,:start]
     Woyo::World.attributes.sort.should eq expected_attrs.sort 
   end
 

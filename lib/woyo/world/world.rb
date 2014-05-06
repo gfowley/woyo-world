@@ -7,7 +7,7 @@ module Woyo
 
 class World < WorldObject
 
-  attributes :name, :description
+  attributes :name, :description, :start
   
   contains :location, :character
 

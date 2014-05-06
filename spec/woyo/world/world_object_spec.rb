@@ -47,7 +47,5 @@ describe Woyo::WorldObject do
     wo.context.should eq :just_a_test
   end
 
-  it 'name attribute defaults to id'
-
 end
 
