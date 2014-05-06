@@ -32,14 +32,13 @@ describe Woyo::DSL do
   end
 
   it 'can add classes to contain' do
-    pending 'fix containment'
-    class DSLTestMore < DSLTest
+    class DSLTest
       contains :cow
       contains :duck
     end
     # class Cow  ; def initialize id, context: nil ; end ; end
     # class Duck ; def initialize id, context: nil ; end ; end
-    DSLTestMore.contains.should eq [ :dog, :cat, :cow, :duck ]
+    DSLTest.contains.should eq [ :dog, :cat, :cow, :duck ]
   end
 
   it 'can create contained objects' do

@@ -97,7 +97,6 @@ describe Woyo::Attributes do
     attr_test.attr_with_boolean_default.should eq :boolean
   end
 
-
   it 'can have a default proc' do
     expect {
       class AttrTest

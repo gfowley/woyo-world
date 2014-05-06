@@ -11,7 +11,7 @@ module DSL
   module ClassMethods
 
     def contains *conts
-      @contains ||= []                      # class instance variable in ClassMethods scope
+      @contains ||= []
       return @contains if conts.empty?
       conts.each { |cont| @contains << cont unless @contains.include? cont }
       @contains.each do |cont|
