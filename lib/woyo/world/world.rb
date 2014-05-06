@@ -9,7 +9,7 @@ class World < WorldObject
 
   attributes :name, :description, :start
   
-  contains :location, :character
+  children :location, :character
 
   def initialize &block
     super nil, context: nil, &block

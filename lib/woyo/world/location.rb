@@ -6,7 +6,7 @@ class Location < WorldObject
 
   attributes :description, name: lambda { |this| this.id.to_s.capitalize }
 
-  contains   :way, :character
+  children   :way, :character
 
   def world
     self.context

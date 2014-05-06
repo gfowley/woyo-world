@@ -10,33 +10,33 @@ module DSL
 
   module ClassMethods
 
-    def contains *conts
-      @contains ||= []
-      return @contains if conts.empty?
-      conts.each { |cont| @contains << cont unless @contains.include? cont }
-      @contains.each do |cont|
+    def children *childs
+      @children ||= []
+      return @children if childs.empty?
+      childs.each { |child| @children << child unless @children.include? child }
+      @children.each do |child|
         class_eval("
 
-          def #{cont}s
-            ( @contains ||= {} )[:#{cont}] ||= ( @#{cont}s ||= {} )
+          def #{child}s
+            ( @children ||= {} )[:#{child}] ||= ( @#{child}s ||= {} )
           end
 
-          def #{cont} cont_or_id, &block
-            #{cont} = cont_or_id.kind_of?( #{cont.capitalize} ) ? cont_or_id : nil
-            id = #{cont} ? #{cont}.id : cont_or_id
-            known = self.#{cont}s[id] ? true : false
+          def #{child} child_or_id, &block
+            #{child} = child_or_id.kind_of?( #{child.capitalize} ) ? child_or_id : nil
+            id = #{child} ? #{child}.id : child_or_id
+            known = self.#{child}s[id] ? true : false
             case
-            when  #{cont} &&  known &&  block_given? then #{cont}.evaluate &block
-            when  #{cont} &&  known && !block_given? then #{cont}
-            when  #{cont} && !known &&  block_given? then self.#{cont}s[id] = #{cont}.evaluate &block
-            when  #{cont} && !known && !block_given? then self.#{cont}s[id] = #{cont}
-            when !#{cont} &&  known &&  block_given? then #{cont} = self.#{cont}s[id].evaluate &block
-            when !#{cont} &&  known && !block_given? then #{cont} = self.#{cont}s[id]
-            when !#{cont} && !known &&  block_given? then #{cont} = self.#{cont}s[id] = #{cont.capitalize}.new id, context: self, &block
-            when !#{cont} && !known && !block_given? then #{cont} = self.#{cont}s[id] = #{cont.capitalize}.new id, context: self
+            when  #{child} &&  known &&  block_given? then #{child}.evaluate &block
+            when  #{child} &&  known && !block_given? then #{child}
+            when  #{child} && !known &&  block_given? then self.#{child}s[id] = #{child}.evaluate &block
+            when  #{child} && !known && !block_given? then self.#{child}s[id] = #{child}
+            when !#{child} &&  known &&  block_given? then #{child} = self.#{child}s[id].evaluate &block
+            when !#{child} &&  known && !block_given? then #{child} = self.#{child}s[id]
+            when !#{child} && !known &&  block_given? then #{child} = self.#{child}s[id] = #{child.capitalize}.new id, context: self, &block
+            when !#{child} && !known && !block_given? then #{child} = self.#{child}s[id] = #{child.capitalize}.new id, context: self
             end
-            # maybe: god-like lists of everything at world level... would need unique ids... self.world.#{cont}s[id] = #{cont} if !known && self.world
-            #{cont}
+            # maybe: god-like lists of everything at world level... would need unique ids... self.world.#{child}s[id] = #{child} if !known && self.world
+            #{child}
           end
 
         ")
@@ -49,8 +49,8 @@ module DSL
     base.extend(ClassMethods)
   end
   
-  def contains
-    @contains ||= {}
+  def children
+    @children ||= {}
   end
 
 end
