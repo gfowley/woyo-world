@@ -24,7 +24,7 @@ describe Woyo::Attributes do
   it 'can be written via method with =' do
     attr_test = AttrTest.new
     AttrTest.attributes.each do |attr|
-      eval "attr_test.#{attr} = '#{attr}'.upcase"
+      attr_test.send(attr, attr.to_s.upcase)
     end
     attr_test.attributes.count.should eq AttrTest.attributes.count
     attr_test.attributes.each do |name,value|
@@ -35,7 +35,7 @@ describe Woyo::Attributes do
   it 'can be written via method without =' do
     attr_test = AttrTest.new
     AttrTest.attributes.each do |attr|
-      eval "attr_test.#{attr} '#{attr}'.upcase"
+      attr_test.send(attr, attr.to_s.upcase)
     end
     attr_test.attributes.count.should eq AttrTest.attributes.count
     attr_test.attributes.each do |name,value|
@@ -46,12 +46,27 @@ describe Woyo::Attributes do
   it 'can be read via method' do
     attr_test = AttrTest.new
     AttrTest.attributes.each do |attr|
-      eval "attr_test.#{attr} '#{attr}'.upcase"
+      attr_test.send(attr, attr.to_s.upcase)
     end
     attr_test.attributes.count.should eq AttrTest.attributes.count
     attr_test.attributes.each do |name,value|
       eval("attr_test.#{name}").should eq value
     end
+  end
+
+  it 'list can be added to' do
+    expect {
+      class AttrTest
+        attributes :attr4, :attr5, :attr6
+      end
+    }.to_not raise_error
+    AttrTest.attributes.count.should eq 6
+    attr_test = AttrTest.new
+    # populate attributes
+    AttrTest.attributes.each do |attr|
+      attr_test.send(attr, attr.to_s.upcase)
+    end
+    attr_test.attributes.count.should eq 6
   end
 
   it 'can have a default value' do
@@ -128,8 +143,6 @@ describe Woyo::Attributes do
     attr_test = AttrTest.new
     attr_test.attr_with_lambda_default.should eq "okay"
   end
-
-  it 'list can be added to'
 
 end
 

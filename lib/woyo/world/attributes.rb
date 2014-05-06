@@ -14,7 +14,7 @@ module Attributes
           unless attributes.has_key? attr
             if default.respond_to? :call
               if default.arity == 0
-                attributes[attr] = default.call # todo: is this the same as ? ... instance_eval default 
+                attributes[attr] = default.call # todo: is this the same as ? ... instance_eval &default
               else
                 attributes[attr] = default.call(self)
               end
