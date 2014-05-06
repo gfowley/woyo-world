@@ -5,26 +5,6 @@ module Attributes
 
   module ClassMethods
 
-=begin
-    def create_attribute_methods_with_class_eval attr, default = nil
-      class_eval("
-        def #{attr}= arg
-          attributes[:#{attr}] = arg    # @#{attr} = arg
-        end
-        def #{attr}(arg=nil)
-          if arg.nil?
-            unless attributes.has_key? :#{attr}   # set default upon first read if value has not been set (including possibly nil)
-              self.#{attr} = proc{ #{default} }.call
-            end
-            attributes[:#{attr}]        # @#{attr}
-          else
-            self.#{attr} = arg
-          end
-        end
-      ")
-    end
-=end
-
     def create_attribute_methods_with_define_method attr, default = nil
       define_method "#{attr}=" do |arg|
         attributes[attr] = arg
@@ -32,7 +12,15 @@ module Attributes
       define_method attr do |arg = nil|
         if arg.nil?
           unless attributes.has_key? attr
-            attributes[attr] = ( default.respond_to?(:call) ? default.call(self) : default )
+            if default.respond_to? :call
+              if default.arity == 0
+                attributes[attr] = default.call # todo: is this the same as ? ... instance_eval default 
+              else
+                attributes[attr] = default.call(self)
+              end
+            else
+              attributes[attr] = default
+            end
           end
           attributes[attr]
         else
@@ -44,7 +32,6 @@ module Attributes
     def attributes *attrs
       @attributes ||= []
       return @attributes if attrs.empty?
-      #@attributes = attrs                # todo: allow additions to existing attributes
       attrs.each do |attr|
         if attr.kind_of? Hash
           attr.each do |attr_sym,default_value|

@@ -96,7 +96,7 @@ describe Woyo::Attributes do
   it 'default proc runs in instance scope' do
     expect {
       class AttrTest
-        attributes attr_with_proc_default: lambda { |this| this.my_method }
+        attributes attr_with_proc_default: proc { |this| this.my_method }
         def my_method
           "okay"
         end
@@ -104,6 +104,29 @@ describe Woyo::Attributes do
     }.to_not raise_error
     attr_test = AttrTest.new
     attr_test.attr_with_proc_default.should eq "okay"
+  end
+
+  it 'can have a default lambda' do
+    expect {
+      class AttrTest
+        attributes attr_with_lambda_default: lambda { Time.now }
+      end
+    }.to_not raise_error
+    attr_test = AttrTest.new
+    attr_test.attr_with_lambda_default.should be < Time.now
+  end
+
+  it 'default lambda runs in instance scope' do
+    expect {
+      class AttrTest
+        attributes attr_with_lambda_default: lambda { |this| this.my_method }
+        def my_method
+          "okay"
+        end
+      end
+    }.to_not raise_error
+    attr_test = AttrTest.new
+    attr_test.attr_with_lambda_default.should eq "okay"
   end
 
   it 'list can be added to'
