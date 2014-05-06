@@ -41,7 +41,7 @@ describe Woyo::DSL do
     DSLTest.children.should eq [ :dog, :cat, :cow, :duck ]
   end
 
-  it 'can create contained objects' do
+  it 'can create child objects' do
     dsl = DSLTest.new
     dog = dsl.dog :brown
     dog.should be_instance_of Dog
@@ -49,7 +49,7 @@ describe Woyo::DSL do
     dsl.dogs[:brown].should be dog
   end
 
-  it 'has hashes of each class of contained objects' do
+  it 'has hashes of each class of child objects' do
     dsl = DSLTest.new
     dog_brown = dsl.dog :brown
     dog_black = dsl.dog :black
@@ -59,7 +59,7 @@ describe Woyo::DSL do
     dsl.cats.should eq Hash[ white: cat_white, black: cat_black ]
   end
 
-  it 'hash a hash of all classes of contained objects' do
+  it 'hash a hash of all classes of child objects' do
     dsl = DSLTest.new
     dog_brown = dsl.dog :brown
     dog_black = dsl.dog :black
