@@ -7,6 +7,8 @@ describe Woyo::World do
     Woyo::World.attributes.sort.should eq expected_attrs.sort 
   end
 
+  it 'name attribute defaults to id'
+
   it 'initializes with no locations' do
     Woyo::World.new.locations.should be_empty
   end

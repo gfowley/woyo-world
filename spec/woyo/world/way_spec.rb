@@ -41,5 +41,19 @@ describe Woyo::Way do
     end
     door.to.should be_a Woyo::Location
   end
+                                      
+  # these could be handled by a State (and Condition) module ?
+  
+  it 'may be closed'
 
+  it 'may be open'
+
+  it 'defaults to open'
+
+  it 'may describe going when closed'
+
+  it 'may describe going when open'
+
+  it 'may have a condition for opening'
+  
 end
