@@ -4,7 +4,7 @@ module Woyo
 
 class Way < WorldObject
 
-  attributes :name, :description
+  attributes :description, name: lambda { |this| this.id.to_s.capitalize }
 
   def from
     @from ||= context

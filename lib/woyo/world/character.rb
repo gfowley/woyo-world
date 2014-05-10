@@ -4,7 +4,7 @@ module Woyo
 
 class Character < WorldObject
 
-  attributes :name, :description
+  attributes :description, name: lambda { |this| this.id.to_s.capitalize }
 
   def world
     @world ||= context if context.is_a? World
