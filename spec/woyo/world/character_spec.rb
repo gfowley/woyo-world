@@ -9,6 +9,11 @@ describe Woyo::Character do
     Woyo::Character.attributes.sort.should eq expected_attrs.sort 
   end
 
+  it 'name attribute defaults to id' do
+    wo = Woyo::Character.new(:boss)
+    wo.name.should eq 'Boss'
+  end
+
   it 'accepts world for parameter context:' do
     wo = nil
     expect { wo = Woyo::Character.new(:my_id, context: Woyo::World.new) }.to_not raise_error
