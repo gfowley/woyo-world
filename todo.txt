@@ -1,62 +1,88 @@
 
-
 world object features...
 
 # world
 
-  location to start in...
-
-  start :location
-
 # attributes
 
-  single...
+  boolean attributes
 
-    attribute :color
+    detected by class level definition boolean default value
 
-  multiple...
+      attribute open: true
+      attribute dark: false
 
-    attributes :size, :shape, :color
+    additional class level define (and detect?) boolean attribute values... 
 
-  boolean opposites / mutually exclusive...
-  first one will be true
-  
-    attributes_exclusive :open, :closed
-    attributes_exclusive :light, :dark
-    attributes_exclusive :dark, :dim, :light, :bright
-    attributes_exclusive :cold, :cool, :warm, :hot
+        is :open
+        is :dark
+        is :warm, :bright
 
-  set attribute values via method style...
+    after defintion, set boolean attribute values...
 
-    color 'Blue'
-    size  10
-    open true
+        open = true
+        open true
+        open!       # ... open true
 
-  set attribute values via assignment style...
+    query boolean attribute values... ?
 
-    color = 'Blue'
-    size  = 10
-    open  = true
+        dark
+        dark?        # ... dark ? true : false
+        is? :dark    # ... def is? attr ; attributes[attr] ? true : false ; end
 
-  defaults via hash instead of just symbol
-    # name
-    # if not specified default to id.to_s.capitalize ? 
+  group...
+
+    group weapons: [ :sword, :knife, :rock, :fists ]   # hash - key will be group name, value an array of symbols for members
+    group :weapons, [ :sword, :knife, :rock, :fists ]  # symbol will be group name, array of symbols for members
+    group :weapons, :sword, :knife, :rock, :fists      # symbols, first will be group name, rest will be members
     
-    attribute color: :blue
-    attribute size: 10
-    attribute name: proc { id.to_s.capitalize }
+    group stats: [ speed: 10, charisma: 20, strength: 30 ]  # defaults like attributes (these are attributes)
+    group :stats, speed: 10, charisma: 20, strength: 30     # ditto
 
-  set boolean attribute values... ?
+    group is a subclass of Hash
+      alias :names, :keys
 
-    is :open
-    is :dark
-    is :warm, :bright
+        world_object.weapons.names         #=> weapons.keys
+        world_object.weapons.values        #=> weapons.values
 
-  test boolean attribute values... ?
+      delegate enumerable methods to values array
+        world_object.weapons.any?
+        world_object.weapons.all?
+        world_object.weapons.each { ..
 
-    if is? :cold
-    if is_cold?
-    if cold
+    group is not an enum, it has no value itself
+    attribute methods for members in parent - default with option to prevent
+
+      world_object.sword
+      world_object.knife
+
+    is group a namespace ? - optional ... attribute methods in group
+
+      world_object.weapons.sword
+      world_object.weapons.knife
+
+    attribute methods in both places ?
+
+    access attributes via group hash
+
+      world_object.weapons[:sword]                #=> rusty_sword
+      world_object.weapons[:sword] = sharp_sword
+
+  exclusive group (booleans)...
+  
+    exclusive_group passable: [ :open, :close ]
+    exclusive_group light: [ :dark, :dim, :bright ]
+    exclusive_group temperature: [ :cold, :cool, :warm, :hot ]
+
+    same as regular group +...
+
+    first member will be true, the rest false
+    additional convenience methods for members...
+
+      world_object.open?
+      world_object.close?
+      world_object.open!
+      world_object.close!
 
 # descriptions
   
