@@ -29,7 +29,7 @@ module Attributes
       end
       if default == true || default == false    # boolean convenience methods
         define_method "#{attr}?" do
-          send attr
+          ( send attr ) ? true : false
         end
         define_method "#{attr}!" do
           send "#{attr}=", true
@@ -68,7 +68,7 @@ module Attributes
   end
 
   def is? attr
-    send attr  
+    send "#{attr}?".to_sym
   end
 
 end
