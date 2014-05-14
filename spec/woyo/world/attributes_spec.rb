@@ -69,6 +69,18 @@ describe Woyo::Attributes do
     attr_test.attributes.count.should eq 6
   end
 
+  it 'can be defined with "attribute"' do
+    expect {
+      class AttrTest
+        attribute :open
+      end
+    }.to_not raise_error
+    attr_test = AttrTest.new
+    attr_test.open.should be_nil
+    attr_test.open = true
+    attr_test.open.should be_true
+  end
+      
   it 'can have a default value' do
     expect { 
       class AttrTest
@@ -141,6 +153,28 @@ describe Woyo::Attributes do
     }.to_not raise_error
     attr_test = AttrTest.new
     attr_test.attr_with_lambda_default.should eq "okay"
+  end
+
+  it 'detected as boolean have convenience accessors' do
+    expect {
+      class AttrTest
+        attribute open: true
+        attribute light: false 
+      end
+    }.to_not raise_error
+    attr_test = AttrTest.new
+    attr_test.open.should eq true
+    attr_test.open?.should eq true
+    attr_test.is?(:open).should eq true
+    attr_test.open = false
+    attr_test.open.should eq false
+    attr_test.open!.should eq true
+    attr_test.open.should eq true
+    attr_test.light.should eq false
+    attr_test.light?.should eq false
+    attr_test.is?(:light).should eq false
+    attr_test.light!.should eq true
+    attr_test.light.should eq true
   end
 
 end

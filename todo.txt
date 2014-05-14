@@ -14,21 +14,21 @@ world object features...
 
     additional class level define (and detect?) boolean attribute values... 
 
-        is :open
-        is :dark
-        is :warm, :bright
+      is :open
+      is :dark
+      is :warm, :bright
 
     after defintion, set boolean attribute values...
 
-        open = true
-        open true
-        open!       # ... open true
+      open = true
+      open true
+      open!       # ... open true
 
     query boolean attribute values... ?
 
-        dark
-        dark?        # ... dark ? true : false
-        is? :dark    # ... def is? attr ; attributes[attr] ? true : false ; end
+      dark
+      dark?        # ... dark ? true : false
+      is? :dark    # ... def is? attr ; attributes[attr] ? true : false ; end
 
   group...
 

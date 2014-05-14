@@ -27,6 +27,14 @@ module Attributes
           attributes[attr] = arg
         end
       end
+      if default == true || default == false    # boolean convenience methods
+        define_method "#{attr}?" do
+          send attr
+        end
+        define_method "#{attr}!" do
+          send "#{attr}=", true
+        end
+      end
     end
 
     def attributes *attrs
@@ -45,6 +53,10 @@ module Attributes
       end
     end
 
+    def attribute *attrs
+      self.attributes *attrs
+    end
+
   end 
 
   def self.included(base)
@@ -53,6 +65,10 @@ module Attributes
   
   def attributes
     @attributes ||= {}
+  end
+
+  def is? attr
+    send attr  
   end
 
 end
