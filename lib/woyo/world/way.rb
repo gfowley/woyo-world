@@ -6,6 +6,12 @@ class Way < WorldObject
 
   attributes :description, name: lambda { |this| this.id.to_s.capitalize }
 
+  attribute open: false, closed: true
+
+  def close!
+    closed!
+  end
+
   def from
     @from ||= context
   end
@@ -26,6 +32,9 @@ class Way < WorldObject
       else
         @to = Location.new arg            # create free-standing destination location
       end
+      self.open!
+    else
+      raise "Symbol required, but #{arg.class} : '#{arg}' given."
     end
   end
 

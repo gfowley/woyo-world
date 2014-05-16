@@ -12,12 +12,6 @@ world object features...
       attribute open: true
       attribute dark: false
 
-    additional class level define (and detect?) boolean attribute values... 
-
-      is :open
-      is :dark
-      is :warm, :bright
-
     after defintion, set boolean attribute values...
 
       open = true
@@ -29,6 +23,12 @@ world object features...
       dark
       dark?        # ... dark ? true : false
       is? :dark    # ... def is? attr ; attributes[attr] ? true : false ; end
+
+    additional class level define (and detect?) boolean attribute values... 
+
+      is :open
+      is :dark
+      is :warm, :bright
 
   group...
 
@@ -45,7 +45,8 @@ world object features...
         world_object.weapons.names         #=> weapons.keys
         world_object.weapons.values        #=> weapons.values
 
-      delegate enumerable methods to values array
+    !!! this is overkill? 
+    delegate enumerable methods to values array
         world_object.weapons.any?
         world_object.weapons.all?
         world_object.weapons.each { ..

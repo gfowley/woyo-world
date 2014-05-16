@@ -17,8 +17,22 @@ describe Woyo::Attributes do
   end                       
 
   it 'hash of names and values can be retrieved for instance' do
-    attrs = AttrTest.new.attributes
-    attrs.should be_instance_of Hash
+    attr_test = AttrTest.new
+    attr_test.attributes.should be_instance_of Hash
+    # populate attributes (todo: fix this, i think this is empty until values are actually assigned...)
+    AttrTest.attributes.each do |attr|
+      attr_test.send(attr, attr.to_s.upcase)
+    end
+    attr_test.attributes.keys.should eq [ :attr1, :attr2, :attr3 ]  
+  end
+
+  it 'have convenience accessor :names for :keys' do
+    attr_test = AttrTest.new
+    # populate attributes (todo: fix)
+    AttrTest.attributes.each do |attr|
+      attr_test.send(attr, attr.to_s.upcase)
+    end
+    attr_test.attributes.names.should eq [ :attr1, :attr2, :attr3 ]  
   end
 
   it 'can be written via method with =' do
@@ -175,6 +189,46 @@ describe Woyo::Attributes do
     attr_test.is?(:light).should eq false
     attr_test.light!.should eq true
     attr_test.light.should eq true
+  end
+
+  context 'groups' do
+
+    before :all do
+      class AT
+        include Woyo::Attributes
+        group :stooges, :larry, :curly, :moe 
+        group :cars,    :mustang, :ferarri, :mini 
+      end
+      @at = AT.new
+    end
+
+    it 'can be listed for class' do
+      groups = AT.groups
+      groups.should be_instance_of Hash
+      groups.count.should eq 2
+      groups.keys.should eq [ :stooges, :cars ]
+      groups[:stooges].should eq [ :larry, :curly, :moe ]
+      groups[:cars].should eq [ :mustang, :ferarri, :mini ]
+    end
+
+    it 'are a Hash' do
+      @at.stooges.should be_instance_of Hash
+      @at.stooges.count.should eq 3
+      @at.stooges.keys.should eq [ :larry, :curly, :moe ] 
+    end
+
+    it 'members are just attributes' do
+      all_attrs = [ :larry, :curly, :moe, :mustang, :ferarri, :mini ]  
+      @at.attributes.keys.should eq all_attrs 
+      all_attrs.each do |attr|
+        @at.should respond_to attr
+      end
+    end
+
+    it 'have convenience accessor :names for :keys' do
+      @at.stooges.names.should eq [ :larry, :curly, :moe ]  
+    end
+
   end
 
 end

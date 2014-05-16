@@ -5,7 +5,7 @@ require 'woyo/world/way'
 describe Woyo::Way do
 
   it 'has attributes' do
-    expected_attrs = [:name,:description]
+    expected_attrs = [:name,:description,:open,:closed]
     Woyo::Way.attributes.sort.should eq expected_attrs.sort 
   end
 
@@ -42,13 +42,37 @@ describe Woyo::Way do
     door.to.should be_a Woyo::Location
   end
                                       
-  # these could be handled by a State (and Condition) module ?
-  
-  it 'may be closed'
+  it 'defaults to closed if "to" not defined' do
+    door = Woyo::Way.new(:door)
+    door.open.should be_false
+    door.closed.should be_true
+  end
 
-  it 'may be open'
+  it 'defaults to open if "to" defined' do
+    door = Woyo::Way.new(:door)
+    door.to = :someplace
+    door.open.should be_true
+    door.closed.should be_false
+  end
 
-  it 'defaults to open'
+  it 'may be made closed' do
+    door = Woyo::Way.new(:door)
+    door.to = :someplace
+    door.open.should be_true
+    door.closed.should be_false
+    door.close!
+    door.open.should be_false
+    door.closed.should be_true
+  end
+
+  it 'may be made open' do
+    door = Woyo::Way.new(:door)
+    door.open.should be_false
+    door.closed.should be_true
+    door.open!
+    door.open.should be_true
+    door.closed.should be_false
+  end
 
   it 'may describe going when closed'
 
