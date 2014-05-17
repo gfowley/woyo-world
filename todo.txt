@@ -7,18 +7,18 @@ world object features...
 
   boolean attributes
 
-    detected by class level definition boolean default value
+ok    detected by class level definition boolean default value
 
       attribute open: true
       attribute dark: false
 
-    after defintion, set boolean attribute values...
+ok    after defintion, set boolean attribute values...
 
       open = true
       open true
       open!       # ... open true
 
-    query boolean attribute values... ?
+ok    query boolean attribute values... ?
 
       dark
       dark?        # ... dark ? true : false
@@ -34,25 +34,19 @@ world object features...
 
     group weapons: [ :sword, :knife, :rock, :fists ]   # hash - key will be group name, value an array of symbols for members
     group :weapons, [ :sword, :knife, :rock, :fists ]  # symbol will be group name, array of symbols for members
-    group :weapons, :sword, :knife, :rock, :fists      # symbols, first will be group name, rest will be members
+ok    group :weapons, :sword, :knife, :rock, :fists      # symbols, first will be group name, rest will be members
     
     group stats: [ speed: 10, charisma: 20, strength: 30 ]  # defaults like attributes (these are attributes)
-    group :stats, speed: 10, charisma: 20, strength: 30     # ditto
+ok    group :stats, speed: 10, charisma: 20, strength: 30     # ditto
 
-    group is a subclass of Hash
+ok    group is a subclass of Hash
       alias :names, :keys
 
         world_object.weapons.names         #=> weapons.keys
         world_object.weapons.values        #=> weapons.values
 
-    !!! this is overkill? 
-    delegate enumerable methods to values array
-        world_object.weapons.any?
-        world_object.weapons.all?
-        world_object.weapons.each { ..
-
-    group is not an enum, it has no value itself
-    attribute methods for members in parent - default with option to prevent
+ok    group is not an enum, it has no value itself
+ok    attribute methods for members in parent
 
       world_object.sword
       world_object.knife
@@ -62,9 +56,7 @@ world object features...
       world_object.weapons.sword
       world_object.weapons.knife
 
-    attribute methods in both places ?
-
-    access attributes via group hash
+ok   access attributes via group hash
 
       world_object.weapons[:sword]                #=> rusty_sword
       world_object.weapons[:sword] = sharp_sword

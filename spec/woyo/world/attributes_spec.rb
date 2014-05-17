@@ -4,7 +4,7 @@ describe Woyo::Attributes do
 
   before :all do
     class AttrTest
-      include Woyo::Attributes
+      prepend Woyo::Attributes
       attributes :attr1, :attr2, :attr3
     end
   end
@@ -19,26 +19,42 @@ describe Woyo::Attributes do
   it 'hash of names and values can be retrieved for instance' do
     attr_test = AttrTest.new
     attr_test.attributes.should be_instance_of Hash
-    # populate attributes (todo: fix this, i think this is empty until values are actually assigned...)
+    # set attributes
     AttrTest.attributes.each do |attr|
       attr_test.send(attr, attr.to_s.upcase)
     end
+    attr_test.attributes.keys.should eq [ :attr1, :attr2, :attr3 ]
+    attr_test.attributes.values.should eq [ 'ATTR1', 'ATTR2', 'ATTR3' ]
+  end
+
+  it 'hash of names and nil values can be retrieved for instance before populating' do
+    attr_test = AttrTest.new
+    attr_test.attributes.should be_instance_of Hash
     attr_test.attributes.keys.should eq [ :attr1, :attr2, :attr3 ]  
+    attr_test.attributes.values.should eq [ nil, nil, nil ]
+  end
+
+  it 'hash of names and default values can be retrieved for instance before populating' do
+    expect { 
+      class DefTest
+        prepend Woyo::Attributes
+        attributes one: 1, two: 2, three: proc { 3 } 
+      end
+    }.to_not raise_error
+    def_test = DefTest.new
+    def_test.attributes.keys.should eq [ :one, :two, :three ]  
+    def_test.attributes.values.should eq [ 1, 2, 3 ]
   end
 
   it 'have convenience accessor :names for :keys' do
     attr_test = AttrTest.new
-    # populate attributes (todo: fix)
-    AttrTest.attributes.each do |attr|
-      attr_test.send(attr, attr.to_s.upcase)
-    end
     attr_test.attributes.names.should eq [ :attr1, :attr2, :attr3 ]  
   end
 
   it 'can be written via method with =' do
     attr_test = AttrTest.new
     AttrTest.attributes.each do |attr|
-      attr_test.send(attr, attr.to_s.upcase)
+      attr_test.send("#{attr}=", attr.to_s.upcase)
     end
     attr_test.attributes.count.should eq AttrTest.attributes.count
     attr_test.attributes.each do |name,value|
@@ -195,8 +211,8 @@ describe Woyo::Attributes do
 
     before :all do
       class AT
-        include Woyo::Attributes
-        group :stooges, :larry, :curly, :moe 
+        prepend Woyo::Attributes
+        group :stooges, :larry, :curly, :moe
         group :cars,    :mustang, :ferarri, :mini 
       end
       @at = AT.new
@@ -211,18 +227,48 @@ describe Woyo::Attributes do
       groups[:cars].should eq [ :mustang, :ferarri, :mini ]
     end
 
-    it 'are a Hash' do
+    it 'hash of names and nil values can be retrieved from instance without populating' do
       @at.stooges.should be_instance_of Hash
       @at.stooges.count.should eq 3
       @at.stooges.keys.should eq [ :larry, :curly, :moe ] 
+      @at.stooges.values.should eq [ nil, nil, nil ] 
     end
 
-    it 'members are just attributes' do
+    it 'hash of names and default values can be retrieved from instance without populating' do
+      expect { 
+        class GroupDefTest
+          prepend Woyo::Attributes
+          group :numbers, one: 1, two: 2, three: proc { 3 } 
+        end
+      }.to_not raise_error
+      def_test = GroupDefTest.new
+      groups = def_test.groups
+      groups.should be_instance_of Hash
+      groups.count.should eq 1
+      groups.keys.should eq [ :numbers ]
+      groups[:numbers].should be_instance_of Hash
+      groups[:numbers].keys.should eq [ :one, :two, :three ]
+      groups[:numbers].values.should eq [ 1, 2, 3 ]
+      def_test.numbers.keys.should eq [ :one, :two, :three ]  
+      def_test.numbers.values.should eq [ 1, 2, 3 ]
+    end
+
+    it 'members are also attributes' do
       all_attrs = [ :larry, :curly, :moe, :mustang, :ferarri, :mini ]  
       @at.attributes.keys.should eq all_attrs 
       all_attrs.each do |attr|
         @at.should respond_to attr
       end
+    end
+
+    it 'members and attributes are the same thing' do
+      pending 'universal approach to attributes and groups'
+      @at.stooges[:curly] = 'bald'
+      @at.stooges[:curly].should eq 'bald'
+      @at.curly.should eq 'bald'
+      @at.ferarri = 'fast'
+      @at.ferarri.should eq 'fast'
+      @at.cars[:ferarri].should eq 'fast'
     end
 
     it 'have convenience accessor :names for :keys' do

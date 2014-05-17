@@ -49,6 +49,7 @@ describe Woyo::Way do
   end
 
   it 'defaults to open if "to" defined' do
+    pending 'boolean groups'
     door = Woyo::Way.new(:door)
     door.to = :someplace
     door.open.should be_true
@@ -56,6 +57,7 @@ describe Woyo::Way do
   end
 
   it 'may be made closed' do
+    pending 'boolean groups'
     door = Woyo::Way.new(:door)
     door.to = :someplace
     door.open.should be_true
@@ -66,6 +68,7 @@ describe Woyo::Way do
   end
 
   it 'may be made open' do
+    pending 'boolean groups'
     door = Woyo::Way.new(:door)
     door.open.should be_false
     door.closed.should be_true

@@ -6,6 +6,7 @@ module Woyo
 
 class WorldObject
 
+  #prepend Attributes
   include Attributes
   include DSL
 
@@ -15,6 +16,7 @@ class WorldObject
   def initialize id, context: nil, &block
     @id = id.to_s.downcase.to_sym
     @context = context
+    super
     evaluate &block
   end
 

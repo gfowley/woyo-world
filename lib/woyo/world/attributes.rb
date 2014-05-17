@@ -7,32 +7,43 @@ module Woyo
 
 module Attributes
 
+  def self.included(base)
+    base.extend(ClassMethods)
+  end
+
+  def self.prepended(base)
+    base.singleton_class.prepend(ClassMethods)  # base.extend(ClassMethods) also seems to work, what's the diff ?
+  end
+  
+  def initialize *args
+    initialize_attributes
+    initialize_groups
+    #super # we'll need this if we prepend Attributes again 
+  end
+
   module ClassMethods
 
-    def create_attribute_methods_with_define_method attr, default = nil
+    def create_attribute_methods attr, default = nil
       
+      define_method "#{attr}_default" do
+        if default.respond_to? :call
+          return default.arity == 0 ? default.call : default.call(self)
+        end
+        default
+      end
+
       define_method "#{attr}=" do |arg|
         attributes[attr] = arg
       end
 
       define_method attr do |arg = nil|
         if arg.nil?
-          unless attributes.has_key? attr
-            if default.respond_to? :call
-              if default.arity == 0
-                attributes[attr] = default.call # todo: is this the same as ? ... instance_eval &default
-              else
-                attributes[attr] = default.call(self)
-              end
-            else
-              attributes[attr] = default
-            end
-          end
           attributes[attr]
         else
           attributes[attr] = arg
         end
       end
+
       if default == true || default == false    # boolean convenience methods
         
         define_method "#{attr}?" do
@@ -54,11 +65,11 @@ module Attributes
         if attr.kind_of? Hash
           attr.each do |attr_sym,default_value|
             @attributes << attr_sym  # this will become a Hash ?
-            create_attribute_methods_with_define_method attr_sym, default_value
+            create_attribute_methods attr_sym, default_value
           end
         else
           @attributes << attr
-          create_attribute_methods_with_define_method attr
+          create_attribute_methods attr
         end
       end
     end
@@ -68,7 +79,7 @@ module Attributes
     end
 
     def groups
-      @groups
+      @groups ||= {} # prevent nil if 'group' was not used
     end
 
     def group sym, *attrs
@@ -77,7 +88,9 @@ module Attributes
       self.attributes *attrs
       attrs.each do |attr|
         if attr.kind_of? Hash
-          group += attr.keys
+          attr.each do |attr_sym,default_value|
+            group << attr_sym
+          end
         else
           group << attr
         end
@@ -85,25 +98,32 @@ module Attributes
       define_method sym do
         groups[sym]  
       end
-      #group
+      group
     end
 
-  end 
+  end  # module ClassMethods
 
-  def self.included(base)
-    base.extend(ClassMethods)
+  def initialize_attributes
+    @attributes = self.class.attributes.each_with_object({}) do |attr,hash|
+      hash[attr] = send "#{attr}_default"
+    end
   end
-  
+
+  def initialize_groups
+    @groups = {}
+    self.class.groups.each do |sym,attrs|
+      @groups[sym] = attrs.each_with_object({}) do |attr,hash|
+        hash[attr] = send attr
+      end
+    end
+    @groups
+  end
+
   def attributes
-    @attributes ||= {} # self.class.attributes.each_with_object({}) { |attr,hash| hash[attr] =  } 
+    @attributes
   end
   
   def groups
-    return @groups if @groups
-    @groups = {}
-    self.class.groups.each do |sym,attrs|
-      @groups[sym] = attrs.each_with_object({}) { |attr,hash| hash[attr] = send attr } 
-    end
     @groups
   end
 
