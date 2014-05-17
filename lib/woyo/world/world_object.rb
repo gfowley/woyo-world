@@ -16,7 +16,7 @@ class WorldObject
   def initialize id, context: nil, &block
     @id = id.to_s.downcase.to_sym
     @context = context
-    super
+    super  # initializes attributes
     evaluate &block
   end
 

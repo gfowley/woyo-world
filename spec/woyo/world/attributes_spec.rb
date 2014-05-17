@@ -227,14 +227,18 @@ describe Woyo::Attributes do
       groups[:cars].should eq [ :mustang, :ferarri, :mini ]
     end
 
-    it 'hash of names and nil values can be retrieved from instance without populating' do
-      @at.stooges.should be_instance_of Hash
+    it 'have convenience accessor :names for :keys' do
+      @at.stooges.names.should eq [ :larry, :curly, :moe ]  
+    end
+
+    it 'names and nil values can be retrieved from instance without populating' do
+      @at.stooges.should be_instance_of Woyo::Attributes::Group
       @at.stooges.count.should eq 3
-      @at.stooges.keys.should eq [ :larry, :curly, :moe ] 
+      @at.stooges.names.should eq [ :larry, :curly, :moe ] 
       @at.stooges.values.should eq [ nil, nil, nil ] 
     end
 
-    it 'hash of names and default values can be retrieved from instance without populating' do
+    it 'names and default values can be retrieved from instance without populating' do
       expect { 
         class GroupDefTest
           prepend Woyo::Attributes
@@ -245,12 +249,18 @@ describe Woyo::Attributes do
       groups = def_test.groups
       groups.should be_instance_of Hash
       groups.count.should eq 1
-      groups.keys.should eq [ :numbers ]
-      groups[:numbers].should be_instance_of Hash
-      groups[:numbers].keys.should eq [ :one, :two, :three ]
+      groups.names.should eq [ :numbers ]
+      groups[:numbers].should be_instance_of Woyo::Attributes::Group
+      groups[:numbers].names.should eq [ :one, :two, :three ]
       groups[:numbers].values.should eq [ 1, 2, 3 ]
-      def_test.numbers.keys.should eq [ :one, :two, :three ]  
+      def_test.numbers.names.should eq [ :one, :two, :three ]  
       def_test.numbers.values.should eq [ 1, 2, 3 ]
+    end
+
+    it 'members can be accessed via group' do
+      @at.stooges[:curly].should eq nil
+      @at.stooges[:curly] = 'bald'
+      @at.stooges[:curly].should eq 'bald'
     end
 
     it 'members are also attributes' do
@@ -261,18 +271,16 @@ describe Woyo::Attributes do
       end
     end
 
-    it 'members and attributes are the same thing' do
-      pending 'universal approach to attributes and groups'
-      @at.stooges[:curly] = 'bald'
-      @at.stooges[:curly].should eq 'bald'
-      @at.curly.should eq 'bald'
+    it 'members are attributes' do
+      @at.stooges[:moe] = 'knucklehead'
+      @at.stooges[:moe].should eq 'knucklehead'
+      @at.moe.should eq 'knucklehead' 
+    end
+
+    it 'attributes are members' do
       @at.ferarri = 'fast'
       @at.ferarri.should eq 'fast'
       @at.cars[:ferarri].should eq 'fast'
-    end
-
-    it 'have convenience accessor :names for :keys' do
-      @at.stooges.names.should eq [ :larry, :curly, :moe ]  
     end
 
   end

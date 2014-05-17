@@ -1,3 +1,4 @@
+require 'forwardable'
 
 class Hash
   alias_method :names, :keys
@@ -6,6 +7,30 @@ end
 module Woyo
 
 module Attributes
+
+  class Group
+
+    extend Forwardable
+
+    def_delegators :@members, :count
+    def_delegators :@attributes, :[], :[]=
+
+    attr_reader :members
+
+    def initialize attributes, *members
+      @attributes = attributes
+      @members = members
+    end
+
+    def names
+      @members
+    end
+
+    def values
+      @attributes.values_at *@members
+    end
+
+  end
 
   def self.included(base)
     base.extend(ClassMethods)
@@ -59,12 +84,12 @@ module Attributes
     end
 
     def attributes *attrs
-      @attributes ||= [] # this will become a Hash ?
+      @attributes ||= []
       return @attributes if attrs.empty?
       attrs.each do |attr|
         if attr.kind_of? Hash
           attr.each do |attr_sym,default_value|
-            @attributes << attr_sym  # this will become a Hash ?
+            @attributes << attr_sym
             create_attribute_methods attr_sym, default_value
           end
         else
@@ -111,11 +136,7 @@ module Attributes
 
   def initialize_groups
     @groups = {}
-    self.class.groups.each do |sym,attrs|
-      @groups[sym] = attrs.each_with_object({}) do |attr,hash|
-        hash[attr] = send attr
-      end
-    end
+    self.class.groups.each { |sym,members| @groups[sym] = Woyo::Attributes::Group.new @attributes, *members }
     @groups
   end
 
