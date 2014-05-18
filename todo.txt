@@ -5,6 +5,10 @@ world object features...
 
 # attributes
 
+
+  default procs will be called upon access, not at initialization
+    this will fix the problem of WorldObject#id being nil when Attributes is prepended and Attributes#initialize is run first 
+
   boolean attributes
 
 ok    detected by class level definition boolean default value
@@ -39,7 +43,7 @@ ok    group :weapons, :sword, :knife, :rock, :fists      # symbols, first will b
     group stats: [ speed: 10, charisma: 20, strength: 30 ]  # defaults like attributes (these are attributes)
 ok    group :stats, speed: 10, charisma: 20, strength: 30     # ditto
 
-ok    group is a subclass of Hash
+ok    group is hash-like
       alias :names, :keys
 
         world_object.weapons.names         #=> weapons.keys

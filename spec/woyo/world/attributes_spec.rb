@@ -4,7 +4,7 @@ describe Woyo::Attributes do
 
   before :all do
     class AttrTest
-      prepend Woyo::Attributes
+      include Woyo::Attributes
       attributes :attr1, :attr2, :attr3
     end
   end
@@ -37,7 +37,7 @@ describe Woyo::Attributes do
   it 'hash of names and default values can be retrieved for instance before populating' do
     expect { 
       class DefTest
-        prepend Woyo::Attributes
+        include Woyo::Attributes
         attributes one: 1, two: 2, three: proc { 3 } 
       end
     }.to_not raise_error
@@ -211,7 +211,7 @@ describe Woyo::Attributes do
 
     before :all do
       class AT
-        prepend Woyo::Attributes
+        include Woyo::Attributes
         group :stooges, :larry, :curly, :moe
         group :cars,    :mustang, :ferarri, :mini 
       end
@@ -241,7 +241,7 @@ describe Woyo::Attributes do
     it 'names and default values can be retrieved from instance without populating' do
       expect { 
         class GroupDefTest
-          prepend Woyo::Attributes
+          include Woyo::Attributes
           group :numbers, one: 1, two: 2, three: proc { 3 } 
         end
       }.to_not raise_error
@@ -283,6 +283,58 @@ describe Woyo::Attributes do
       @at.cars[:ferarri].should eq 'fast'
     end
 
+  end
+
+  context 'exclusive groups' do
+
+    before :all do
+      class ExGroupTest
+        include Woyo::Attributes
+        exclusive_group :temp, :hot, :warm, :cool, :cold
+        exclusive_group :light, :dark, :dim, :bright
+      end
+    end
+
+    it 'are listed for a class' do
+      groups = ExGroupTest.exclusive_groups
+      groups.should be_instance_of Hash
+      groups.count.should eq 2
+      groups.keys.should eq [ :temp, :light ]
+      groups[:temp].should eq [ :hot, :warm, :cool, :cold ] 
+      groups[:light].should eq [ :dark, :dim, :bright ]
+    end
+
+    it 'are accessible via methods for instance' do
+      egt = ExGroupTest.new
+      egt.temp.should be_instance_of Woyo::Attributes::BooleanGroup
+    end
+
+    it 'first member is true, rest are false' do
+      egt = ExGroupTest.new
+      egt.light[:dark].should eq true
+      egt.light[:dim].should eq false
+      egt.light[:bright].should eq false
+    end
+
+    it 'making group member true affect member attributes' do
+      egt = ExGroupTest.new
+      egt.temp[:cold] = true
+      egt.cold.should be true
+      egt.cool.should be false
+      egt.warm.should be false
+      egt.hot.should be false
+    end
+
+    it 'making attribute true affects group members' do
+      pending 'make attributes aware of exclusive group they may be a member of'
+      egt = ExGroupTest.new
+      egt.cold = true
+      egt.light[:cold].should be true
+      egt.light[:cool].should be false
+      egt.light[:warm].should be false
+      egt.light[:hot].should be false
+    end
+  
   end
 
 end

@@ -1,4 +1,4 @@
-require 'forwardable'
+require_relative 'group'
 
 class Hash
   alias_method :names, :keys
@@ -7,30 +7,6 @@ end
 module Woyo
 
 module Attributes
-
-  class Group
-
-    extend Forwardable
-
-    def_delegators :@members, :count
-    def_delegators :@attributes, :[], :[]=
-
-    attr_reader :members
-
-    def initialize attributes, *members
-      @attributes = attributes
-      @members = members
-    end
-
-    def names
-      @members
-    end
-
-    def values
-      @attributes.values_at *@members
-    end
-
-  end
 
   def self.included(base)
     base.extend(ClassMethods)
@@ -43,6 +19,7 @@ module Attributes
   def initialize *args
     initialize_attributes
     initialize_groups
+    initialize_exclusive_groups
     #super # we'll need this if we prepend Attributes again 
   end
 
@@ -104,7 +81,7 @@ module Attributes
     end
 
     def groups
-      @groups ||= {} # prevent nil if 'group' was not used
+      @groups ||= {}
     end
 
     def group sym, *attrs
@@ -126,6 +103,29 @@ module Attributes
       group
     end
 
+    def exclusive_groups
+      @exclusive_groups ||={}
+    end
+
+    def exclusive_group sym, *attrs
+      @exclusive_groups ||= {}
+      group = @exclusive_groups[sym] ? @exclusive_groups[sym] : ( @exclusive_groups[sym] = [] )
+      self.attributes *attrs
+      attrs.each do |attr|
+        if attr.kind_of? Hash
+          attr.each do |attr_sym,default_value|
+            group << attr_sym
+          end
+        else
+          group << attr
+        end
+      end
+      define_method sym do
+        exclusive_groups[sym]  
+      end
+      group
+    end
+
   end  # module ClassMethods
 
   def initialize_attributes
@@ -140,12 +140,22 @@ module Attributes
     @groups
   end
 
+  def initialize_exclusive_groups
+    @exclusive_groups = {}
+    self.class.exclusive_groups.each { |sym,members| @exclusive_groups[sym] = Woyo::Attributes::BooleanGroup.new @attributes, *members }
+    @exclusive_groups
+  end
+
   def attributes
     @attributes
   end
   
   def groups
     @groups
+  end
+
+  def exclusive_groups
+    @exclusive_groups
   end
 
   def is? attr
