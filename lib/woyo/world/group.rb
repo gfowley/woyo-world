@@ -20,8 +20,9 @@ module Attributes
     end
     
     def []= attr, value
+      old_value = self[attr]
       super
-      if listener = @listeners[attr]
+      if ( listener = @listeners[attr] ) && value != old_value
         listener.notify attr, value
       end
     end
