@@ -129,7 +129,7 @@ module Attributes
   end  # module ClassMethods
 
   def initialize_attributes
-    @attributes = self.class.attributes.each_with_object({}) do |attr,hash|
+    @attributes = self.class.attributes.each_with_object(Woyo::Attributes::AttributesHash.new) do |attr,hash|
       hash[attr] = send "#{attr}_default"
     end
   end

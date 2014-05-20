@@ -18,7 +18,7 @@ describe Woyo::Attributes do
 
   it 'hash of names and values can be retrieved for instance' do
     attr_test = AttrTest.new
-    attr_test.attributes.should be_instance_of Hash
+    attr_test.attributes.should be_instance_of Woyo::Attributes::AttributesHash
     # set attributes
     AttrTest.attributes.each do |attr|
       attr_test.send(attr, attr.to_s.upcase)
@@ -29,7 +29,7 @@ describe Woyo::Attributes do
 
   it 'hash of names and nil values can be retrieved for instance before populating' do
     attr_test = AttrTest.new
-    attr_test.attributes.should be_instance_of Hash
+    attr_test.attributes.should be_instance_of Woyo::Attributes::AttributesHash
     attr_test.attributes.keys.should eq [ :attr1, :attr2, :attr3 ]  
     attr_test.attributes.values.should eq [ nil, nil, nil ]
   end
@@ -316,7 +316,7 @@ describe Woyo::Attributes do
       egt.light[:bright].should eq false
     end
 
-    it 'making group member true affect member attributes' do
+    it 'making group member true affects member attributes' do
       egt = ExGroupTest.new
       egt.temp[:cold] = true
       egt.cold.should be true
@@ -326,7 +326,6 @@ describe Woyo::Attributes do
     end
 
     it 'making attribute true affects group members' do
-      pending 'make attributes aware of exclusive group they may be a member of'
       egt = ExGroupTest.new
       egt.cold = true
       egt.light[:cold].should be true
