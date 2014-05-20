@@ -25,6 +25,10 @@ describe Woyo::Attributes::AttributesHash do
     @attributes[:test].should be true
   end
 
+  it 'provides list of attribute names' do
+    @attributes.names.should eq [:test]
+  end
+
   it 'registers attribute listeners' do
     @attributes.add_attribute_listener :test, @listener
   end
@@ -53,19 +57,55 @@ describe Woyo::Attributes::AttributesHash do
     @listener.notified.should be false
   end
 
+  it 'accepts attributes at initialization' do
+    pending 'move attribute list handling into initialize'
+  end
+
 end
 
 describe Woyo::Attributes::Group do
 
-  it 'requires attributes object and members symbols to initialize'
+  before :all do
+    @attributes = Woyo::Attributes::AttributesHash.new
+    @group = Woyo::Attributes::Group.new @attributes, :larry, :curly, :moe
+  end
 
-  it 'initializes with populated backing attributes'
+  it 'requires attributes object and members symbols to initialize' do
+    expect { Woyo::Attributes::Group.new @attributes, :larry, :curly, :moe }.to_not raise_error
+  end
 
-  it 'members backed by attributes'
+  it 'accepts attributes at initialization' do
+    pending 'move attribute list handling into initialize'
+  end
 
-  it 'member names can be listed'
+  it 'initializes with members backed by attributes' do
+    pending 'move attribute list handling into initialize'
+    @attributes.keys.should eq @group.members
+  end
 
-  it 'member values can be listed'
+  it 'maintains list of members' do
+    @group.members.should eq [ :larry, :curly, :moe ]
+  end
+
+  it 'member names can be listed' do
+    @group.names.should eq [ :larry, :curly, :moe ]
+  end
+
+  it 'members are backed by attributes' do
+    @group[:larry] = 'dumb'
+    @group[:curly] = 'bald'
+    @group[:moe] = 'smart'
+    @group[:larry].should eq 'dumb'
+    @group[:curly].should eq 'bald'
+    @group[:moe].should eq 'smart'
+    @attributes[:larry].should eq 'dumb'
+    @attributes[:curly].should eq 'bald'
+    @attributes[:moe].should eq 'smart'
+  end
+  
+  it 'member values can be listed' do
+    @group.values.should eq %w( dumb bald smart )
+  end
 
 end
 
