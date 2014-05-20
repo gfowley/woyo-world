@@ -9,6 +9,8 @@ module Attributes
     alias_method :names, :keys
     alias_method :set, :[]=
 
+    attr_reader :listeners
+
     def initialize
       @listeners = {}
     end
