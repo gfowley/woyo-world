@@ -19,7 +19,7 @@ module Attributes
   def initialize *args
     initialize_attributes
     initialize_groups
-    initialize_exclusive_groups
+    initialize_boolean_groups
     #super # we'll need this if we prepend Attributes again 
   end
 
@@ -115,13 +115,13 @@ module Attributes
       group
     end
 
-    def exclusive_groups
-      @exclusive_groups ||={}
+    def boolean_groups
+      @boolean_groups ||={}
     end
 
-    def exclusive_group sym, *attrs
-      @exclusive_groups ||= {}
-      group = @exclusive_groups[sym] ? @exclusive_groups[sym] : ( @exclusive_groups[sym] = [] )
+    def group! sym, *attrs
+      @boolean_groups ||= {}
+      group = @boolean_groups[sym] ? @boolean_groups[sym] : ( @boolean_groups[sym] = [] )
       self.attributes *attrs
       attrs.each do |attr|
         define_attr? attr
@@ -135,7 +135,7 @@ module Attributes
         end
       end
       define_method sym do
-        exclusive_groups[sym]  
+        boolean_groups[sym]  
       end
       group
     end
@@ -154,10 +154,10 @@ module Attributes
     @groups
   end
 
-  def initialize_exclusive_groups
-    @exclusive_groups = {}
-    self.class.exclusive_groups.each { |sym,members| @exclusive_groups[sym] = Woyo::Attributes::BooleanGroup.new @attributes, *members }
-    @exclusive_groups
+  def initialize_boolean_groups
+    @boolean_groups = {}
+    self.class.boolean_groups.each { |sym,members| @boolean_groups[sym] = Woyo::Attributes::BooleanGroup.new @attributes, *members }
+    @boolean_groups
   end
 
   def attributes
@@ -168,8 +168,8 @@ module Attributes
     @groups
   end
 
-  def exclusive_groups
-    @exclusive_groups
+  def boolean_groups
+    @boolean_groups
   end
 
   def is? attr

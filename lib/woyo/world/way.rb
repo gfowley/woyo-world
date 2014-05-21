@@ -6,7 +6,7 @@ class Way < WorldObject
 
   attributes :description, name: lambda { |this| this.id.to_s.capitalize }
 
-  exclusive_group :passable, :closed, :open  # defaults to closed: true 
+  group! :passable, :closed, :open  # defaults to closed: true 
 
   def close!
     closed!
@@ -32,7 +32,7 @@ class Way < WorldObject
       else
         @to = Location.new arg            # create free-standing destination location
       end
-      self.passable[:open] = true
+      self.open!
     else
       raise "Symbol required, but #{arg.class} : '#{arg}' given."
     end
