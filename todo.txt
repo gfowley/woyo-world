@@ -44,7 +44,7 @@ ok    group :weapons, :sword, :knife, :rock, :fists      # symbols, first will b
 ok    group :stats, speed: 10, charisma: 20, strength: 30     # ditto
 
 ok    group is hash-like
-      alias :names, :keys
+       alias :names, :keys
 
         world_object.weapons.names         #=> weapons.keys
         world_object.weapons.values        #=> weapons.values
@@ -65,16 +65,16 @@ ok   access attributes via group hash
       world_object.weapons[:sword]                #=> rusty_sword
       world_object.weapons[:sword] = sharp_sword
 
-  exclusive group (booleans)...
+ok  exclusive group (booleans)...
   
-    exclusive_group passable: [ :open, :close ]
+ok    exclusive_group passable: , :open, :close 
     exclusive_group light: [ :dark, :dim, :bright ]
     exclusive_group temperature: [ :cold, :cool, :warm, :hot ]
 
-    same as regular group +...
+ok    same as regular group +...
 
-    first member will be true, the rest false
-    additional convenience methods for members...
+ok    first member will be true, the rest false
+ok    additional convenience methods for members...
 
       world_object.open?
       world_object.close?
@@ -163,6 +163,25 @@ ok   access attributes via group hash
     description 'Big strong'
     to :garden
   end
+
+  way can describe being open closed
+
+    way :out do
+      name 'Door'
+      to :garden
+      description 'Wooden door'
+      description :open   => 'An open wooden door leading to sunlit garden',
+                  :closed => 'A closed solid wooden door'
+    end
+
+  way can describe going (open) or not (closed)
+
+    way :out do
+      name 'Door'
+      to :garden
+      go  :open   => 'Stepping into the warm sunlight',
+          :closed => 'The solid wooden door remains stubbornly closed' 
+    end
 
   way :door, to: :other_location, description: 'Big'
 

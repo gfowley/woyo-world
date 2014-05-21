@@ -336,5 +336,35 @@ describe Woyo::Attributes do
   
   end
 
+  context 'assigned a Hash as a value' do
+
+    before :all do
+      class AttrHashTest
+        include Woyo::Attributes
+        attributes :reaction, :hot, :cold
+      end
+      @aht = AttrHashTest.new
+    end
+
+    it 'accepts the hash as a value' do
+      expect { @aht.reaction hot: 'Sweat', cold: 'Shiver' }.to_not raise_error
+    end
+
+    it 'returns the value of the first key that evaluates as a true attribute' do
+      @aht.cold = true
+      @aht.reaction.should eq 'Shiver'
+      @aht.hot = true
+      @aht.reaction.should eq 'Sweat'
+    end
+
+    it 'otherwise it returns the hash' do
+      reactions = { :hot => 'Sweat', :cold => 'Shiver' }
+      @aht.cold = false
+      @aht.hot = false
+      @aht.reaction.should eq reactions
+    end
+
+  end
+
 end
 

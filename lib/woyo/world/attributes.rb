@@ -52,11 +52,11 @@ module Attributes
 
     def define_attr attr
       define_method attr do |arg = nil|
-        if arg.nil?
-          attributes[attr]
-        else
-          attributes[attr] = arg
-        end
+        return attributes[attr] = arg unless arg.nil?
+        return attributes[attr]       unless attributes[attr].kind_of? Hash
+        true_attribute_match = attributes[attr].detect { |name,value| attributes[name] == true }
+        return true_attribute_match[1] if true_attribute_match
+        attributes[attr]
       end
     end
 
@@ -99,7 +99,7 @@ module Attributes
     def group sym, *attrs
       @groups ||= {}
       group = @groups[sym] ? @groups[sym] : ( @groups[sym] = [] )
-      self.attributes *attrs # ( attrs.collect { |attr| { attr => false } } )   # set boolean defaults and covenience accessors
+      self.attributes *attrs
       attrs.each do |attr|
         if attr.kind_of? Hash
           attr.each do |attr_sym,default_value|

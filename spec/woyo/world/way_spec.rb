@@ -117,10 +117,38 @@ describe Woyo::Way do
     door.open!
     door.should_not be_closed
   end
+  
+  context 'description' do
 
-  it 'may describe going when closed'
+    before :all do
+      @door = Woyo::Way.new(:door)
+      @door.to = :someplace
+    end
 
-  it 'may describe going when open'
+    it 'can be described' do
+      @door.description = 'Just a door'
+      @door.description.should eq 'Just a door'
+    end
+
+    it 'can be described open' do
+      @door.description open: 'An open door', closed: 'A closed door'
+      @door.description.should eq 'An open door'
+    end
+
+    it 'can be described closed' do
+      @door.close!
+      @door.description.should eq 'A closed door'
+    end
+
+  end
+
+  context 'going' do
+
+    it 'when closed'
+
+    it 'when open'
+
+  end
 
   it 'may have a condition for opening'
   
