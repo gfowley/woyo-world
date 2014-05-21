@@ -290,13 +290,13 @@ describe Woyo::Attributes do
     before :all do
       class ExGroupTest
         include Woyo::Attributes
-        exclusive_group :temp, :hot, :warm, :cool, :cold
-        exclusive_group :light, :dark, :dim, :bright
+        group! :temp, :hot, :warm, :cool, :cold
+        group! :light, :dark, :dim, :bright
       end
     end
 
     it 'are listed for a class' do
-      groups = ExGroupTest.exclusive_groups
+      groups = ExGroupTest.boolean_groups
       groups.should be_instance_of Hash
       groups.count.should eq 2
       groups.keys.should eq [ :temp, :light ]
