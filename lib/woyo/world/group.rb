@@ -36,7 +36,7 @@ module Attributes
     def_delegators :@members, :count
     def_delegators :@attributes, :[], :[]=
 
-    attr_reader :members
+    attr_reader :members, :attributes
 
     def initialize attributes, *members
       @attributes = attributes
@@ -55,19 +55,26 @@ module Attributes
 
   class BooleanGroup < Group
 
+    attr_reader :default 
+    
     def initialize attributes, *members
       super
-      @members.each { |member| self[member] = false }
-      self[@members.first] = true
+      @default = @members.first
+      self[@default] = true
+      #@members.each { |member| self[member] = false }
       @members.each { |member| @attributes.add_attribute_listener member, self }
     end
 
     def []= this_member, value
-      # assuming this_member is in @members for now
+      raise '#{this_member} is not a member of this group' unless @members.include? this_member
       super
-      # assuming value==true for now
-      # sync group members via AttributesHash#set to prevent triggering notify
-      @members.each { |member| @attributes.set(member,false) unless member == this_member }
+      if value
+        # sync group members via AttributesHash#set to prevent (re)triggering notify
+        @members.each { |member| @attributes.set(member,false) unless member == this_member }
+      else
+        # revert to default
+        self[@default] = true
+      end
     end
 
     def notify this_member, value

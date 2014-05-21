@@ -33,7 +33,7 @@ describe Woyo::Attributes::AttributesHash do
     @attributes.add_attribute_listener :test, @listener
   end
 
-  it 'maintains ilst of attribute listeners' do
+  it 'maintains list of attribute listeners' do
     @attributes.listeners.should be_kind_of Hash
     @attributes.listeners[:test].should be @listener
   end
@@ -57,9 +57,17 @@ describe Woyo::Attributes::AttributesHash do
     @listener.notified.should be false
   end
 
-  it 'accepts attributes at initialization' do
-    pending 'move attribute list handling into initialize'
-  end
+  # context '#initialize' do
+  #   it 'accepts attributes arguments' do
+  #     #pending 'move attribute list handling into initialize'
+  #     attributes = Woyo::Attributes::AttributesHash.new :larry, :curly, :moe
+  #     attributes.names.should eq [ :larry, :curly, :moe ]
+  #     attributes.values.should eq [ nil, nil, nil ]
+  #   end
+  #   it 'accepts attributes arguments with defaults'
+  #   it 'accepts attributes array'
+  #   it 'accepts attributes array with defaults'
+  # end
 
 end
 
@@ -70,18 +78,18 @@ describe Woyo::Attributes::Group do
     @group = Woyo::Attributes::Group.new @attributes, :larry, :curly, :moe
   end
 
-  it 'requires attributes object and members symbols to initialize' do
+  it '#initialize requires attributes object' do
     expect { Woyo::Attributes::Group.new @attributes, :larry, :curly, :moe }.to_not raise_error
+    expect { Woyo::Attributes::Group.new }.to raise_error
   end
 
-  it 'accepts attributes at initialization' do
-    pending 'move attribute list handling into initialize'
-  end
-
-  it 'initializes with members backed by attributes' do
-    pending 'move attribute list handling into initialize'
-    @attributes.keys.should eq @group.members
-  end
+  # it 'accepts attributes at initialization' do
+  #   pending 'move attribute list handling into initialize'
+  # end
+  # it 'initializes with members backed by attributes' do
+  #   pending 'move attribute list handling into initialize'
+  #   @attributes.keys.should eq @group.members
+  # end
 
   it 'maintains list of members' do
     @group.members.should eq [ :larry, :curly, :moe ]
@@ -111,36 +119,42 @@ end
 
 describe Woyo::Attributes::BooleanGroup do
 
-  # before :all do
-  #   attributes = { tom: nil, dick: nil, harry: nil }
-  #   @bg = Woyo::Attributes::BooleanGroup.new attributes, :hot, :warm, :cool, :cold
-  # end
+  before :all do
+    @group = Woyo::Attributes::BooleanGroup.new Woyo::Attributes::AttributesHash.new, :warm, :cool, :cold
+  end
 
-  it 'initializes with populated backing attributes'
-  # it 'initializes with populated backing attributes, and members' do
-  #   attributes = { tom: nil, dick: nil, harry: nil }
-  #   @bg.should be_instance_of Woyo::Attributes::BooleanGroup
-  # end
+  it 'has default' do
+    @group.default.should eq :warm
+  end
 
-  it 'registers as listener for attributes'
+  it 'defaults to first member true, the rest false' do
+    @group[:warm].should be true
+    @group[:cool].should be false
+    @group[:cold].should be false
+  end
+  
+  it 'registers as listener for attributes' do
+    @group.members.each do |member|
+      @group.attributes.listeners[member].should be @group
+    end
+  end
 
-  it 'defaults to first member true, the rest false'
-  #   @bg[:hot].should be true
-  #   @bg[:warm].should be false
-  #   @bg[:cool].should be false
-  #   @bg[:cold].should be false
-  # end
+  it 'setting a member true changes the rest to false' do
+    @group[:cold] = true
+    @group[:warm].should be false
+    @group[:cool].should be false
+    @group[:cold].should be true
+  end
 
-  it 'setting a member true changes the rest to false'
-  #   @bg[:cold] = true
-  #   @bg[:hot].should be false
-  #   @bg[:warm].should be false
-  #   @bg[:cool].should be false
-  #   @bg[:cold].should be true
-  # end
+  it 'setting a true member false reverts to default' do
+    @group[:cold] = false
+    @group[:warm].should be true
+    @group[:cool].should be false
+    @group[:cold].should be false
+  end
 
-  it 'setting a member false changes default to true'
-
-  it 'can only set existing members'
+  it 'can only set existing members' do
+    expect { @group[:bogus] = true }.to raise_error
+  end
 
 end
