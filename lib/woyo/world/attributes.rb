@@ -25,19 +25,32 @@ module Attributes
 
   module ClassMethods
 
-    def create_attribute_methods attr, default = nil
-      
+    def define_attr_methods attr, default = nil
+      define_attr_default attr, default
+      define_attr_equals attr
+      define_attr attr
+      if default == true || default == false    # boolean convenience methods
+        define_attr? attr
+        define_attr! attr
+      end
+    end
+
+    def define_attr_default attr, default
       define_method "#{attr}_default" do
         if default.respond_to? :call
           return default.arity == 0 ? default.call : default.call(self)
         end
         default
       end
+    end
 
+    def define_attr_equals attr
       define_method "#{attr}=" do |arg|
         attributes[attr] = arg
       end
+    end
 
+    def define_attr attr
       define_method attr do |arg = nil|
         if arg.nil?
           attributes[attr]
@@ -45,19 +58,18 @@ module Attributes
           attributes[attr] = arg
         end
       end
+    end
 
-      if default == true || default == false    # boolean convenience methods
-        
-        define_method "#{attr}?" do
-          ( send attr ) ? true : false
-        end
-
-        define_method "#{attr}!" do
-          send "#{attr}=", true
-        end
-
+    def define_attr? attr
+      define_method "#{attr}?" do
+        ( send attr ) ? true : false
       end
+    end
 
+    def define_attr! attr
+      define_method "#{attr}!" do
+        send "#{attr}=", true
+      end
     end
 
     def attributes *attrs
@@ -67,11 +79,11 @@ module Attributes
         if attr.kind_of? Hash
           attr.each do |attr_sym,default_value|
             @attributes << attr_sym
-            create_attribute_methods attr_sym, default_value
+            define_attr_methods attr_sym, default_value
           end
         else
           @attributes << attr
-          create_attribute_methods attr
+          define_attr_methods attr
         end
       end
     end
@@ -112,6 +124,8 @@ module Attributes
       group = @exclusive_groups[sym] ? @exclusive_groups[sym] : ( @exclusive_groups[sym] = [] )
       self.attributes *attrs
       attrs.each do |attr|
+        define_attr? attr
+        define_attr! attr
         if attr.kind_of? Hash
           attr.each do |attr_sym,default_value|
             group << attr_sym
