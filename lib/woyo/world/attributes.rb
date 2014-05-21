@@ -87,7 +87,7 @@ module Attributes
     def group sym, *attrs
       @groups ||= {}
       group = @groups[sym] ? @groups[sym] : ( @groups[sym] = [] )
-      self.attributes *attrs
+      self.attributes *attrs # ( attrs.collect { |attr| { attr => false } } )   # set boolean defaults and covenience accessors
       attrs.each do |attr|
         if attr.kind_of? Hash
           attr.each do |attr_sym,default_value|

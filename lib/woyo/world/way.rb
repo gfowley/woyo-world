@@ -8,9 +8,9 @@ class Way < WorldObject
 
   exclusive_group :passable, :closed, :open  # defaults to closed: true 
 
-  def close!
-    closed!
-  end
+  # def close!
+  #   closed!
+  # end
 
   def from
     @from ||= context

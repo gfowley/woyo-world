@@ -56,18 +56,37 @@ describe Woyo::Way do
   end
 
   it 'may be made closed' do
-    pending 'boolean groups'
     door = Woyo::Way.new(:door)
     door.to = :someplace
     door.open.should be_true
     door.closed.should be_false
-    door.close!
+    door.closed = true
     door.open.should be_false
     door.closed.should be_true
   end
 
   it 'may be made open' do
-    pending 'boolean groups'
+    door = Woyo::Way.new(:door)
+    door.open.should be_false
+    door.closed.should be_true
+    door.open = true
+    door.open.should be_true
+    door.closed.should be_false
+  end
+
+  it 'may be made closed!' do
+    pending 'boolean convenience methods for BooleanGroup'
+    door = Woyo::Way.new(:door)
+    door.to = :someplace
+    door.open.should be_true
+    door.closed.should be_false
+    door.closed = true
+    door.open.should be_false
+    door.closed.should be_true
+  end
+
+  it 'may be made open!' do
+    pending 'boolean convenience methods for BooleanGroup'
     door = Woyo::Way.new(:door)
     door.open.should be_false
     door.closed.should be_true
