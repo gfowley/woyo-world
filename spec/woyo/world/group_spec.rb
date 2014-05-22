@@ -146,12 +146,14 @@ describe Woyo::Attributes::BooleanGroup do
     @group[:cold].should be true
   end
 
-  it 'setting a true member false reverts to default' do
+  it 'for a group > 2 members setting a true member false reverts to default' do
     @group[:cold] = false
     @group[:warm].should be true
     @group[:cool].should be false
     @group[:cold].should be false
   end
+
+  it 'for a binary group setting a true member false sets the other true'
 
   it 'can only set existing members' do
     expect { @group[:bogus] = true }.to raise_error
