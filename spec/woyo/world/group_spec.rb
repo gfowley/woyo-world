@@ -153,7 +153,14 @@ describe Woyo::Attributes::BooleanGroup do
     @group[:cold].should be false
   end
 
-  it 'for a binary group setting a true member false sets the other true'
+  it 'for a binary group setting a true member false sets the other true' do
+    @binary_group = Woyo::Attributes::BooleanGroup.new Woyo::Attributes::AttributesHash.new, :yes, :no
+    @binary_group[:yes].should be true
+    @binary_group[:no].should be false
+    @binary_group[:yes] = false
+    @binary_group[:yes].should be false
+    @binary_group[:no].should be true
+  end
 
   it 'can only set existing members' do
     expect { @group[:bogus] = true }.to raise_error

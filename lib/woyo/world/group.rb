@@ -68,17 +68,21 @@ module Attributes
     def []= this_member, value
       raise '#{this_member} is not a member of this group' unless @members.include? this_member
       super
-      if value
-        # sync group members via AttributesHash#set to prevent (re)triggering notify
+      if value #true
+        # sync group members via AttributesHash#set to prevent triggering notify
         @members.each { |member| @attributes.set(member,false) unless member == this_member }
-      else
-        # revert to default
-        self[@default] = true
+      else     #false
+        if self.count == 2  # binary group
+          @members.each { |member| @attributes.set member ,(member != this_member ) }
+        else
+          self[@default] = true # revert to default
+        end
       end
     end
 
     def notify this_member, value
       # assuming value==true for now
+      # sync group members via AttributesHash#set to prevent re-triggering notify
       @members.each { |member| @attributes.set(member,false) unless member == this_member }
     end
     
