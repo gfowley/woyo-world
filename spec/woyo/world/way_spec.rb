@@ -5,7 +5,7 @@ require 'woyo/world/way'
 describe Woyo::Way do
 
   it 'has attributes' do
-    expected_attrs = [:name,:description,:open,:closed]
+    expected_attrs = [:name,:description,:open,:closed,:going]
     Woyo::Way.attributes.sort.should eq expected_attrs.sort 
   end
 
@@ -144,12 +144,21 @@ describe Woyo::Way do
 
   context 'going' do
 
-    it 'when closed'
+    before :all do
+      @door = Woyo::Way.new(:door)
+      @door.to :someplace
+      @door.going :open => 'Swings open', :closed => 'Slams shut'
+    end
 
-    it 'when open'
+    it 'when open' do
+      @door.go.should eq ( { go: true, going: 'Swings open', location: :someplace } )
+    end
+
+    it 'when closed' do
+      @door.close!
+      @door.go.should eq ( { go: false, going: 'Slams shut', location: nil } )
+    end
 
   end
 
-  it 'may have a condition for opening'
-  
 end

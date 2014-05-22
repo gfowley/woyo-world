@@ -285,7 +285,7 @@ describe Woyo::Attributes do
 
   end
 
-  context 'exclusive groups' do
+  context 'boolean groups' do
 
     before :all do
       class ExGroupTest

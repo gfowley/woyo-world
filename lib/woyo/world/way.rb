@@ -8,6 +8,10 @@ class Way < WorldObject
 
   group! :passable, :closed, :open  # defaults to closed: true 
 
+  def world
+    from ? from.world : nil
+  end
+
   def close!
     closed!
   end
@@ -16,8 +20,12 @@ class Way < WorldObject
     @from ||= context
   end
 
-  def world
-    from ? from.world : nil
+  def to arg=nil
+    if arg.nil?
+      @to
+    else
+      self.to = arg
+    end
   end
 
   def to= arg
@@ -38,12 +46,14 @@ class Way < WorldObject
     end
   end
 
-  def to arg=nil
-    if arg.nil?
-      @to
-    else
-      self.to = arg
-    end
+  attribute :going 
+  
+  def go
+    {
+      go:       open?,
+      location: open? ? @to.id : nil,
+      going:    @attributes[:going][ open? ? :open : :closed ]
+    }
   end
 
 end
