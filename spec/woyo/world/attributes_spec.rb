@@ -333,6 +333,8 @@ describe Woyo::Attributes do
       egt.light[:warm].should be false
       egt.light[:hot].should be false
     end
+
+    it 'group name accessor returns name of true member'
   
   end
 
