@@ -166,4 +166,17 @@ describe Woyo::Attributes::BooleanGroup do
     expect { @group[:bogus] = true }.to raise_error
   end
 
+  it 'can be reset to default!' do
+    @group[:cool] = true 
+    @group.default!
+    @group[:warm].should eq true
+  end
+
+  it '#value returns name of true member' do
+    @group[:warm] = true
+    @group.value.should eq :warm
+    @group[:cold] = true
+    @group.value.should eq :cold
+  end
+
 end

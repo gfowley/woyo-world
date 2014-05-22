@@ -135,7 +135,7 @@ module Attributes
         end
       end
       define_method sym do
-        boolean_groups[sym]  
+        boolean_groups[sym]
       end
       group
     end

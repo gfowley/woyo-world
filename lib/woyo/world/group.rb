@@ -61,7 +61,6 @@ module Attributes
       super
       @default = @members.first
       self[@default] = true
-      #@members.each { |member| self[member] = false }
       @members.each { |member| @attributes.add_attribute_listener member, self }
     end
 
@@ -85,7 +84,15 @@ module Attributes
       # sync group members via AttributesHash#set to prevent re-triggering notify
       @members.each { |member| @attributes.set(member,false) unless member == this_member }
     end
-    
+
+    def value
+      @members.detect { |member| @attributes[member] } # name of first member with true value 
+    end
+
+    def default!
+      self[@default] = true
+    end
+
   end
 
 end

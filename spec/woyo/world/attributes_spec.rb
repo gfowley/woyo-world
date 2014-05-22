@@ -334,8 +334,6 @@ describe Woyo::Attributes do
       egt.light[:hot].should be false
     end
 
-    it 'group name accessor returns name of true member'
-  
   end
 
   context 'assigned a Hash as a value' do
