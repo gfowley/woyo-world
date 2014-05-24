@@ -49,11 +49,7 @@ class Way < WorldObject
   attribute :going 
   
   def go
-    {
-      go:       open?,
-      location: open? ? @to.id : nil,
-      going:    @attributes[:going][ open? ? :open : :closed ]
-    }
+    { go: open?, going: self.going }
   end
 
 end

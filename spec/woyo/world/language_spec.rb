@@ -255,7 +255,7 @@ describe 'DSL' do
             stairs.to.id.should eq :cellar
             stairs.should be_open
             stairs.description.should eq 'Rickety stairs lead down into darkness.'
-            stairs.go.should eq ( { go: true, location: :cellar, going: 'Creaky steps lead uncertainly downwards...' } )
+            stairs.go.should eq ( { go: true, going: 'Creaky steps lead uncertainly downwards...' } )
           end
 
           it 'a closed way' do
@@ -265,7 +265,7 @@ describe 'DSL' do
             stairs.close!
             stairs.should be_closed
             stairs.description.should eq 'Broken stairs end in darkness.'
-            stairs.go.should eq ( { go: false, location: nil, going: 'The dangerous stairs are impassable.' } )
+            stairs.go.should eq ( { go: false, going: 'The dangerous stairs are impassable.' } )
           end
 
         end

@@ -151,12 +151,12 @@ describe Woyo::Way do
     end
 
     it 'when open' do
-      @door.go.should eq ( { go: true, going: 'Swings open', location: :someplace } )
+      @door.go.should eq ( { go: true, going: 'Swings open' } )
     end
 
     it 'when closed' do
       @door.close!
-      @door.go.should eq ( { go: false, going: 'Slams shut', location: nil } )
+      @door.go.should eq ( { go: false, going: 'Slams shut' } )
     end
 
   end
