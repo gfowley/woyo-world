@@ -20,6 +20,7 @@ module Attributes
     initialize_attributes
     initialize_groups
     initialize_boolean_groups
+    initialize_is_overrides
     #super # we'll need this if we prepend Attributes again 
   end
 
@@ -78,12 +79,14 @@ module Attributes
       attrs.each do |attr|
         if attr.kind_of? Hash
           attr.each do |attr_sym,default_value|
-            @attributes << attr_sym
+            @attributes << attr_sym unless @attributes.include? attr_sym
             define_attr_methods attr_sym, default_value
           end
         else
-          @attributes << attr
-          define_attr_methods attr
+          unless @attributes.include? attr
+            @attributes << attr
+            define_attr_methods attr
+          end
         end
       end
     end
@@ -140,6 +143,18 @@ module Attributes
       group
     end
 
+    def is *attrs
+      @is_overrides ||= []
+      attrs.each do |attr|
+        @is_overrides << attr unless @is_overrides.include? attr 
+        self.attribute( { attr => true } )
+      end
+    end
+
+    def is_overrides
+      @is_overrides ||= []
+    end
+
   end  # module ClassMethods
 
   def initialize_attributes
@@ -158,6 +173,10 @@ module Attributes
     @boolean_groups = {}
     self.class.boolean_groups.each { |sym,members| @boolean_groups[sym] = Woyo::Attributes::BooleanGroup.new @attributes, *members }
     @boolean_groups
+  end
+
+  def initialize_is_overrides
+    self.class.is_overrides.each { |attr| send "#{attr}!" } 
   end
 
   def attributes

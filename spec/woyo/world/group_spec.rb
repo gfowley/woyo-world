@@ -57,18 +57,6 @@ describe Woyo::Attributes::AttributesHash do
     @listener.notified.should be false
   end
 
-  # context '#initialize' do
-  #   it 'accepts attributes arguments' do
-  #     #pending 'move attribute list handling into initialize'
-  #     attributes = Woyo::Attributes::AttributesHash.new :larry, :curly, :moe
-  #     attributes.names.should eq [ :larry, :curly, :moe ]
-  #     attributes.values.should eq [ nil, nil, nil ]
-  #   end
-  #   it 'accepts attributes arguments with defaults'
-  #   it 'accepts attributes array'
-  #   it 'accepts attributes array with defaults'
-  # end
-
 end
 
 describe Woyo::Attributes::Group do
@@ -82,14 +70,6 @@ describe Woyo::Attributes::Group do
     expect { Woyo::Attributes::Group.new @attributes, :larry, :curly, :moe }.to_not raise_error
     expect { Woyo::Attributes::Group.new }.to raise_error
   end
-
-  # it 'accepts attributes at initialization' do
-  #   pending 'move attribute list handling into initialize'
-  # end
-  # it 'initializes with members backed by attributes' do
-  #   pending 'move attribute list handling into initialize'
-  #   @attributes.keys.should eq @group.members
-  # end
 
   it 'maintains list of members' do
     @group.members.should eq [ :larry, :curly, :moe ]

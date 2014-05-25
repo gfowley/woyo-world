@@ -185,26 +185,151 @@ describe Woyo::Attributes do
     attr_test.attr_with_lambda_default.should eq "okay"
   end
 
-  it 'detected as boolean have convenience accessors' do
-    expect {
-      class AttrTest
-        attribute open: true
-        attribute light: false 
+  context 'that are boolean' do
+
+    context 'have convenient instance accessors' do
+
+      before :all do
+        expect {
+          class BooleanAttrTest
+            include Woyo::Attributes
+            attribute open: true
+            attribute light: false 
+          end
+        }.to_not raise_error
       end
-    }.to_not raise_error
-    attr_test = AttrTest.new
-    attr_test.open.should eq true
-    attr_test.open?.should eq true
-    attr_test.is?(:open).should eq true
-    attr_test.open = false
-    attr_test.open.should eq false
-    attr_test.open!.should eq true
-    attr_test.open.should eq true
-    attr_test.light.should eq false
-    attr_test.light?.should eq false
-    attr_test.is?(:light).should eq false
-    attr_test.light!.should eq true
-    attr_test.light.should eq true
+
+      it '#attr?' do
+        attr_test = BooleanAttrTest.new
+        attr_test.open.should eq true
+        attr_test.open?.should eq true
+      end
+
+      it '#attr!' do
+        attr_test = BooleanAttrTest.new
+        attr_test.open = false
+        attr_test.open.should eq false
+        attr_test.open!.should eq true
+        attr_test.open.should eq true
+      end
+
+      it '#is? :attr' do
+        attr_test = BooleanAttrTest.new
+        attr_test.is?(:open).should eq true
+        attr_test.open = false
+        attr_test.is?(:open).should eq false
+      end
+
+    end
+
+    context 'have class accessor ::is' do
+
+      it 'that defines new attribute with true default' do 
+        expect {
+          class BooleanIsTest1
+            include Woyo::Attributes
+            is :attr1
+          end
+        }.to_not raise_error
+        attr_test = BooleanIsTest1.new
+        attr_test.attr1.should eq true 
+      end
+
+      it 'that sets true default for existing attribute' do
+        expect {
+          class BooleanIsTest2
+            include Woyo::Attributes
+            attribute :attr2
+            is :attr2
+          end
+        }.to_not raise_error
+        attr_test = BooleanIsTest2.new
+        attr_test.attr2.should eq true 
+      end
+
+      it 'that changes default to true for existing attribute' do
+        expect {
+          class BooleanIsTest3
+            include Woyo::Attributes
+            attribute :attr3 => false
+            is :attr3
+          end
+        }.to_not raise_error
+        attr_test = BooleanIsTest3.new
+        attr_test.attr3.should eq true 
+      end
+
+      it 'that works for attribute in BooleanGroup' do
+        expect {
+          class BooleanIsTest4
+            include Woyo::Attributes
+            group! :temp, :hot, :warm, :cool, :cold
+            # :hot is true by default
+            is :cold
+            # :cold is now true
+          end
+        }.to_not raise_error
+        attr_test = BooleanIsTest4.new
+        attr_test.hot.should eq false
+        attr_test.warm.should eq false
+        attr_test.cool.should eq false
+        attr_test.cold.should eq true
+      end
+
+    end
+
+  end
+
+  context 'can be re-defined' do
+
+    it 'without duplication' do
+      expect {
+        class AttrReDef1
+          include Woyo::Attributes
+          attribute :attr1
+        end
+        class AttrReDef1
+          attribute :attr1
+        end
+      }.to_not raise_error
+      AttrReDef1.attributes.count.should eq 1
+      AttrReDef1.attributes.should eq [:attr1] 
+      attr_rd1 = AttrReDef1.new
+      attr_rd1.attr1.should be_nil
+    end
+
+    it 'to set default' do
+      expect {
+        class AttrReDef2
+          include Woyo::Attributes
+          attribute :attr2
+        end
+        class AttrReDef2
+          attribute attr2: 'two'
+        end
+      }.to_not raise_error
+      AttrReDef2.attributes.count.should eq 1
+      AttrReDef2.attributes.should eq [:attr2] 
+      attr_rd2 = AttrReDef2.new
+      attr_rd2.attr2.should eq 'two'
+    end
+
+    it 'to change default'  do
+      expect {
+        class AttrReDef3
+          include Woyo::Attributes
+          attribute attr3: '333'
+        end
+        class AttrReDef3
+          attribute attr3: 'three'
+        end
+      }.to_not raise_error
+      AttrReDef3.attributes.count.should eq 1
+      AttrReDef3.attributes.should eq [:attr3] 
+      attr_rd3 = AttrReDef3.new
+      attr_rd3.attr3.should eq 'three'
+    end
+
   end
 
   context 'groups' do
@@ -304,7 +429,7 @@ describe Woyo::Attributes do
       groups[:light].should eq [ :dark, :dim, :bright ]
     end
 
-    it 'are accessible via methods for instance' do
+    it 'accessor returns BooleanGroup instance' do
       egt = ExGroupTest.new
       egt.temp.should be_instance_of Woyo::Attributes::BooleanGroup
     end
