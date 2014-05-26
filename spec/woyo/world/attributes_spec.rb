@@ -19,7 +19,6 @@ describe Woyo::Attributes do
   it 'hash of names and values can be retrieved for instance' do
     attr_test = AttrTest.new
     attr_test.attributes.should be_instance_of Woyo::Attributes::AttributesHash
-    # set attributes
     AttrTest.attributes.each do |attr|
       attr_test.send(attr, attr.to_s.upcase)
     end
@@ -92,7 +91,6 @@ describe Woyo::Attributes do
     }.to_not raise_error
     AttrTest.attributes.count.should eq 6
     attr_test = AttrTest.new
-    # populate attributes
     AttrTest.attributes.each do |attr|
       attr_test.send(attr, attr.to_s.upcase)
     end
@@ -220,10 +218,18 @@ describe Woyo::Attributes do
         attr_test.is?(:open).should eq false
       end
 
+      it '#is :attr' do
+        attr_test = BooleanAttrTest.new
+        attr_test.light.should eq false
+        attr_test.is(:light)
+        attr_test.light.should eq true
+      end
     end
 
     context 'have class accessor ::is' do
 
+      # I was confused here, this may not be needed as a class method at all!!!
+      
       it 'that defines new attribute with true default' do 
         expect {
           class BooleanIsTest1

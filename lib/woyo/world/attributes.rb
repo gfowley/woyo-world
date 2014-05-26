@@ -192,7 +192,11 @@ module Attributes
   end
 
   def is? attr
-    send "#{attr}?".to_sym
+    send "#{attr}?"
+  end
+
+  def is attr
+    send "#{attr}=", true
   end
 
 end
