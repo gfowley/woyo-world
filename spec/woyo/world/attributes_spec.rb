@@ -5,57 +5,62 @@ describe Woyo::Attributes do
   before :all do
     class AttrTest
       include Woyo::Attributes
-      attributes :attr1, :attr2, :attr3
+      #attributes :attr1, :attr2, :attr3
     end
   end
   
-  it 'names can be listed for class' do
-    attrs = AttrTest.attributes
-    attrs.should be_instance_of Array
-    attrs.count.should eq 3
-    attrs.all? { |a| a.is_a? Symbol }.should be_true
-  end                       
+  # it 'names can be listed for class' do
+  #   attrs = AttrTest.attributes
+  #   attrs.should be_instance_of Array
+  #   attrs.count.should eq 3
+  #   attrs.all? { |a| a.is_a? Symbol }.should be_true
+  # end                       
 
-  it 'hash of names and values can be retrieved for instance' do
+  it '#attributes returns empty AttributesHash for instance with no attributes' do
     attr_test = AttrTest.new
     attr_test.attributes.should be_instance_of Woyo::Attributes::AttributesHash
-    AttrTest.attributes.each do |attr|
-      attr_test.send(attr, attr.to_s.upcase)
-    end
-    attr_test.attributes.keys.should eq [ :attr1, :attr2, :attr3 ]
-    attr_test.attributes.values.should eq [ 'ATTR1', 'ATTR2', 'ATTR3' ]
+    attr_test.attributes.count.should eq 0
   end
 
-  it 'hash of names and nil values can be retrieved for instance before populating' do
+  it '#attributes returns AttributesHash with names and nil values for instance with unpopulated attributes' do
     attr_test = AttrTest.new
+    attr_test.attributes :attr1, :attr2, :attr3
     attr_test.attributes.should be_instance_of Woyo::Attributes::AttributesHash
     attr_test.attributes.keys.should eq [ :attr1, :attr2, :attr3 ]  
     attr_test.attributes.values.should eq [ nil, nil, nil ]
   end
 
-  it 'hash of names and default values can be retrieved for instance before populating' do
-    expect { 
-      class DefTest
-        include Woyo::Attributes
-        attributes one: 1, two: 2, three: proc { 3 } 
-      end
-    }.to_not raise_error
-    def_test = DefTest.new
-    def_test.attributes.keys.should eq [ :one, :two, :three ]  
-    def_test.attributes.values.should eq [ 1, 2, 3 ]
+  it '#attributes returns AttributeHash with names and values for instance with populated attributes' do
+    attr_test = AttrTest.new
+    attr_test.attributes :attr1, :attr2, :attr3
+    attr_test.attributes.should be_instance_of Woyo::Attributes::AttributesHash
+    attr_test.attributes.keys.should eq [ :attr1, :attr2, :attr3 ]
+    attr_test.attributes.keys.each do |attr|
+      attr_test.send(attr, attr.to_s.upcase)
+    end
+    attr_test.attributes.values.should eq [ 'ATTR1', 'ATTR2', 'ATTR3' ]
+  end
+
+  it '#attributes returns AttributesHash with names and default values for instance with unpopulated attributes' do
+    attr_test = AttrTest.new
+    attr_test.attributes one: 1, two: 2, three: proc { 3 } 
+    attr_test.attributes.should be_instance_of Woyo::Attributes::AttributesHash
+    attr_test.attributes.keys.should eq [ :one, :two, :three ]  
+    attr_test.attributes.values.should eq [ 1, 2, 3 ]
   end
 
   it 'have convenience accessor :names for :keys' do
     attr_test = AttrTest.new
+    attr_test.attributes :attr1, :attr2, :attr3
     attr_test.attributes.names.should eq [ :attr1, :attr2, :attr3 ]  
   end
 
   it 'can be written via method with =' do
     attr_test = AttrTest.new
-    AttrTest.attributes.each do |attr|
+    attr_test.attributes :attr1, :attr2, :attr3
+    attr_test.attributes.names.each do |attr|
       attr_test.send("#{attr}=", attr.to_s.upcase)
     end
-    attr_test.attributes.count.should eq AttrTest.attributes.count
     attr_test.attributes.each do |name,value|
       value.should eq name.to_s.upcase
     end
@@ -63,10 +68,10 @@ describe Woyo::Attributes do
 
   it 'can be written via method without =' do
     attr_test = AttrTest.new
-    AttrTest.attributes.each do |attr|
+    attr_test.attributes :attr1, :attr2, :attr3
+    attr_test.attributes.names.each do |attr|
       attr_test.send(attr, attr.to_s.upcase)
     end
-    attr_test.attributes.count.should eq AttrTest.attributes.count
     attr_test.attributes.each do |name,value|
       value.should eq name.to_s.upcase
     end
@@ -74,112 +79,76 @@ describe Woyo::Attributes do
 
   it 'can be read via method' do
     attr_test = AttrTest.new
-    AttrTest.attributes.each do |attr|
+    attr_test.attributes :attr1, :attr2, :attr3
+    attr_test.attributes.names.each do |attr|
       attr_test.send(attr, attr.to_s.upcase)
     end
-    attr_test.attributes.count.should eq AttrTest.attributes.count
     attr_test.attributes.each do |name,value|
       eval("attr_test.#{name}").should eq value
     end
   end
 
   it 'list can be added to' do
-    expect {
-      class AttrTest
-        attributes :attr4, :attr5, :attr6
-      end
-    }.to_not raise_error
-    AttrTest.attributes.count.should eq 6
     attr_test = AttrTest.new
-    AttrTest.attributes.each do |attr|
-      attr_test.send(attr, attr.to_s.upcase)
-    end
+    attr_test.attributes :attr1, :attr2, :attr3
+    attr_test.attributes :attr4, :attr5, :attr6
     attr_test.attributes.count.should eq 6
+    attr_test.attributes.names.should eq [ :attr1, :attr2, :attr3, :attr4, :attr5, :attr6 ]
+  end
+
+  it 'list can be added to without duplication' do
+    attr_test = AttrTest.new
+    attr_test.attributes :attr1, :attr2, :attr3
+    attr_test.attributes :attr2, :attr3, :attr4
+    attr_test.attributes.count.should eq 4
+    attr_test.attributes.names.should eq [ :attr1, :attr2, :attr3, :attr4 ]
   end
 
   it 'can be defined with "attribute"' do
-    expect {
-      class AttrTest
-        attribute :open
-      end
-    }.to_not raise_error
     attr_test = AttrTest.new
+    attr_test.attribute :open
     attr_test.open.should be_nil
     attr_test.open = true
     attr_test.open.should be_true
   end
       
   it 'can have a default value' do
-    expect { 
-      class AttrTest
-        attributes attr_with_array___default: [ 1, 2, 3 ]
-        attributes attr_with_hash____default: { a: 1, b: 2, c: 3 }
-        attributes attr_with_number__default: 12345
-        attributes attr_with_string__default: "abcde"
-        attributes attr_with_boolean_default: true
-      end
-    }.to_not raise_error
     attr_test = AttrTest.new
+    attr_test.attributes attr_with_array___default: [ 1, 2, 3 ]
+    attr_test.attributes attr_with_hash____default: { a: 1, b: 2, c: 3 }
+    attr_test.attributes attr_with_number__default: 12345
+    attr_test.attributes attr_with_string__default: "abcde"
+    attr_test.attributes attr_with_boolean_default: true
     attr_test.attr_with_array___default.should eq [ 1, 2, 3 ]
-    attr_test.attr_with_array___default = :array
-    attr_test.attr_with_array___default.should eq :array
     attr_test.attr_with_hash____default.should eq ( { a: 1, b: 2, c: 3 } )
-    attr_test.attr_with_hash____default = :hash
-    attr_test.attr_with_hash____default.should eq :hash
     attr_test.attr_with_number__default.should eq 12345
-    attr_test.attr_with_number__default = :number
-    attr_test.attr_with_number__default.should eq :number
     attr_test.attr_with_string__default.should eq "abcde"
-    attr_test.attr_with_string__default = :string
-    attr_test.attr_with_string__default.should eq :string
     attr_test.attr_with_boolean_default.should eq true
-    attr_test.attr_with_boolean_default = :boolean
-    attr_test.attr_with_boolean_default.should eq :boolean
   end
 
   it 'can have a default proc' do
-    expect {
-      class AttrTest
-        attributes attr_with_proc_default: proc { Time.now }
-      end
-    }.to_not raise_error
     attr_test = AttrTest.new
+    attr_test.attributes attr_with_proc_default: proc { Time.now }
     attr_test.attr_with_proc_default.should be < Time.now
   end
 
   it 'default proc runs in instance scope' do
-    expect {
-      class AttrTest
-        attributes attr_with_proc_default: proc { |this| this.my_method }
-        def my_method
-          "okay"
-        end
-      end
-    }.to_not raise_error
     attr_test = AttrTest.new
+    attr_test.define_singleton_method(:my_method) { "okay" }
+    attr_test.attributes attr_with_proc_default: proc { |this| this.my_method }
     attr_test.attr_with_proc_default.should eq "okay"
   end
 
   it 'can have a default lambda' do
-    expect {
-      class AttrTest
-        attributes attr_with_lambda_default: lambda { Time.now }
-      end
-    }.to_not raise_error
     attr_test = AttrTest.new
+    attr_test.attributes attr_with_lambda_default: lambda { Time.now }
     attr_test.attr_with_lambda_default.should be < Time.now
   end
 
   it 'default lambda runs in instance scope' do
-    expect {
-      class AttrTest
-        attributes attr_with_lambda_default: lambda { |this| this.my_method }
-        def my_method
-          "okay"
-        end
-      end
-    }.to_not raise_error
     attr_test = AttrTest.new
+    attr_test.define_singleton_method(:my_method) { "okay" }
+    attr_test.attributes attr_with_lambda_default: lambda { |this| this.my_method }
     attr_test.attr_with_lambda_default.should eq "okay"
   end
 
