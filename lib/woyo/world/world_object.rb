@@ -1,6 +1,6 @@
 
 require_relative 'attributes'
-require_relative 'dsl'
+require_relative 'evaluate'
 
 module Woyo
 
@@ -8,7 +8,7 @@ class WorldObject
 
   #prepend Attributes
   include Attributes
-  include DSL
+  include Evaluate
 
   attr_reader :id, :context
   attr_accessor :_test
