@@ -28,7 +28,7 @@ ok    query boolean attribute values... ?
       dark?        # ... dark ? true : false
       is? :dark    # ... def is? attr ; attributes[attr] ? true : false ; end
 
-    additional class level define (and detect?) boolean attribute values... 
+ok    additional class level define (and detect?) boolean attribute values... 
 
       is :open
       is :dark
@@ -55,7 +55,7 @@ ok    attribute methods for members in parent
       world_object.sword
       world_object.knife
 
-    is group a namespace ? - optional ... attribute methods in group
+no    is group a namespace ? - optional ... attribute methods in group
 
       world_object.weapons.sword
       world_object.weapons.knife
