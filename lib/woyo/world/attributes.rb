@@ -30,25 +30,6 @@ module Attributes
       @groups ||= {}
     end
 
-    def group sym, *attrs
-      @groups ||= {}
-      group = @groups[sym] ? @groups[sym] : ( @groups[sym] = [] )
-      self.attributes *attrs
-      attrs.each do |attr|
-        if attr.kind_of? Hash
-          attr.each do |attr_sym,default_value|
-            group << attr_sym
-          end
-        else
-          group << attr
-        end
-      end
-      define_singleton_method sym do
-        groups[sym]  
-      end
-      group
-    end
-
     def boolean_groups
       @boolean_groups ||={}
     end
@@ -74,17 +55,17 @@ module Attributes
       group
     end
 
-    def is *attrs
-      @is_overrides ||= []
-      attrs.each do |attr|
-        @is_overrides << attr unless @is_overrides.include? attr 
-        self.attribute( { attr => true } )
-      end
-    end
+    # def is *attrs
+    #   @is_overrides ||= []
+    #   attrs.each do |attr|
+    #     @is_overrides << attr unless @is_overrides.include? attr 
+    #     self.attribute( { attr => true } )
+    #   end
+    # end
 
-    def is_overrides
-      @is_overrides ||= []
-    end
+    # def is_overrides
+    #   @is_overrides ||= []
+    # end
 
   end  # module ClassMethods
 
@@ -193,6 +174,25 @@ module Attributes
 
   def is attr
     send "#{attr}=", true
+  end
+
+  def group sym, *attrs
+    @groups ||= {}
+    group = @groups[sym] ? @groups[sym] : ( @groups[sym] = [] )
+    attributes *attrs
+    attrs.each do |attr|
+      if attr.kind_of? Hash
+        attr.each do |attr_sym,default_value|
+          group << attr_sym
+        end
+      else
+        group << attr
+      end
+    end
+    define_singleton_method sym do
+      groups[sym]  
+    end
+    group
   end
 
 end
