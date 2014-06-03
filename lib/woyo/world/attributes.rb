@@ -26,34 +26,14 @@ module Attributes
 
   module ClassMethods
 
-    def groups
-      @groups ||= {}
-    end
+    # def groups
+    #   @groups ||= {}
+    # end
 
-    def boolean_groups
-      @boolean_groups ||={}
-    end
+    # def boolean_groups
+    #   @boolean_groups ||={}
+    # end
 
-    def group! sym, *attrs
-      @boolean_groups ||= {}
-      group = @boolean_groups[sym] ? @boolean_groups[sym] : ( @boolean_groups[sym] = [] )
-      self.attributes *attrs
-      attrs.each do |attr|
-        define_attr? attr
-        define_attr! attr
-        if attr.kind_of? Hash
-          attr.each do |attr_sym,default_value|
-            group << attr_sym
-          end
-        else
-          group << attr
-        end
-      end
-      define_singleton_method sym do
-        boolean_groups[sym]
-      end
-      group
-    end
 
     # def is *attrs
     #   @is_overrides ||= []
@@ -90,36 +70,6 @@ module Attributes
   # def initialize_is_overrides
   #   self.class.is_overrides.each { |attr| send "#{attr}!" } 
   # end
-
-  def groups
-    @groups
-  end
-
-  def boolean_groups
-    @boolean_groups
-  end
- 
-  def attributes *attrs
-    @attributes ||= Woyo::Attributes::AttributesHash.new
-    return @attributes if attrs.empty?
-    attrs.each do |attr|
-      if attr.kind_of? Hash
-        attr.each do |attr_sym,default|
-          define_attr_methods attr_sym, default
-          @attributes[attr_sym] = send "#{attr_sym}_default"
-        end
-      else
-        unless @attributes.include? attr
-          define_attr_methods attr
-          @attributes[attr] = nil
-        end
-      end
-    end
-  end
-
-  def attribute *attrs
-    attributes *attrs
-  end
 
   def define_attr_methods attr, default = nil
     define_attr_default attr, default
@@ -176,23 +126,74 @@ module Attributes
     send "#{attr}=", true
   end
 
+  def attribute *attrs
+    attributes *attrs
+  end
+
+  def attributes *attrs
+    @attributes ||= Woyo::Attributes::AttributesHash.new
+    return @attributes if attrs.empty?
+    attrs.each do |attr|
+      if attr.kind_of? Hash
+        attr.each do |attr_sym,default|
+          define_attr_methods attr_sym, default
+          @attributes[attr_sym] = send "#{attr_sym}_default"
+        end
+      else
+        unless @attributes.include? attr
+          define_attr_methods attr
+          @attributes[attr] = nil
+        end
+      end
+    end
+  end
+
+  def groups
+    @groups
+  end
+
   def group sym, *attrs
     @groups ||= {}
-    group = @groups[sym] ? @groups[sym] : ( @groups[sym] = [] )
+    grp = @groups[sym] ? @groups[sym] : ( @groups[sym] = Woyo::Attributes::Group.new attributes )
     attributes *attrs
     attrs.each do |attr|
       if attr.kind_of? Hash
         attr.each do |attr_sym,default_value|
-          group << attr_sym
+          grp << attr_sym
         end
       else
-        group << attr
+        grp << attr
       end
     end
     define_singleton_method sym do
-      groups[sym]  
+      @groups[sym]  
     end
-    group
+    grp
+  end
+
+  def exclusions
+    @exclusions
+  end
+ 
+  def exclusion sym, *attrs
+    @exclusions ||= {}
+    exc = @exclusions[sym] ? @exclusions[sym] : ( @exclusions[sym] = Woyo::Attributes::Exclusion.new attributes )
+    attributes *attrs
+    attrs.each do |attr|
+      define_attr? attr
+      define_attr! attr
+      if attr.kind_of? Hash
+        attr.each do |attr_sym,default_value|
+          exc << attr_sym
+        end
+      else
+        exc << attr
+      end
+    end
+    define_singleton_method sym do
+      @exclusions[sym]
+    end
+    exc
   end
 
 end

@@ -97,10 +97,10 @@ describe Woyo::Attributes::Group do
 
 end
 
-describe Woyo::Attributes::BooleanGroup do
+describe Woyo::Attributes::Exclusion do
 
   before :all do
-    @group = Woyo::Attributes::BooleanGroup.new Woyo::Attributes::AttributesHash.new, :warm, :cool, :cold
+    @group = Woyo::Attributes::Exclusion.new Woyo::Attributes::AttributesHash.new, :warm, :cool, :cold
   end
 
   it 'has default' do
@@ -134,7 +134,7 @@ describe Woyo::Attributes::BooleanGroup do
   end
 
   it 'for a binary group setting a true member false sets the other true' do
-    @binary_group = Woyo::Attributes::BooleanGroup.new Woyo::Attributes::AttributesHash.new, :yes, :no
+    @binary_group = Woyo::Attributes::Exclusion.new Woyo::Attributes::AttributesHash.new, :yes, :no
     @binary_group[:yes].should be true
     @binary_group[:no].should be false
     @binary_group[:yes] = false

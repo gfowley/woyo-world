@@ -213,9 +213,8 @@ describe Woyo::Attributes do
 
     let(:gat) { AttrTest.new }
 
-    before :all do
+    before :each do
       gat.group :stooges, :larry, :curly, :moe
-      #gat.group :cars,    :mustang, :ferarri, :mini 
     end
 
     it 'can be accessed by named instance methods' do
@@ -230,22 +229,11 @@ describe Woyo::Attributes do
     end
 
     it 'names and default values can be retrieved' do
-      expect { 
-        class GroupDefTest
-          include Woyo::Attributes
-          group :numbers, one: 1, two: 2, three: proc { 3 } 
-        end
-      }.to_not raise_error
-      def_test = GroupDefTest.new
-      groups = def_test.groups
-      groups.should be_instance_of Hash
-      groups.count.should eq 1
-      groups.names.should eq [ :numbers ]
-      groups[:numbers].should be_instance_of Woyo::Attributes::Group
-      groups[:numbers].names.should eq [ :one, :two, :three ]
-      groups[:numbers].values.should eq [ 1, 2, 3 ]
-      def_test.numbers.names.should eq [ :one, :two, :three ]  
-      def_test.numbers.values.should eq [ 1, 2, 3 ]
+      gat.group :numbers, one: 1, two: 2, three: proc { 3 } 
+      gat.numbers.should be_instance_of Woyo::Attributes::Group
+      gat.numbers.count.should eq 3
+      gat.numbers.names.should eq [ :one, :two, :three ]  
+      gat.numbers.values.should eq [ 1, 2, 3 ]
     end
 
     it 'members can be accessed via group' do
@@ -254,107 +242,88 @@ describe Woyo::Attributes do
       gat.stooges[:curly].should eq 'bald'
     end
 
-    it 'members are also attributes' do
-      all_attrs = [ :larry, :curly, :moe, :mustang, :ferarri, :mini ]  
-      gat.attributes.keys.should eq all_attrs 
-      all_attrs.each do |attr|
-        gat.should respond_to attr
-      end
-    end
-
     it 'members are attributes' do
-      gat.stooges[:moe] = 'knucklehead'
-      gat.stooges[:moe].should eq 'knucklehead'
-      gat.moe.should eq 'knucklehead' 
+      gat.attributes.keys.should eq [ :larry, :curly, :moe ]  
+      gat.stooges[:larry] = 'knucklehead'
+      gat.larry.should eq 'knucklehead' 
     end
 
     it 'attributes are members' do
-      gat.ferarri = 'fast'
-      gat.ferarri.should eq 'fast'
-      gat.cars[:ferarri].should eq 'fast'
+      gat.moe = 'smart'
+      gat.stooges[:moe].should eq 'smart'
     end
 
-    #it '#groups returns list or groups or something...'
+    it '#groups returns hash with names and groups' do
+      gat.group :numbers, one: 1, two: 2, three: proc { 3 } 
+      gat.groups.should eq( { stooges: gat.stooges, numbers: gat.numbers } )
+    end
 
   end
 
-  context 'boolean groups' do
+  context 'exclusions' do
 
-    before :all do
-      class ExGroupTest
-        include Woyo::Attributes
-        group! :temp, :hot, :warm, :cool, :cold
-        group! :light, :dark, :dim, :bright
-      end
+    let(:xat) { AttrTest.new }
+
+    before :each do
+      xat.exclusion :temp, :warm, :cool, :cold
     end
 
-    it 'are listed for a class' do
-      groups = ExGroupTest.boolean_groups
-      groups.should be_instance_of Hash
-      groups.count.should eq 2
-      groups.keys.should eq [ :temp, :light ]
-      groups[:temp].should eq [ :hot, :warm, :cool, :cold ] 
-      groups[:light].should eq [ :dark, :dim, :bright ]
-    end
-
-    it 'accessor returns BooleanGroup instance' do
-      egt = ExGroupTest.new
-      egt.temp.should be_instance_of Woyo::Attributes::BooleanGroup
+    it 'can be accessed by named instance methods' do
+      xat.temp.should be_instance_of Woyo::Attributes::Exclusion
     end
 
     it 'first member is true, rest are false' do
-      egt = ExGroupTest.new
-      egt.light[:dark].should eq true
-      egt.light[:dim].should eq false
-      egt.light[:bright].should eq false
+      xat.temp[:warm].should eq true
+      xat.temp[:cool].should eq false
+      xat.temp[:cold].should eq false
     end
 
     it 'making group member true affects member attributes' do
-      egt = ExGroupTest.new
-      egt.temp[:cold] = true
-      egt.cold.should be true
-      egt.cool.should be false
-      egt.warm.should be false
-      egt.hot.should be false
+      xat.temp[:cold] = true
+      xat.cold.should be true
+      xat.cool.should be false
+      xat.warm.should be false
     end
 
     it 'making attribute true affects group members' do
-      egt = ExGroupTest.new
-      egt.cold = true
-      egt.light[:cold].should be true
-      egt.light[:cool].should be false
-      egt.light[:warm].should be false
-      egt.light[:hot].should be false
+      xat.cool = true
+      xat.temp[:cold].should be false
+      xat.temp[:cool].should be true
+      xat.temp[:warm].should be false
+    end
+
+    it '#exclusions returns hash with names and exlcusions' do
+      xat.exclusion :light, :dark, :dim, :bright
+      xat.exclusions.should eq( { temp: xat.temp, light: xat.light } )
     end
 
   end
 
-  context 'assigned a Hash as a value' do
+  context 'with Hash value' do
 
-    before :all do
-      class AttrHashTest
-        include Woyo::Attributes
-        attributes :reaction, :hot, :cold
-      end
-      @aht = AttrHashTest.new
+    let(:hat) { AttrTest.new }
+
+    before :each do
+      hat.attributes :reaction, :hot, :cold
     end
 
-    it 'accepts the hash as a value' do
-      expect { @aht.reaction hot: 'Sweat', cold: 'Shiver' }.to_not raise_error
+    it 'accept a hash as value' do
+      expect { hat.reaction hot: 'Sweat', cold: 'Shiver' }.to_not raise_error
     end
 
-    it 'returns the value of the first key that evaluates as a true attribute' do
-      @aht.cold = true
-      @aht.reaction.should eq 'Shiver'
-      @aht.hot = true
-      @aht.reaction.should eq 'Sweat'
+    it 'return the value of the first key that evaluates as a true attribute' do
+      hat.reaction hot: 'Sweat', cold: 'Shiver' 
+      hat.cold = true
+      hat.reaction.should eq 'Shiver'
+      hat.hot = true
+      hat.reaction.should eq 'Sweat'
     end
 
-    it 'otherwise it returns the hash' do
-      reactions = { :hot => 'Sweat', :cold => 'Shiver' }
-      @aht.cold = false
-      @aht.hot = false
-      @aht.reaction.should eq reactions
+    it 'otherwise return the hash' do
+      hat.reaction hot: 'Sweat', cold: 'Shiver' 
+      hat.cold = false
+      hat.hot = false
+      hat.reaction.should eq ( { :hot => 'Sweat', :cold => 'Shiver' } )
     end
 
   end
