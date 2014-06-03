@@ -4,9 +4,12 @@ module Woyo
 
 class Way < WorldObject
 
-  attributes :description, name: lambda { |this| this.id.to_s.capitalize }
-
-  group! :passable, :closed, :open  # defaults to closed: true 
+  def initialize_object
+    super
+    attributes :description, name: lambda { |this| this.id.to_s.capitalize }
+    attribute :going 
+    exclusion :passable, :closed, :open  # defaults to closed: true 
+  end
 
   def world
     from ? from.world : nil
@@ -46,7 +49,6 @@ class Way < WorldObject
     end
   end
 
-  attribute :going 
   
   def go
     { go: open?, going: self.going }

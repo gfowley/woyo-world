@@ -3,15 +3,16 @@ require 'woyo/world/world'
 require 'woyo/world/location'
 
 describe Woyo::Character do
- 
+
+  let(:char) { Woyo::Character.new :boss }
+
   it 'has attributes' do
-    expected_attrs = [:name,:description]
-    Woyo::Character.attributes.sort.should eq expected_attrs.sort 
+    char.attributes.should be_instance_of Woyo::Attributes::AttributesHash
+    char.attributes.names.sort.should eq [:description,:name]
   end
 
   it 'name attribute defaults to id' do
-    wo = Woyo::Character.new(:boss)
-    wo.name.should eq 'Boss'
+    char.name.should eq 'Boss'
   end
 
   it 'accepts world for parameter context:' do

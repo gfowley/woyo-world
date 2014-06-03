@@ -4,14 +4,15 @@ require 'woyo/world/way'
 
 describe Woyo::Location do
 
+  let(:location) { Woyo::Location.new :home }
+
   it 'has attributes' do
-    expected_attrs = [:name,:description]
-    Woyo::Location.attributes.sort.should eq expected_attrs.sort 
+    location.attributes.should be_instance_of Woyo::Attributes::AttributesHash
+    location.attributes.names.sort.should eq [:description,:name]
   end
 
   it 'name attribute defaults to id' do
-    wo = Woyo::Location.new(:home)
-    wo.name.should eq 'Home'
+    location.name.should eq 'Home'
   end
 
   it 'accepts world for parameter context:' do

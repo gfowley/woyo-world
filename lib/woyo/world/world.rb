@@ -7,9 +7,12 @@ module Woyo
 
 class World < WorldObject
 
-  attributes :name, :description, :start
-  
   children :location, :character
+
+  def initialize_object
+    super
+    attributes :name, :description, :start
+  end
 
   def initialize &block
     super nil, context: nil, &block

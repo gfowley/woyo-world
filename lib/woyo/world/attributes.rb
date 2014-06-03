@@ -8,46 +8,48 @@ module Woyo
 
 module Attributes
 
-  def self.included(base)
-    base.extend(ClassMethods)
-  end
+=begin
+
+  # def self.included(base)
+  #   base.extend(ClassMethods)
+  # end
 
   # def self.prepended(base)
   #   base.singleton_class.prepend(ClassMethods)  # base.extend(ClassMethods) also seems to work, what's the diff ?
   # end
   
-  def initialize *args
-    # initialize_attributes
-    # initialize_groups
-    # initialize_boolean_groups
-    # initialize_is_overrides
-    #super # we'll need this if we prepend Attributes again 
-  end
+  # def initialize *args
+  #   # initialize_attributes
+  #   # initialize_groups
+  #   # initialize_boolean_groups
+  #   # initialize_is_overrides
+  #   #super # we'll need this if we prepend Attributes again 
+  # end
 
-  module ClassMethods
+  # module ClassMethods
 
-    # def groups
-    #   @groups ||= {}
-    # end
+  #   # def groups
+  #   #   @groups ||= {}
+  #   # end
 
-    # def boolean_groups
-    #   @boolean_groups ||={}
-    # end
+  #   # def boolean_groups
+  #   #   @boolean_groups ||={}
+  #   # end
 
 
-    # def is *attrs
-    #   @is_overrides ||= []
-    #   attrs.each do |attr|
-    #     @is_overrides << attr unless @is_overrides.include? attr 
-    #     self.attribute( { attr => true } )
-    #   end
-    # end
+  #   # def is *attrs
+  #   #   @is_overrides ||= []
+  #   #   attrs.each do |attr|
+  #   #     @is_overrides << attr unless @is_overrides.include? attr 
+  #   #     self.attribute( { attr => true } )
+  #   #   end
+  #   # end
 
-    # def is_overrides
-    #   @is_overrides ||= []
-    # end
+  #   # def is_overrides
+  #   #   @is_overrides ||= []
+  #   # end
 
-  end  # module ClassMethods
+  # end  # module ClassMethods
 
   # def initialize_attributes
   #   @attributes = self.class.attributes.each_with_object(Woyo::Attributes::AttributesHash.new) do |attr,hash|
@@ -70,6 +72,8 @@ module Attributes
   # def initialize_is_overrides
   #   self.class.is_overrides.each { |attr| send "#{attr}!" } 
   # end
+
+=end
 
   def define_attr_methods attr, default = nil
     define_attr_default attr, default
