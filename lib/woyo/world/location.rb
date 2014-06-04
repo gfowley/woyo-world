@@ -4,7 +4,7 @@ module Woyo
 
 class Location < WorldObject
 
-  children   :way, :character
+  children   :way
 
   def initialize_object
     super

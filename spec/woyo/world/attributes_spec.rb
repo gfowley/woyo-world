@@ -278,6 +278,12 @@ describe Woyo::Attributes do
       xat.temp[:cold].should eq false
     end
 
+    it '#value returns true member' do
+      xat.temp.value.should eq :warm
+      xat.temp[:cold] = true
+      xat.temp.value.should eq :cold
+    end
+
     it 'making group member true affects member attributes' do
       xat.temp[:cold] = true
       xat.cold.should be true

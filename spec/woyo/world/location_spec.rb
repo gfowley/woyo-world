@@ -67,15 +67,15 @@ describe Woyo::Location do
     home.world.should eq world
   end
 
-  it '#characters' do
-    home = Woyo::Location.new :home do
-      character :peter do
-      end
-    end
-    home.characters.size.should eq 1
-    peter = home.characters[:peter]
-    peter.should be_instance_of Woyo::Character
-    peter.location.should be home
-  end
+  # it '#characters' do
+  #   home = Woyo::Location.new :home do
+  #     character :peter do
+  #     end
+  #   end
+  #   home.characters.size.should eq 1
+  #   peter = home.characters[:peter]
+  #   peter.should be_instance_of Woyo::Character
+  #   peter.location.should be home
+  # end
 
 end
