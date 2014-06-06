@@ -1,7 +1,7 @@
 
 module Woyo
 
-module DSL
+module Evaluate
   
   def evaluate &block
     (block.arity < 1 ? (instance_eval &block) : block.call(self)) if block_given?
@@ -35,7 +35,6 @@ module DSL
             when !#{child} && !known &&  block_given? then #{child} = self.#{child}s[id] = #{child.capitalize}.new id, context: self, &block
             when !#{child} && !known && !block_given? then #{child} = self.#{child}s[id] = #{child.capitalize}.new id, context: self
             end
-            # maybe: god-like lists of everything at world level... would need unique ids... self.world.#{child}s[id] = #{child} if !known && self.world
             #{child}
           end
 

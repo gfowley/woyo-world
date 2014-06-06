@@ -4,14 +4,15 @@ require 'woyo/world/way'
 
 describe Woyo::Way do
 
+  let(:way) { Woyo::Way.new :door }
+
   it 'has attributes' do
-    expected_attrs = [:name,:description,:open,:closed,:going]
-    Woyo::Way.attributes.sort.should eq expected_attrs.sort 
+    way.attributes.should be_instance_of Woyo::Attributes::AttributesHash
+    way.attributes.names.sort.should eq [:closed,:description,:going,:name,:open]
   end
 
   it 'name attribute defaults to id' do
-    wo = Woyo::Way.new(:door)
-    wo.name.should eq 'Door'
+    way.name.should eq 'Door'
   end
 
   it 'accepts location for parameter context:' do

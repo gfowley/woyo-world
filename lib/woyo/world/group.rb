@@ -33,7 +33,7 @@ module Attributes
 
     extend Forwardable
 
-    def_delegators :@members, :count
+    def_delegators :@members, :count, :<<
     def_delegators :@attributes, :[], :[]=
 
     attr_reader :members, :attributes
@@ -53,19 +53,34 @@ module Attributes
 
   end
 
-  class BooleanGroup < Group
+  class Exclusion < Group
 
     attr_reader :default 
     
     def initialize attributes, *members
       super
-      @default = @members.first
-      self[@default] = true
-      @members.each { |member| @attributes.add_attribute_listener member, self }
+      if @members && ! @members.empty?
+        @default = @members.first
+        self[@default] = true
+        @members.each { |member| @attributes.add_attribute_listener member, self }
+      end
+    end
+
+    def << new_member
+      raise "#{new_member} is not an attribute" unless @attributes.names.include? new_member
+      super
+      if @members.count == 1
+        @default = new_member
+        @attributes.set new_member, true
+      else
+        @attributes.set new_member, false
+      end
+      @attributes.add_attribute_listener new_member, self
+      self
     end
 
     def []= this_member, value
-      raise '#{this_member} is not a member of this group' unless @members.include? this_member
+      raise "#{this_member} is not a member of this group" unless @members.include? this_member
       super
       if value #true
         # sync group members via AttributesHash#set to prevent triggering notify

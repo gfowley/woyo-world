@@ -4,9 +4,12 @@ module Woyo
 
 class Location < WorldObject
 
-  attributes :description, name: lambda { |this| this.id.to_s.capitalize }
+  children   :way
 
-  children   :way, :character
+  def initialize_object
+    super
+    attributes :description, name: lambda { |this| this.id.to_s.capitalize }
+  end
 
   def world
     self.context

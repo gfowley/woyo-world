@@ -1,14 +1,13 @@
 
 require_relative 'attributes'
-require_relative 'dsl'
+require_relative 'evaluate'
 
 module Woyo
 
 class WorldObject
 
-  #prepend Attributes
   include Attributes
-  include DSL
+  include Evaluate
 
   attr_reader :id, :context
   attr_accessor :_test
@@ -16,9 +15,11 @@ class WorldObject
   def initialize id, context: nil, &block
     @id = id.to_s.downcase.to_sym
     @context = context
-    super  # initializes attributes
+    initialize_object
     evaluate &block
   end
+
+  def initialize_object ; end
 
 end
 
