@@ -7,18 +7,18 @@ describe Woyo::Location do
   let(:location) { Woyo::Location.new :home }
 
   it 'has attributes' do
-    location.attributes.should be_instance_of Woyo::Attributes::AttributesHash
-    location.attributes.names.sort.should eq [:description,:name]
+    expect(location.attributes).to be_instance_of Woyo::Attributes::AttributesHash
+    expect(location.attributes.names.sort).to eq [:description,:name]
   end
 
   it 'name attribute defaults to id' do
-    location.name.should eq 'Home'
+    expect(location.name).to eq 'Home'
   end
 
   it 'accepts world for parameter context:' do
     wo = nil
     expect { wo = Woyo::Location.new(:my_id, context: Woyo::World.new) }.to_not raise_error
-    wo.context.should be_instance_of Woyo::World
+    expect(wo.context).to be_instance_of Woyo::World
   end
 
   context 'ways' do
@@ -29,8 +29,8 @@ describe Woyo::Location do
         way( :down ) { to :cellar }
         way( :out  ) { to :garden }
       end
-      home.ways.count.should eq 3
-      home.ways.keys.should eq [ :up, :down, :out ]
+      expect(home.ways.count).to eq 3
+      expect(home.ways.keys).to eq [ :up, :down, :out ]
     end
 
     it 'are from here' do
@@ -40,7 +40,7 @@ describe Woyo::Location do
         end
       end
       door = home.ways[:door]
-      door.from.should eq home
+      expect(door.from).to eq home
     end
 
     it 'go to locations' do
@@ -50,21 +50,21 @@ describe Woyo::Location do
         end
       end
       door = home.ways[:door]
-      door.to.should be_instance_of Woyo::Location
-      door.to.id.should eq :away
+      expect(door.to).to be_instance_of Woyo::Location
+      expect(door.to.id).to eq :away
     end
 
   end
 
   it '#here' do
     home = Woyo::Location.new :home 
-    home.here.should be home
+    expect(home.here).to be home
   end
 
   it '#world' do
     world = Woyo::World.new
     home = Woyo::Location.new :home, context: world
-    home.world.should eq world
+    expect(home.world).to eq world
   end
 
   # it '#characters' do

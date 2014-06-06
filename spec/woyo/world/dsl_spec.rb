@@ -12,9 +12,9 @@ describe 'DSL' do
         description 'A small world'
         start :home
       end
-      world.name.should eq 'Small'
-      world.description.should eq 'A small world'
-      world.start.should eq :home
+      expect(world.name).to eq 'Small'
+      expect(world.description).to eq 'A small world'
+      expect(world.start).to eq :home
     end
 
     it 'contains locations' do
@@ -25,11 +25,11 @@ describe 'DSL' do
           name '3'
         end
       end
-      world.locations.count.should eq 3
-      world.locations[:one].should be_instance_of Woyo::Location
-      world.locations[:two].should be_instance_of Woyo::Location
-      world.locations[:three].should be_instance_of Woyo::Location
-      world.locations[:three].name.should eq '3'
+      expect(world.locations.count).to eq 3
+      expect(world.locations[:one]).to be_instance_of Woyo::Location
+      expect(world.locations[:two]).to be_instance_of Woyo::Location
+      expect(world.locations[:three]).to be_instance_of Woyo::Location
+      expect(world.locations[:three].name).to eq '3'
     end
 
   end
@@ -64,9 +64,9 @@ describe 'DSL' do
         end
       end
       location = world.locations[:house]
-      location.id.should eq :house
-      location.name.should eq 'Home'
-      location.description.should eq 'Sweet'
+      expect(location.id).to eq :house
+      expect(location.name).to eq 'Home'
+      expect(location.description).to eq 'Sweet'
     end
 
     it 'redefined' do
@@ -85,11 +85,11 @@ describe 'DSL' do
           description 'Sweet'
         end
       end
-      world.locations.count.should eq 1
+      expect(world.locations.count).to eq 1
       location = world.locations[:house]
-      location.id.should eq :house
-      location.name.should eq 'Home'
-      location.description.should eq 'Sweet'
+      expect(location.id).to eq :house
+      expect(location.name).to eq 'Home'
+      expect(location.description).to eq 'Sweet'
     end
 
     it 'multiple with attributes' do
@@ -103,16 +103,16 @@ describe 'DSL' do
           description 'Okay'
         end
       end
-      world.should be_instance_of Woyo::World
-      world.locations.count.should eq 2
+      expect(world).to be_instance_of Woyo::World
+      expect(world.locations.count).to eq 2
       home = world.locations[:home]
-      home.id.should eq :home
-      home.name.should eq 'Home'
-      home.description.should eq 'Sweet'
+      expect(home.id).to eq :home
+      expect(home.name).to eq 'Home'
+      expect(home.description).to eq 'Sweet'
       away = world.locations[:away]
-      away.id.should eq :away
-      away.name.should eq 'Away'
-      away.description.should eq 'Okay'
+      expect(away.id).to eq :away
+      expect(away.name).to eq 'Away'
+      expect(away.description).to eq 'Okay'
     end
 
   end
@@ -131,15 +131,15 @@ describe 'DSL' do
           end
         end
         home = world.locations[:home]
-        home.ways.count.should eq 1
+        expect(home.ways.count).to eq 1
         door = home.ways[:door]
-        door.should be_instance_of Woyo::Way
-        door.name.should eq 'Large Wooden Door'
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :away
+        expect(door).to be_instance_of Woyo::Way
+        expect(door.name).to eq 'Large Wooden Door'
+        expect(door.to).to be_instance_of Woyo::Location
+        expect(door.to.id).to eq :away
         away = world.locations[:away]
-        away.ways.count.should eq 0
-        door.to.should eq away
+        expect(away.ways.count).to eq 0
+        expect(door.to).to eq away
       end
 
       it 'to existing location' do
@@ -154,15 +154,15 @@ describe 'DSL' do
           end
         end
         home = world.locations[:home]
-        home.ways.count.should eq 1
+        expect(home.ways.count).to eq 1
         door = home.ways[:door]
-        door.should be_instance_of Woyo::Way
-        door.name.should eq 'Large Wooden Door'
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :away
+        expect(door).to be_instance_of Woyo::Way
+        expect(door.name).to eq 'Large Wooden Door'
+        expect(door.to).to be_instance_of Woyo::Location
+        expect(door.to.id).to eq :away
         away = world.locations[:away]
-        away.ways.count.should eq 0
-        door.to.should eq away
+        expect(away.ways.count).to eq 0
+        expect(door.to).to eq away
       end
 
       it 'to same location' do
@@ -175,13 +175,13 @@ describe 'DSL' do
           end
         end
         home = world.locations[:home]
-        home.ways.count.should eq 1
+        expect(home.ways.count).to eq 1
         door = home.ways[:door]
-        door.should be_instance_of Woyo::Way
-        door.name.should eq 'Large Wooden Door'
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :home
-        door.to.should eq home
+        expect(door).to be_instance_of Woyo::Way
+        expect(door.name).to eq 'Large Wooden Door'
+        expect(door.to).to be_instance_of Woyo::Location
+        expect(door.to.id).to eq :home
+        expect(door.to).to eq home
       end
 
     end
@@ -202,15 +202,15 @@ describe 'DSL' do
           end
         end
         home = world.locations[:home]
-        home.ways.count.should eq 1
+        expect(home.ways.count).to eq 1
         door = home.ways[:door]
-        door.name.should eq 'Large Wooden Door'
-        door.description.should eq "Nicer"
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :away
+        expect(door.name).to eq 'Large Wooden Door'
+        expect(door.description).to eq "Nicer"
+        expect(door.to).to be_instance_of Woyo::Location
+        expect(door.to.id).to eq :away
         away = world.locations[:away]
-        away.ways.count.should eq 0
-        door.to.should eq away
+        expect(away.ways.count).to eq 0
+        expect(door.to).to eq away
       end
 
       it 'to existing location' do
@@ -229,15 +229,15 @@ describe 'DSL' do
           end
         end
         home = world.locations[:home]
-        home.ways.count.should eq 1
+        expect(home.ways.count).to eq 1
         door = home.ways[:door]
-        door.name.should eq 'Large Wooden Door'
-        door.description.should eq "Nicer"
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :away
+        expect(door.name).to eq 'Large Wooden Door'
+        expect(door.description).to eq "Nicer"
+        expect(door.to).to be_instance_of Woyo::Location
+        expect(door.to.id).to eq :away
         away = world.locations[:away]
-        away.ways.count.should eq 0
-        door.to.should eq away
+        expect(away.ways.count).to eq 0
+        expect(door.to).to eq away
       end
 
       it 'to same location' do
@@ -254,13 +254,13 @@ describe 'DSL' do
           end
         end
         home = world.locations[:home]
-        home.ways.count.should eq 1
+        expect(home.ways.count).to eq 1
         door = home.ways[:door]
-        door.name.should eq 'Large Wooden Door'
-        door.description.should eq "Nicer"
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :home
-        door.to.should eq home
+        expect(door.name).to eq 'Large Wooden Door'
+        expect(door.description).to eq "Nicer"
+        expect(door.to).to be_instance_of Woyo::Location
+        expect(door.to.id).to eq :home
+        expect(door.to).to eq home
       end
 
     end
@@ -287,20 +287,20 @@ describe 'DSL' do
       it 'an open way' do
         room = @world.locations[:room]
         stairs = room.ways[:stairs]
-        stairs.to.id.should eq :cellar
-        stairs.should be_open
-        stairs.description.should eq 'Rickety stairs lead down into darkness.'
-        stairs.go.should eq ( { go: true, going: 'Creaky steps lead uncertainly downwards...' } )
+        expect(stairs.to.id).to eq :cellar
+        expect(stairs).to be_open
+        expect(stairs.description).to eq 'Rickety stairs lead down into darkness.'
+        expect(stairs.go).to eq ( { go: true, going: 'Creaky steps lead uncertainly downwards...' } )
       end
 
       it 'a closed way' do
         room = @world.locations[:room]
         stairs = room.ways[:stairs]
-        stairs.to.id.should eq :cellar
+        expect(stairs.to.id).to eq :cellar
         stairs.close!
-        stairs.should be_closed
-        stairs.description.should eq 'Broken stairs end in darkness.'
-        stairs.go.should eq ( { go: false, going: 'The dangerous stairs are impassable.' } )
+        expect(stairs).to be_closed
+        expect(stairs.description).to eq 'Broken stairs end in darkness.'
+        expect(stairs.go).to eq ( { go: false, going: 'The dangerous stairs are impassable.' } )
       end
 
     end
@@ -347,12 +347,12 @@ describe 'DSL' do
             description 'Jolly'
           end
         end
-        world.characters.count.should eq 1
-        world.characters[:jim].should be_instance_of Woyo::Character
+        expect(world.characters.count).to eq 1
+        expect(world.characters[:jim]).to be_instance_of Woyo::Character
         jim = world.characters[:jim]
-        jim.location.should be_nil
-        jim.name.should eq 'James'
-        jim.description.should eq 'Jolly'
+        expect(jim.location).to be_nil
+        expect(jim.name).to eq 'James'
+        expect(jim.description).to eq 'Jolly'
       end
 
       it 'existing' do
@@ -365,12 +365,12 @@ describe 'DSL' do
             description 'Jovial'
           end
         end
-        world.characters.count.should eq 1
-        world.characters[:jim].should be_instance_of Woyo::Character
+        expect(world.characters.count).to eq 1
+        expect(world.characters[:jim]).to be_instance_of Woyo::Character
         jim = world.characters[:jim]
-        jim.location.should be_nil
-        jim.name.should eq 'James'
-        jim.description.should eq 'Jovial'
+        expect(jim.location).to be_nil
+        expect(jim.name).to eq 'James'
+        expect(jim.description).to eq 'Jovial'
       end
 
     end

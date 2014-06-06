@@ -9,11 +9,11 @@ describe Woyo::WorldObject do
     end
 
     it 'creates id' do
-      Woyo::WorldObject.new(:my_id).id.should eq :my_id
+      expect(Woyo::WorldObject.new(:my_id).id).to eq :my_id
     end
 
     it 'converts id to lowercase' do
-      Woyo::WorldObject.new(:MY_id ).id.should eq :my_id
+      expect(Woyo::WorldObject.new(:MY_id ).id).to eq :my_id
     end
 
     it 'accepts named parameter context:' do
@@ -23,7 +23,7 @@ describe Woyo::WorldObject do
     it 'accepts a block with arity 0' do
       result = ''
       Woyo::WorldObject.new( :home ) { result = 'ok' }
-      result.should eq 'ok'
+      expect(result).to eq 'ok'
     end
 
     it 'instance evals block with arity 0' do
@@ -33,18 +33,18 @@ describe Woyo::WorldObject do
     it 'accepts a block with arity 1' do
       result = ''
       Woyo::WorldObject.new( :home ) { |scope| result = 'ok' }
-      result.should eq 'ok'
+      expect(result).to eq 'ok'
     end
 
     it 'passes self to block with arity 1' do
-      Woyo::WorldObject.new( :home ) { |scope| scope.should be_instance_of Woyo::WorldObject }
+      Woyo::WorldObject.new( :home ) { |scope| expect(scope).to be_instance_of Woyo::WorldObject }
     end
 
   end
 
   it 'provides access to context' do
     wo = Woyo::WorldObject.new(:my_id, context: :just_a_test )
-    wo.context.should eq :just_a_test
+    expect(wo.context).to eq :just_a_test
   end
 
 end
