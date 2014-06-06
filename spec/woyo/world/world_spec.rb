@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'woyo/world/world'
 
 describe Woyo::World do

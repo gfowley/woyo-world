@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'woyo/world/attributes'
 
 describe Woyo::Attributes do

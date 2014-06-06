@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'woyo/world/character'
 require 'woyo/world/world'
 require 'woyo/world/location'

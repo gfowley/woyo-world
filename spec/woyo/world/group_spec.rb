@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'woyo/world/group'
 
 describe Woyo::Attributes::AttributesHash do
