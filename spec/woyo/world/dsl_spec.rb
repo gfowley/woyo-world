@@ -6,16 +6,28 @@ describe 'DSL' do
   let(:world) { Woyo::World.new }
 
   context 'world' do
-  
-    it 'has attributes' do
-      world.evaluate do
-        name 'Small'
-        description 'A small world'
-        start :home
-      end
-      expect(world.name).to eq 'Small'
-      expect(world.description).to eq 'A small world'
-      expect(world.start).to eq :home
+
+    example 'has attributes' do
+      heading        "Would default to example description"
+      intro          "This is how to do this..."
+      before_code    "Here is some code..."
+      code "world.evaluate do
+              name 'Small'
+              description 'A small world'
+              start :home
+            end"
+      eval code
+      # code_proc = eval "proc { #{code} }"
+      # world.evaluate &code_proc
+      after_code     "That was some nice code!"
+      before_results "Here come the results..."
+      results [
+        { code: "world.name",        value: "'Small'",         before: "Where are we ?", after: "Right here." }, 
+        { code: "world.description", value: "'A small world'", before: "What's it all about ?", after: "It is what it is." }, 
+        { code: "world.start",       value: ":home",           before: "Where to begin ?", after: "At the beginning." }, 
+      ]
+      after_results  "Those were great results!"
+      conclusion     "All's well that ends well."
     end
 
     it 'contains locations' do
