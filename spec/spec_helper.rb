@@ -5,7 +5,8 @@ RSpec.configure do |config|
 end
 
 RSpec.configure do |config|
-  config.around :each do |example|
+
+  config.around :example do |example|
     @example = example
     @example.metadata[:specdoc] = {}
 
@@ -13,8 +14,8 @@ RSpec.configure do |config|
       @example.metadata[:specdoc][:heading] = text
     end
 
-    def intro text
-      @example.metadata[:specdoc][:intro] = text
+    def introduction text
+      @example.metadata[:specdoc][:introduction] = text
     end
 
     def before_code text
@@ -55,5 +56,30 @@ RSpec.configure do |config|
     example.run
 
   end
+
+end
+
+class RSpec::Core::ExampleGroup
+
+  def self.heading text
+    init_specdoc
+    metadata[:specdoc][self][:heading] = text
+  end
+
+  def self.introduction text
+    init_specdoc
+    metadata[:specdoc][self][:introduction] = text
+  end
+
+  def self.conclusion text
+    init_specdoc
+    metadata[:specdoc][self][:conclusion] = text
+  end
+
+  def self.init_specdoc
+    metadata[:specdoc] = {} unless metadata[:specdoc]
+    metadata[:specdoc][self] = {} unless metadata[:specdoc][self]
+  end
+
 end
 

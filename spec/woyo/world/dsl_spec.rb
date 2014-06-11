@@ -1,15 +1,22 @@
 require 'spec_helper'
 require 'woyo/world/world'
 
-describe 'DSL' do
+describe 'DSL', stuff: true  do
+
+  heading "This is the beginning of the DSL"
+  introduction "And a great DSL it is too"
+  conclusion "Hope you enjoyed this little DSL"
 
   let(:world) { Woyo::World.new }
 
   context 'world' do
 
+    heading "The World"
+    introduction "In the beginning..."
+    
     example 'has attributes' do
       heading        "Would default to example description"
-      intro          "This is how to do this..."
+      introduction   "This is how to do this..."
       before_code    "Here is some code..."
       code "world.evaluate do
               name 'Small'
@@ -45,29 +52,11 @@ describe 'DSL' do
       expect(world.locations[:three].name).to eq '3'
     end
 
+    conclusion  "And so, in conclusion!"
+    
   end
 
   context 'location' do 
-
-    # it 'new without block' do
-    #   world = Woyo::World.new do
-    #     location :home
-    #     location :away
-    #     location :lost
-    #   end
-    #   world.should be_instance_of Woyo::World
-    #   world.locations.count.should eq 3
-    # end
-
-    # it 'new with empty block' do
-    #   world = Woyo::World.new do
-    #     location :home do ; end
-    #     location :away do ; end
-    #     location :lost do ; end
-    #   end
-    #   world.should be_instance_of Woyo::World
-    #   world.locations.count.should eq 3
-    # end
 
     it 'defined with attributes' do
       world.evaluate do

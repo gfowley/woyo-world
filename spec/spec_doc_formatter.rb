@@ -1,13 +1,14 @@
 RSpec::Support.require_rspec_core "formatters/base_formatter"
 RSpec::Support.require_rspec_core "formatters/console_codes"
 
+require 'json'
+
 class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
 
   RSpec::Core::Formatters.register self,  
     :start,
     :example_group_started, :example_group_finished,
-    :example_started, :example_passed, :example_failed, :example_pending,
-    :message,
+    :example_passed, :example_failed, :example_pending,
     :stop
 
   def initialize(output)
@@ -16,52 +17,61 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
   end
   
   def start(start_notification)
-    output.puts "### start           : -------------------------------------------------------------------- "
+    @specdoc_root = {}
+    @specdoc_group = @specdoc_root
+    @specdoc_parents = []
+    output.puts "### start          :"
   end
 
   def stop(examples_notification)
-    output.puts "### stop            : -------------------------------------------------------------------- "
+    output.puts "### stop           :"
   end
 
   def example_group_started(group_notification)
-    output.puts "### group start     : #{current_indentation}#{group_notification.group.description}"
-    @group_level += 1
+    group_notification.group.init_specdoc
+    this_group_specdoc = group_notification.group.metadata[:specdoc][group_notification.group] 
+    this_group_specdoc[:examples] = []
+    @specdoc_group[group_notification.group.description] = this_group_specdoc
+    @specdoc_parents << @specdoc_group
+    @specdoc_group = this_group_specdoc
+    output.puts "### group start    :#{indent}#{group_notification.group.description} #=> #{@specdoc_group}"
   end
 
   def example_group_finished(group_notification)
-    @group_level -= 1 
-    output.puts "### group finish    : #{current_indentation}#{group_notification.group.description}"
-  end
-
-  def example_started(example_notification)
-    output.puts "### example started : #{current_indentation}#{example_notification.example.description}"
+    output.puts "### group finish   :#{indent}#{group_notification.group.description} #=> #{@specdoc_group}"
+    @specdoc_group = @specdoc_parents.pop
   end
 
   def example_passed(example_notification)
-    output.puts "### example passed  : #{current_indentation}#{example_notification.example.description}"
-    output.puts example_notification.example.metadata[:specdoc]
+    collect_example example_notification, :passed
   end
 
   def example_pending(example_notification)
-    output.puts "### example pending : #{current_indentation}#{example_notification.example.description}"                                                                
-    output.puts example_notification.example.metadata[:specdoc]
+    collect_example example_notification, :pending
   end
 
-  def example_failed(failed_example_notification)
-    output.puts "### example failed  : #{current_indentation}#{failed_example_notification.example.description}"
-    output.puts example_notification.example.metadata[:specdoc]
+  def example_failed(example_notification)
+    collect_example example_notification, :failed
+  end
+
+  def collect_example example_notification, result
+    @specdoc_group[:examples] << example_notification.example.metadata[:specdoc]
+    output.puts "### example #{result} :#{indent}:#{example_notification.example.description} #=> #{@specdoc_group[:examples].last}"
+  end
+
+  def indent
+    ':' * @specdoc_parents.count
   end
   
-  def message(message_notification)
-    output.puts "### message         : #{message_notification.message}"
-  end
-
-  def current_indentation
-    '  ' * @group_level
-  end
-
 end
 
+  # def example_started(example_notification)
+  #   output.puts "### example started : #{current_indentation}#{example_notification.example.description}"
+  # end
+
+  # def message(message_notification)
+  #   output.puts "### message         : #{message_notification.message}"
+  # end
 
   # def start_dump(null_notification)
   #   output.puts null_notification
