@@ -2,6 +2,7 @@ RSpec::Support.require_rspec_core "formatters/base_formatter"
 RSpec::Support.require_rspec_core "formatters/console_codes"
 
 require 'json'
+require 'haml'
 
 class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
 
@@ -22,7 +23,20 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
   end
 
   def stop(examples_notification)
-    output.puts JSON.pretty_generate @specdoc_root
+    # if option[:json]
+    output.puts json_format 
+    # end
+    # if option[:haml]
+    output.puts haml_format
+    # end
+  end
+
+  def json_format
+    JSON.pretty_generate @specdoc_root
+  end
+
+  def haml_format
+    Haml::Engine.new( File.read( File.join File.dirname( __FILE__ ), 'spec_doc.haml' )).render( Object.new, specdoc: @specdoc_root )
   end
 
   def example_group_started(group_notification)
