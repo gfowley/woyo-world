@@ -3,6 +3,10 @@ require 'woyo/world/world'
 
 describe 'DSL', stuff: true  do
 
+  title   "Woyo World"
+  tagline "World of Your Own"
+  url     "https://github.com/iqeo/woyo-world"
+
   heading "This is the beginning of the DSL"
   introduction "And a great DSL it is too"
   conclusion "Hope you enjoyed this little DSL"

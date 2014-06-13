@@ -61,6 +61,21 @@ end
 
 class RSpec::Core::ExampleGroup
 
+  def self.title text
+    init_specdoc
+    metadata[:specdoc][self][:title] = text
+  end
+
+  def self.tagline text
+    init_specdoc
+    metadata[:specdoc][self][:tagline] = text
+  end
+
+  def self.url text
+    init_specdoc
+    metadata[:specdoc][self][:url] = text
+  end
+
   def self.heading text
     init_specdoc
     metadata[:specdoc][self][:heading] = text
