@@ -5,8 +5,8 @@
       - haml_tag :strong, example[:heading] 
     - haml_tag :p, example[:introduction]
     - haml_tag :p, example[:before_code]
-    - haml_tag :div do
-      - haml_tag :pre, example[:code]
+    - haml_tag :pre do
+      - haml_tag :code, example[:code]
     - haml_tag :p, example[:after_code]
     - haml_tag :p, example[:before_results]
     - render_results example[:results]
@@ -21,10 +21,11 @@
 - def render_result result
   - haml_tag :div do
     - haml_tag :p, result[:before]
-    - haml_tag :div do
-      - haml_tag :span, result[:code]
-      - haml_tag :span, ' #=> '
-      - haml_tag :span, result[:value]
+    - haml_tag :pre do
+      - haml_tag :code do
+        - haml_tag :span, result[:code]
+        - haml_tag :span, ' #=> '
+        - haml_tag :span, result[:value]
     - haml_tag :p, result[:after] 
 
 - def render_results results
@@ -46,5 +47,8 @@
 
 %html
   %body
-    - render_groups specdoc[:groups]
+    %div#main_content_wrap.outer
+      %section#main_content.inner
+        - render_groups specdoc[:groups]
+
 
