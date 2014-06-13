@@ -18,13 +18,14 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
   
   def start(start_notification)
     @specdoc_root = {}
+    @specdoc_root[:groups] = []
     @specdoc_group = @specdoc_root
     @specdoc_parents = []
   end
 
   def stop(examples_notification)
     # if option[:json]
-    output.puts json_format 
+    #output.puts json_format 
     # end
     # if option[:haml]
     output.puts haml_format
@@ -36,18 +37,21 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
   end
 
   def haml_format
-    Haml::Engine.new( File.read( File.join File.dirname( __FILE__ ), 'spec_doc.haml' )).render( Object.new, specdoc: @specdoc_root )
+    Haml::Engine.new( File.read( File.join File.dirname( __FILE__ ), 'spec_doc.haml' )).render( self, specdoc: @specdoc_root )
   end
 
   def example_group_started(group_notification)
     this_group = group_notification.group
     this_group.init_specdoc
     this_group_specdoc = this_group.metadata[:specdoc][this_group] 
-    @specdoc_group[this_group.description] = this_group_specdoc
+    #@specdoc_group[this_group.description] = this_group_specdoc
+    @specdoc_group[:groups] << this_group_specdoc
     @specdoc_parents << @specdoc_group
     @specdoc_group = this_group_specdoc
-    @specdoc_group[:heading] ||= this_group.description.capitalize
-    @specdoc_group[:examples] = []
+    @specdoc_group[:description]   = this_group.description
+    @specdoc_group[:heading]     ||= this_group.description.capitalize
+    @specdoc_group[:examples]      = []
+    @specdoc_group[:groups]        = []
   end
 
   def example_group_finished(group_notification)
