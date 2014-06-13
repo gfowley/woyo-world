@@ -1,0 +1,5 @@
+tmp/
+spec/
+pkg/
+Gemfile.lock
+
