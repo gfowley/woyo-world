@@ -23,8 +23,17 @@ RSpec.configure do |config|
     end
 
     def code text = nil
-      @example.metadata[:specdoc][:code] = text if text 
+      @example.metadata[:specdoc][:code] = fix_indent(text) if text 
       @example.metadata[:specdoc][:code]
+    end
+
+    def fix_indent text
+      lines = text.lines
+      leading = lines.collect { |l| l.index /[^ ]/ }
+      indent = leading.reject { |n| n == 0 }.min
+      indent_regex = Regexp.new('^'+' '*indent)
+      lines.each { |l| l.sub!(indent_regex,'') }
+      lines.join
     end
 
     def after_code text

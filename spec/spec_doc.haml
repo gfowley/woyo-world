@@ -5,8 +5,7 @@
       - haml_tag :strong, example[:heading] 
     - haml_tag :p, example[:introduction]
     - haml_tag :p, example[:before_code]
-    - haml_tag :pre do
-      - haml_tag :code, example[:code]
+    - haml_tag :pre, "<code>#{preserve(example[:code])}</code>"
     - haml_tag :p, example[:after_code]
     - haml_tag :p, example[:before_results]
     - render_results example[:results]
@@ -21,11 +20,7 @@
 - def render_result result
   - haml_tag :div do
     - haml_tag :p, result[:before]
-    - haml_tag :pre do
-      - haml_tag :code do
-        - haml_tag :span, result[:code]
-        - haml_tag :span, ' #=> '
-        - haml_tag :span, result[:value]
+    - haml_tag :pre, "<code>#{result[:code]} #=> #{result[:value]}</code>"
     - haml_tag :p, result[:after] 
 
 - def render_results results
