@@ -10,23 +10,22 @@ describe 'DSL', stuff: true  do
   heading      "WOYO : World of Your Own"
   introduction "This gem woyo-world is a Ruby-based DSL (Domain Specific Language) for creating and interacting with a virtual world. A world is comprised of locations to visit, and ways to go between locations."
 
-  # let(:world) { Woyo::World.new }
-
   context 'world' do
 
     introduction "A world is comprised of attributes and objects, including locations, items, characters, etc.."
-    
+  
     example 'has attributes' do
-      heading        "Attributes"
-      introduction   "A world has attributes that describe and define it's operation."
-      code "world = Woyo::World.new
-            world.evaluate do
-              name 'Small'
-              description 'A small world.'
-              start :home
-            end"
-      # code_proc = eval "proc { #{code} }" ; world.evaluate &code_proc
-      before_results "Attributes may be accessed from the world."
+      heading      "Attributes"
+      introduction "A world has attributes that describe and define it's operation."
+      codes [
+        { code: "world = Woyo::World.new" },
+        { code: "world.evaluate do
+                   name 'Small'
+                   description 'A small world.'
+                   start :home
+                 end" }
+      ]
+      before_result "Attributes may be accessed from the world."
       results [
         { code: "world.name",        value: "'Small'",          before: "The 'name' attribute is to be presented to the user" }, 
         { code: "world.description", value: "'A small world.'", before: "The 'description' attrbute is to be presented to the user" }, 
@@ -45,14 +44,14 @@ describe 'DSL', stuff: true  do
     it 'single' do
       heading      "From humble beginnings..."
       introduction "A single location"
-      code "world = Woyo::World.new
-            world.evaluate do
+      code "world = Woyo::World.new"
+      code "world.evaluate do
               location :home do
                 name 'My Home'
                 description 'Sweet home.'
               end
             end"
-      before_results "Locations have an identifier (in this case :home) that is unique within the world." 
+      before_result "Locations have an identifier (in this case :home) that is unique within the world." 
       results [
         {
           before: "A location may be referenced like this...",
@@ -66,15 +65,11 @@ describe 'DSL', stuff: true  do
           before: "To get information about the location...",
           code:   "location.id",
           value:  ":home",
-        },
-        {
-          code:   "location.name",
-          value:  "'My Home'",
-        },
-        {
-          code:   "location.description",
-          value:  "'Sweet home.'",
-        },
+        }
+      ]
+      result "location.name" => "'My Home'"
+      result "location.description" => "'Sweet home.'"
+      results [
         {
           before: "No matter how sweet, this little world is kind of boring...",
           code:   "world.locations.count",

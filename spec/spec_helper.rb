@@ -23,18 +23,30 @@ RSpec.configure do |config|
       @example.metadata[:specdoc][:before_code] = text
     end
 
-    def code text = nil
-      @example.metadata[:specdoc][:code] = fix_indent(text) if text 
-      @binding.eval text
-      @example.metadata[:specdoc][:code]
+    def codes array = nil
+      if array 
+        @example.metadata[:specdoc][:codes] ||= []
+        @example.metadata[:specdoc][:codes]  += array
+        codes.each do |code|
+          code[:code] = fix_indent(code[:code])
+          @binding.eval code[:code]
+        end
+      end
+      @example.metadata[:specdoc][:codes]
+    end
+
+    def code text
+      codes [ { code: text } ]
     end
 
     def fix_indent text
       lines = text.lines
       leading = lines.collect { |l| l.index /[^ ]/ }
       indent = leading.reject { |n| n == 0 }.min
-      indent_regex = Regexp.new('^'+' '*indent)
-      lines.each { |l| l.sub!(indent_regex,'') }
+      if indent
+        indent_regex = Regexp.new('^'+' '*indent)
+        lines.each { |l| l.sub!(indent_regex,'') }
+      end
       lines.join
     end
 
@@ -42,13 +54,14 @@ RSpec.configure do |config|
       @example.metadata[:specdoc][:after_code] = text
     end
 
-    def before_results text
+    def before_result text
       @example.metadata[:specdoc][:before_results] = text
     end
 
     def results array = nil
       if array
-        @example.metadata[:specdoc][:results] = array
+        @example.metadata[:specdoc][:results] ||= []
+        @example.metadata[:specdoc][:results]  += array
         results.each do |result|
           if result[:value] 
             expect(@binding.eval result[:code]).to eq @binding.eval result[:value]
@@ -60,7 +73,11 @@ RSpec.configure do |config|
       @example.metadata[:specdoc][:results]
     end
 
-    def after_results text
+    def result rhash
+      results [ { code: rhash.keys.first, value: rhash.values.first } ]
+    end
+
+    def after_result text
       @example.metadata[:specdoc][:after_results] = text
     end
 
