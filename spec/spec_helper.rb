@@ -9,6 +9,7 @@ RSpec.configure do |config|
   config.around :example do |example|
     @example = example
     @example.metadata[:specdoc] = {}
+    @binding = @example.binding
 
     def heading text
       @example.metadata[:specdoc][:heading] = text
@@ -24,6 +25,7 @@ RSpec.configure do |config|
 
     def code text = nil
       @example.metadata[:specdoc][:code] = fix_indent(text) if text 
+      @binding.eval text
       @example.metadata[:specdoc][:code]
     end
 
@@ -48,7 +50,11 @@ RSpec.configure do |config|
       if array
         @example.metadata[:specdoc][:results] = array
         results.each do |result|
-          expect(eval result[:code]).to eq eval result[:value] 
+          if result[:value] 
+            expect(@binding.eval result[:code]).to eq @binding.eval result[:value]
+          else
+            @binding.eval result[:code]
+          end
         end
       end
       @example.metadata[:specdoc][:results]

@@ -7,75 +7,85 @@ describe 'DSL', stuff: true  do
   tagline "World of Your Own"
   url     "https://github.com/iqeo/woyo-world"
 
-  heading "This is the beginning of the DSL"
-  introduction "And a great DSL it is too"
-  conclusion "Hope you enjoyed this little DSL"
+  heading      "WOYO : World of Your Own"
+  introduction "This gem woyo-world is a Ruby-based DSL (Domain Specific Language) for creating and interacting with a virtual world. A world is comprised of locations to visit, and ways to go between locations."
 
-  let(:world) { Woyo::World.new }
+  # let(:world) { Woyo::World.new }
 
   context 'world' do
 
-    heading "The World"
-    introduction "In the beginning..."
+    introduction "A world is comprised of attributes and objects, including locations, items, characters, etc.."
     
     example 'has attributes' do
-      heading        "Would default to example description"
-      introduction   "This is how to do this..."
-      before_code    "Here is some code..."
-      code "world.evaluate do
+      heading        "Attributes"
+      introduction   "A world has attributes that describe and define it's operation."
+      code "world = Woyo::World.new
+            world.evaluate do
               name 'Small'
-              description 'A small world'
+              description 'A small world.'
               start :home
             end"
-      eval code
-      # code_proc = eval "proc { #{code} }"
-      # world.evaluate &code_proc
-      after_code     "That was some nice code!"
-      before_results "Here come the results..."
+      # code_proc = eval "proc { #{code} }" ; world.evaluate &code_proc
+      before_results "Attributes may be accessed from the world."
       results [
-        { code: "world.name",        value: "'Small'",         before: "Where are we ?", after: "Right here." }, 
-        { code: "world.description", value: "'A small world'", before: "What's it all about ?", after: "It is what it is." }, 
-        { code: "world.start",       value: ":home",           before: "Where to begin ?", after: "At the beginning." }, 
+        { code: "world.name",        value: "'Small'",          before: "The 'name' attribute is to be presented to the user" }, 
+        { code: "world.description", value: "'A small world.'", before: "The 'description' attrbute is to be presented to the user" }, 
+        { code: "world.start",       value: ":home",            before: "The 'start' attribute refers to the location the user will start at in the world...", after: "...in this case 'home'." }, 
       ]
-      after_results  "Those were great results!"
-      conclusion     "All's well that ends well."
     end
 
-    it 'contains locations' do
-      world.evaluate do
-        location :one
-        location :two do ; end
-        location :three do
-          name '3'
-        end
-      end
-      expect(world.locations.count).to eq 3
-      expect(world.locations[:one]).to be_instance_of Woyo::Location
-      expect(world.locations[:two]).to be_instance_of Woyo::Location
-      expect(world.locations[:three]).to be_instance_of Woyo::Location
-      expect(world.locations[:three].name).to eq '3'
-    end
-
-    conclusion  "And so, in conclusion!"
+    conclusion "The most interesting worlds contain locations to visit."
     
   end
 
-  context 'location' do 
+  context 'locations' do 
 
-    it 'defined with attributes' do
-      world.evaluate do
-        location :house do
-          name 'Home'
-          description 'Sweet'
-        end
-      end
-      location = world.locations[:house]
-      expect(location.id).to eq :house
-      expect(location.name).to eq 'Home'
-      expect(location.description).to eq 'Sweet'
+    introduction "A location is a place to visit in a world."
+
+    it 'single' do
+      heading      "From humble beginnings..."
+      introduction "A single location"
+      code "world = Woyo::World.new
+            world.evaluate do
+              location :home do
+                name 'My Home'
+                description 'Sweet home.'
+              end
+            end"
+      before_results "Locations have an identifier (in this case :home) that is unique within the world." 
+      results [
+        {
+          before: "A location may be referenced like this...",
+          code:   "location = world.locations[:home]",
+        },
+        {
+          before: "...or this...",
+          code:   "location = world.location :home",
+        },
+        {
+          before: "To get information about the location...",
+          code:   "location.id",
+          value:  ":home",
+        },
+        {
+          code:   "location.name",
+          value:  "'My Home'",
+        },
+        {
+          code:   "location.description",
+          value:  "'Sweet home.'",
+        },
+        {
+          before: "No matter how sweet, this little world is kind of boring...",
+          code:   "world.locations.count",
+          value:  "1",
+        }
+      ]
+      conclusion "Let's expand our horizons..."
     end
 
     it 'redefined' do
+      world = Woyo::World.new
       world.evaluate do
         location :house do
           name 'Home'
