@@ -21,12 +21,12 @@ describe 'DSL', stuff: true  do
       introduction "A world has attributes that describe and define it's operation."
       codes [
         { pre:  "world.evaluate do",
-          code: "  name 'Small'
+          code:   "name 'Small'
                    description 'A small world.'
                    start :home",
           post: "end" }
       ]
-      before_result "Attributes may be accessed from the world."
+      before_results "Attributes may be accessed from the world."
       results [
         { code: "world.name",        value: "'Small'",          before: "The 'name' attribute is to be presented to the user" }, 
         { code: "world.description", value: "'A small world.'", before: "The 'description' attrbute is to be presented to the user" }, 
@@ -47,13 +47,13 @@ describe 'DSL', stuff: true  do
       introduction "A single location"
       codes [
         { pre:  "world.evaluate do",
-          code: "  location :home do
+          code:   "location :home do
                      name 'My Home'
                      description 'Sweet home.'
                    end",
           post: "end" }
       ]
-      before_result "Locations have an identifier (in this case :home) that is unique within the world." 
+      before_results "Locations have an identifier (in this case :home) that is unique within the world." 
       results [
         {
           before: "A location may be referenced like this...",
@@ -62,13 +62,10 @@ describe 'DSL', stuff: true  do
         {
           before: "...or this...",
           code:   "location = world.location :home",
-        },
-        {
-          before: "To get information about the location...",
-          code:   "location.id",
-          value:  ":home",
+          after: "To get information about the location...",
         }
       ]
+      result "location.id" => ":home"
       result "location.name" => "'My Home'"
       result "location.description" => "'Sweet home.'"
       results [

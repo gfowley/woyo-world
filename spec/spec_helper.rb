@@ -11,6 +11,10 @@ RSpec.configure do |config|
     @example.metadata[:specdoc] = {}
     @binding = @example.example_group_instance.eval_binding
 
+    def hide
+      @example.metadata[:specdoc][:hide] = true
+    end
+
     def heading text
       @example.metadata[:specdoc][:heading] = text
     end
@@ -19,8 +23,8 @@ RSpec.configure do |config|
       @example.metadata[:specdoc][:introduction] = text
     end
 
-    def before_code text
-      @example.metadata[:specdoc][:before_code] = text
+    def before_codes text
+      @example.metadata[:specdoc][:before_codes] = text
     end
 
     def codes array = nil
@@ -50,11 +54,11 @@ RSpec.configure do |config|
       lines.join
     end
 
-    def after_code text
-      @example.metadata[:specdoc][:after_code] = text
+    def after_codes text
+      @example.metadata[:specdoc][:after_codes] = text
     end
 
-    def before_result text
+    def before_results text
       @example.metadata[:specdoc][:before_results] = text
     end
 
@@ -77,7 +81,7 @@ RSpec.configure do |config|
       results [ { code: rhash.keys.first, value: rhash.values.first } ]
     end
 
-    def after_result text
+    def after_results text
       @example.metadata[:specdoc][:after_results] = text
     end
 
@@ -110,6 +114,11 @@ class RSpec::Core::ExampleGroup
   def self.url text
     init_specdoc
     metadata[:specdoc][self][:url] = text
+  end
+
+  def self.hide text
+    init_specdoc
+    metadata[:specdoc][self][:hide] = true
   end
 
   def self.heading text

@@ -44,7 +44,6 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
     this_group = group_notification.group
     this_group.init_specdoc
     this_group_specdoc = this_group.metadata[:specdoc][this_group] 
-    #@specdoc_group[this_group.description] = this_group_specdoc
     @specdoc_group[:groups] << this_group_specdoc
     @specdoc_parents << @specdoc_group
     @specdoc_group = this_group_specdoc
