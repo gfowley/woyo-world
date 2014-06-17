@@ -10,6 +10,8 @@ describe 'DSL', stuff: true  do
   heading      "WOYO : World of Your Own"
   introduction "This gem woyo-world is a Ruby-based DSL (Domain Specific Language) for creating and interacting with a virtual world. A world is comprised of locations to visit, and ways to go between locations."
 
+  let(:world) { Woyo::World.new }
+
   context 'world' do
 
     introduction "A world is comprised of attributes and objects, including locations, items, characters, etc.."
@@ -18,12 +20,11 @@ describe 'DSL', stuff: true  do
       heading      "Attributes"
       introduction "A world has attributes that describe and define it's operation."
       codes [
-        { code: "world = Woyo::World.new" },
-        { code: "world.evaluate do
-                   name 'Small'
+        { pre:  "world.evaluate do",
+          code: "  name 'Small'
                    description 'A small world.'
-                   start :home
-                 end" }
+                   start :home",
+          post: "end" }
       ]
       before_result "Attributes may be accessed from the world."
       results [
@@ -44,13 +45,14 @@ describe 'DSL', stuff: true  do
     it 'single' do
       heading      "From humble beginnings..."
       introduction "A single location"
-      code "world = Woyo::World.new"
-      code "world.evaluate do
-              location :home do
-                name 'My Home'
-                description 'Sweet home.'
-              end
-            end"
+      codes [
+        { pre:  "world.evaluate do",
+          code: "  location :home do
+                     name 'My Home'
+                     description 'Sweet home.'
+                   end",
+          post: "end" }
+      ]
       before_result "Locations have an identifier (in this case :home) that is unique within the world." 
       results [
         {

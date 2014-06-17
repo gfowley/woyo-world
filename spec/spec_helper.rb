@@ -9,7 +9,7 @@ RSpec.configure do |config|
   config.around :example do |example|
     @example = example
     @example.metadata[:specdoc] = {}
-    @binding = @example.binding
+    @binding = @example.example_group_instance.eval_binding
 
     def heading text
       @example.metadata[:specdoc][:heading] = text
@@ -29,7 +29,7 @@ RSpec.configure do |config|
         @example.metadata[:specdoc][:codes]  += array
         codes.each do |code|
           code[:code] = fix_indent(code[:code])
-          @binding.eval code[:code]
+          @binding.eval code.values_at(:pre,:code,:post).join "\n"
         end
       end
       @example.metadata[:specdoc][:codes]
@@ -92,6 +92,10 @@ RSpec.configure do |config|
 end
 
 class RSpec::Core::ExampleGroup
+
+  def eval_binding
+    binding
+  end
 
   def self.title text
     init_specdoc
