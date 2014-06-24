@@ -22,12 +22,12 @@
   - unless example.first == :hide
     - haml_tag :div do
       - example.each do |element|
-        - case element.keys.first
-        - when :head 
+        - case 
+        - when element.keys.first == :head 
           - render_head element
-        - when :text
+        - when element.keys.first == :text
           - render_text element
-        - when :code
+        - when element.keys.include?(:code)
           - render_code element
 
 - def render_head element
