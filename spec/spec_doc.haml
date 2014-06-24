@@ -1,46 +1,8 @@
 
-- def render_example example
-  - unless example[:hide]
-    - haml_tag :div do
-      - haml_tag :p do
-        - haml_tag :strong, example[:heading] 
-      - haml_tag :p, example[:introduction]
-      - haml_tag :p, example[:before_codes]
-      - render_codes example[:codes]
-      - haml_tag :p, example[:after_codes]
-      - haml_tag :p, example[:before_results]
-      - render_results example[:results]
-      - haml_tag :p, example[:after_results]
-      - haml_tag :p, example[:conclusion]
-
-- def render_examples examples
-  - if examples && !examples.empty?
-    - examples.each do |example|
-      - render_example example
-
-- def render_code code
-  - unless code[:hide]
-    - haml_tag :div do
-      - haml_tag :p, code[:before]
-      - haml_tag :pre, "<code>#{preserve(code[:code])}</code>"
-      - haml_tag :p, code[:after] 
-
-- def render_codes codes
-  - if codes && !codes.empty?
-    - codes.each do |code|
-      - render_code code
-
-- def render_result result
-  - unless result[:hide]
-    - haml_tag :div do
-      - haml_tag :p, result[:before]
-      - haml_tag :pre, "<code>#{result[:code]} #{' #=> ' + result[:value].to_s if result[:value]}</code>"
-      - haml_tag :p, result[:after] 
-
-- def render_results results
-  - if results && !results.empty?
-    - results.each do |result|
-      - render_result result
+- def render_groups groups
+  - if groups && !groups.empty?
+    - groups.each do |group|
+      - render_group group
 
 - def render_group group
   - unless group[:hide]
@@ -51,10 +13,33 @@
       - render_groups group[:groups]
       - haml_tag :p, group[:conclusion]
 
-- def render_groups groups
-  - if groups && !groups.empty?
-    - groups.each do |group|
-      - render_group group
+- def render_examples examples
+  - if examples && !examples.empty?
+    - examples.each do |example|
+      - render_example example
+
+- def render_example example
+  - unless example.first == :hide
+    - haml_tag :div do
+      - example.each do |element|
+        - case element.keys.first
+        - when :head 
+          - render_head element
+        - when :text
+          - render_text element
+        - when :code
+          - render_code element
+
+- def render_head element
+  - haml_tag :h1, element.values.first
+   
+- def render_text element
+  - haml_tag :p, element.values.first
+   
+- def render_code element
+  - unless element[:hide]
+    - haml_tag :div do
+      - haml_tag :pre, "<code>#{preserve(element[:code])}#{' #=> ' + element[:value].to_s if element[:value]}</code>"
 
 %html
 

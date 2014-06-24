@@ -10,270 +10,281 @@ describe 'DSL', stuff: true  do
   heading      "WOYO : World of Your Own"
   introduction "This gem woyo-world is a Ruby-based DSL (Domain Specific Language) for creating and interacting with a virtual world. A world is comprised of locations to visit, and ways to go between locations."
 
-  let(:world) { Woyo::World.new }
-
   context 'world' do
+
+    before :all do
+      @world = Woyo::World.new
+    end
+
+    def world ; @world ; end
 
     introduction "A world is comprised of attributes and objects, including locations, items, characters, etc.."
   
-    example 'has attributes' do
-      heading      "Attributes"
-      introduction "A world has attributes that describe and define it's operation."
-      codes [
-        { pre:  "world.evaluate do",
-          code:   "name 'Small'
-                   description 'A small world.'
-                   start :home",
-          post: "end" }
-      ]
-      before_results "Attributes may be accessed from the world."
-      results [
-        { code: "world.name",        value: "'Small'",          before: "The 'name' attribute is to be presented to the user" }, 
-        { code: "world.description", value: "'A small world.'", before: "The 'description' attrbute is to be presented to the user" }, 
-        { code: "world.start",       value: ":home",            before: "The 'start' attribute refers to the location the user will start at in the world...", after: "...in this case 'home'." }, 
-      ]
-    end
-
-    conclusion "The most interesting worlds contain locations to visit."
+    # example 'has attributes' do
+    #   heading      "Attributes"
+    #   introduction "A world has attributes that describe and define it's operation."
+    #   codes [ { pre:  "world.evaluate do",
+    #             code:   "name 'Small'
+    #                      description 'A small world.'
+    #                      start :home",
+    #             post: "end" } ]
+    #   before_results "Attributes may be accessed from the world."
+    #   results [ { code: "world.name",        value: "'Small'",          before: "The 'name' attribute is to be presented to the user" }, 
+    #             { code: "world.description", value: "'A small world.'", before: "The 'description' attrbute is to be presented to the user" }, 
+    #             { code: "world.start",       value: ":home",            before: "The 'start' attribute refers to the location the user will start at in the world...", after: "...in this case 'home'." } ]
+    # end
     
+    example 'also has attributes' do
+      head "Attributes"
+      text "A world has attributes that describe and define it's operation."
+      code pre:  "world.evaluate do",
+           code:   "name 'Small'
+                    description 'A small world.'
+                    start :home",
+           post: "end"
+      text "Attributes may be accessed from the world."
+      text "The 'name' attribute is to be presented to the user" 
+      code "world.name" => "'Small'"
+      text "The 'description' attrbute is to be presented to the user"
+      code "world.description" => "'A small world.'"
+      text "The 'start' attribute refers to the location the user will start at in the world..."
+      code "world.start" => ":home"
+      text "...in this case 'home'."
+    end
+    
+    conclusion "The most interesting worlds contain locations to visit."
+
   end
 
   context 'locations' do 
 
+    before :all do
+      @world = Woyo::World.new
+    end
+
+    def world ; @world ; end
+
     introduction "A location is a place to visit in a world."
 
-    it 'single' do
-      heading      "From humble beginnings..."
-      introduction "A single location"
-      codes [
-        { pre:  "world.evaluate do",
-          code:   "location :home do
-                     name 'My Home'
-                     description 'Sweet home.'
-                   end",
-          post: "end" }
-      ]
-      before_results "Locations have an identifier (in this case :home) that is unique within the world." 
-      results [
-        {
-          before: "A location may be referenced like this...",
-          code:   "location = world.locations[:home]",
-        },
-        {
-          before: "...or this...",
-          code:   "location = world.location :home",
-          after: "To get information about the location...",
-        }
-      ]
-      result "location.id" => ":home"
-      result "location.name" => "'My Home'"
-      result "location.description" => "'Sweet home.'"
-      results [
-        {
-          before: "No matter how sweet, this little world is kind of boring...",
-          code:   "world.locations.count",
-          value:  "1",
-        }
-      ]
-      conclusion "Let's expand our horizons..."
+    # example 'home' do
+    #   heading      "From humble beginnings"
+    #   introduction "A single location"
+    #   codes [ { pre:  "world.evaluate do",
+    #             code:   "location :home do
+    #                        name 'My Home'
+    #                        description 'This old house.'
+    #                      end",
+    #             post: "end" } ]
+    #   before_results "Locations have an identifier (in this case :home) that is unique within the world." 
+    #   results [ { before: "A location may be referenced like this...",
+    #               code:   "home = world.locations[:home]" },
+    #             { before: "...or this...",
+    #               code:   "home = world.location :home",
+    #               after: "To get information about the location..." } ]
+    #   result "home.id" => ":home"
+    #   result "home.name" => "'My Home'"
+    #   result "home.description" => "'This old house.'"
+    #   conclusion "This is a nice old house, but let's make some changes to it..."
+    # end
+
+    example 'also home' do
+      head "From humble beginnings"
+      text "A single location"
+      code pre:  "world.evaluate do",
+           code:   "location :home do
+                      name 'My Home'
+                      description 'This old house.'
+                    end",
+           post: "end"
+      text "Locations have an identifier (in this case :home) that is unique within the world." 
+      text "A location may be referenced like this..."
+      code "home = world.locations[:home]"
+      text "...or this..."
+      code "home = world.location :home"
+      text "To get information about the location..."
+      code "home.id" => ":home"
+      code "home.name" => "'My Home'"
+      code "home.description" => "'This old house.'"
+      text "This is a nice old house, but let's make some changes to it..."
     end
 
-    it 'redefined' do
-      world = Woyo::World.new
-      world.evaluate do
-        location :house do
-          name 'Home'
-        end
-      end
-      world.evaluate do
-        location :house do
-          description 'Old'
-        end
-      end
-      world.evaluate do
-        location :house do
-          description 'Sweet'
-        end
-      end
-      expect(world.locations.count).to eq 1
-      location = world.locations[:house]
-      expect(location.id).to eq :house
-      expect(location.name).to eq 'Home'
-      expect(location.description).to eq 'Sweet'
+    # example 'making changes' do
+    #   heading      "Change begins at home"
+    #   introduction "Let's make some changes to this location."
+    #   codes [ { pre:  "home = world.location :home
+    #                    world.evaluate do",
+    #             code:   "location :home do
+    #                        description 'Sweet home.'
+    #                      end",
+    #             post: "end" } ]
+    #   after_codes "The new description replaces the old one."
+    #   before_results "Now our home looks like this..."
+    #   result "home.name" => "'My Home'"
+    #   result "home.description" => "'Sweet home.'"
+    #   results [ { before: "No matter how sweet, this little world is not very interesting...",
+    #               code: "world.locations.count", value:  "1" } ]
+    #   conclusion "Let's expand our horizons..."
+    # end
+
+    example 'also making changes' do
+      head "Change begins at home"
+      text "Let's make some changes to this location."
+      code pre:  "home = world.location :home
+                  world.evaluate do",
+           code:   "location :home do
+                      description 'Sweet home.'
+                    end",
+           post: "end"
+      text "The new description replaces the old one."
+      text "Now our home looks like this..."
+      code "home.name" => "'My Home'"
+      code "home.description" => "'Sweet home.'"
+      text "No matter how sweet, this little world is not very interesting..."
+      code "world.locations.count" => "1"
+      text "Let's expand our horizons..."
     end
 
-    it 'multiple with attributes' do
-      world = Woyo::World.new do
-        location :home do
-          name 'Home'
-          description 'Sweet'
-        end
-        location :away do
-          name 'Away'
-          description 'Okay'
-        end
-      end
-      expect(world).to be_instance_of Woyo::World
-      expect(world.locations.count).to eq 2
-      home = world.locations[:home]
-      expect(home.id).to eq :home
-      expect(home.name).to eq 'Home'
-      expect(home.description).to eq 'Sweet'
-      away = world.locations[:away]
-      expect(away.id).to eq :away
-      expect(away.name).to eq 'Away'
-      expect(away.description).to eq 'Okay'
+#     example 'second' do
+#       heading "Expandng horizons" 
+#       introduction "Add a location to our world"
+#       codes [ { pre:  "home = world.location :home
+#                        world.evaluate do",
+#                 code:   "location :garden do
+#                            name 'Garden'
+#                            description 'A green leafy place.'
+#                          end",
+#                 post: "end" } ]
+#       before_results "Now our world is a little more interesting..."
+#       result "world.locations.count" => "2"
+#       result "garden = world.location :garden" => nil
+#       results [ { before: "This seems like a nice garden...",
+#                   code:   "garden.id", value: ":garden" } ]
+#       result "garden.name" => "'Garden'"
+#       result "garden.description" => "'A green leafy place.'"
+#       results [ { before: "We'd like to visit this garden, but there's no way, no really..",
+#                   code:   "home.ways",   value: "{}" },
+#                 { code:   "garden.ways", value: "{}" } ]
+#       conclusion "To go from location to location we need Ways"
+#     end
+
+    example 'also second' do
+      head "Expandng horizons" 
+      text "Add a location to our world"
+      code pre:  "home = world.location :home
+                    world.evaluate do",
+           code:   "location :garden do
+                      name 'Garden'
+                      description 'A green leafy place.'
+                    end",
+           post: "end"
+      text "Now our world is a little more interesting..."
+      code "world.locations.count" => "2"
+      code "garden = world.location :garden"
+      text "This seems like a nice garden..."
+      code "garden.id" => ":garden"
+      code "garden.name" => "'Garden'"
+      code "garden.description" => "'A green leafy place.'"
+      text "We'd like to visit this garden, but there's no way, really..."
+      code "home.ways"   => "{}"
+      code "garden.ways" => "{}"
+      text "To go from location to location we need Ways"
     end
 
   end
 
   context 'ways' do
 
-    context 'new way' do
-
-      it 'to new location' do
-        world = Woyo::World.new do
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              to :away
-            end
-          end
-        end
-        home = world.locations[:home]
-        expect(home.ways.count).to eq 1
-        door = home.ways[:door]
-        expect(door).to be_instance_of Woyo::Way
-        expect(door.name).to eq 'Large Wooden Door'
-        expect(door.to).to be_instance_of Woyo::Location
-        expect(door.to.id).to eq :away
-        away = world.locations[:away]
-        expect(away.ways.count).to eq 0
-        expect(door.to).to eq away
-      end
-
-      it 'to existing location' do
-        world = Woyo::World.new do
-          location :away do
-          end
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              to :away
-            end
-          end
-        end
-        home = world.locations[:home]
-        expect(home.ways.count).to eq 1
-        door = home.ways[:door]
-        expect(door).to be_instance_of Woyo::Way
-        expect(door.name).to eq 'Large Wooden Door'
-        expect(door.to).to be_instance_of Woyo::Location
-        expect(door.to.id).to eq :away
-        away = world.locations[:away]
-        expect(away.ways.count).to eq 0
-        expect(door.to).to eq away
-      end
-
-      it 'to same location' do
-        world = Woyo::World.new do
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              to :home
-            end
-          end
-        end
-        home = world.locations[:home]
-        expect(home.ways.count).to eq 1
-        door = home.ways[:door]
-        expect(door).to be_instance_of Woyo::Way
-        expect(door.name).to eq 'Large Wooden Door'
-        expect(door.to).to be_instance_of Woyo::Location
-        expect(door.to.id).to eq :home
-        expect(door.to).to eq home
-      end
-
+    before :all do
+      @world = Woyo::World.new
     end
 
-    context 'existing way' do
+    def world ; @world ; end
 
-      it 'to new location' do
-        world = Woyo::World.new do
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              description "Big, real big!"
-            end
-            way :door do
-              description 'Nicer'
-              to :away
-            end
-          end
-        end
-        home = world.locations[:home]
-        expect(home.ways.count).to eq 1
-        door = home.ways[:door]
-        expect(door.name).to eq 'Large Wooden Door'
-        expect(door.description).to eq "Nicer"
-        expect(door.to).to be_instance_of Woyo::Location
-        expect(door.to.id).to eq :away
-        away = world.locations[:away]
-        expect(away.ways.count).to eq 0
-        expect(door.to).to eq away
-      end
+    introduction "A Woyo::Way is a directional path between locations."
 
-      it 'to existing location' do
-        world = Woyo::World.new do
-          location :away do
-          end
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              description "Big, real big!"
-            end
-            way :door do
-              description 'Nicer'
-              to :away
-            end
-          end
-        end
-        home = world.locations[:home]
-        expect(home.ways.count).to eq 1
-        door = home.ways[:door]
-        expect(door.name).to eq 'Large Wooden Door'
-        expect(door.description).to eq "Nicer"
-        expect(door.to).to be_instance_of Woyo::Location
-        expect(door.to.id).to eq :away
-        away = world.locations[:away]
-        expect(away.ways.count).to eq 0
-        expect(door.to).to eq away
-      end
+    # example "from here to there" do
+    #   introduction "A way is defined within a location."
+    #   codes [ { pre:  "world.evaluate do",
+    #             code:   "location :here do
+    #                        way :road do
+    #                          to :there
+    #                          description 'A short road'
+    #                          going       'Takes a long time'
+    #                        end
+    #                      end",
+    #             post: "end" } ]
+    #   after_codes "Ways have an identifier (in this case :road) that is unique within that location."
+    #   before_results "A way may be referenced like this..."
+    #   result "here = world.locations[:here]" => nil
+    #   result "way = here.ways[:road]" => nil
+    #   results [ { before: "...or this...",
+    #               code:   "here = world.location :here" },
+    #             { code:   "way = here.way :road" } ]
+    #   results [ { before: "The way's attributes include a description that may be included in location representation to the user.",
+    #               code:   "way.description", value: "'A short road'" } ]
+    #   results [ { before: "The location the way is defined within is the location the way is 'from'.",
+    #               code:   "way.from" },
+    #             { code:   "way.from.id", value: ":here" } ]
+    #   results [ { before: "Ways connect 'to' a location (in this case :there). This location is created if it does not already exist.",
+    #               code:   "way.to" },
+    #             { code:   "way.to.id", value: ":there" } ]
+    # end
 
-      it 'to same location' do
-        world = Woyo::World.new do
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              description "Big, real big!"
-            end
-            way :door do
-              description 'Nicer'
-              to :home
-            end
-          end
-        end
-        home = world.locations[:home]
-        expect(home.ways.count).to eq 1
-        door = home.ways[:door]
-        expect(door.name).to eq 'Large Wooden Door'
-        expect(door.description).to eq "Nicer"
-        expect(door.to).to be_instance_of Woyo::Location
-        expect(door.to.id).to eq :home
-        expect(door.to).to eq home
-      end
+    # example "hit the road" do
+    #   introduction "Ways connect locations so that a user can move about in your world. Usually upon user input, the user goes a way from location to location. An optional description of the 'going' may be presented."
+    #   codes [ { pre:  "world.evaluate do",
+    #             code:   "location :room do
+    #                        way :stairs do
+    #                          to :cellar
+    #                          description 'Rickety stairs lead down into darkness.'
+    #                          going       'Creaky steps lead uncertainly downwards...'
+    #                        end
+    #                      end
+    #                      location :cellar do
+    #                        description 'Dark and damp, as expected.'
+    #                      end",
+    #             post: "end" } ]
+    #   before_results "Accessing the location and way..."
+    #   result "room = world.location :room" => nil
+    #   result "stairs = room.way :stairs" => nil
+    #   results [ { before: "When we try to 'go' a way, the result describes the attempt.",
+    #               code:   "attempt = stairs.go", value: "{ go: true, going: 'Creaky steps lead uncertainly downwards...' }" },
+    #             { before: "Whether successful or not (true in this case)...",
+    #               code:   "attempt[:go]", value: "true" },
+    #             { before: "And a description of the attempt (none in this case)...",
+    #               code:   "attempt[:going]", value: "'Creaky steps lead uncertainly downwards...'" } ]
+    # end
 
-    end
+    # example "going a way" do
+    #   introduction "Ways may be open or closed, optionally with descriptions for each state. A user cannot go a closed way, and an alternative 'going' description may be presented if attempted."
+    #   codes [ { pre:  "world.evaluate do",
+    #             code:   "location :room do
+    #                        way :stairs do
+    #                          to :cellar
+    #                          description   open:   'Rickety stairs lead down into darkness.',
+    #                                        closed: 'Broken stairs end in darkness.'
+    #                          going         open:   'Creaky steps lead uncertainly downwards...',
+    #                                        closed: 'The dangerous stairs are impassable.'
+    #                        end
+    #                      end
+    #                      location :cellar do
+    #                        description 'Dark and damp, as expected.'
+    #                      end",
+    #             post: "end" } ]
+    #   before_results "Accessing the location and way..."
+    #   result "room = world.location :room" => nil
+    #   result "stairs = room.way :stairs" => nil
+    #   results [ { before: "Ways that go 'to' somewhere are open by default.",
+    #               code:   "stairs.open?", value: "true" },
+    #             { before: "With an appropriate description.",
+    #               code:   "stairs.description", value: "'Rickety stairs lead down into darkness.'" },
+    #             { before: "Going an open way succeeds.",
+    #               code:   "attempt = stairs.go", value: "{ go: true, going: 'Creaky steps lead uncertainly downwards...' }" },
+    #             { code:   "attempt[:go]", value: "true" },
+    #             { code:   "attempt[:going]", value: "'Creaky steps lead uncertainly downwards...'" } ]
+    #   # results... for closed
+    #   #
+    # end
 
     context 'going' do
 
@@ -311,76 +322,6 @@ describe 'DSL', stuff: true  do
         expect(stairs).to be_closed
         expect(stairs.description).to eq 'Broken stairs end in darkness.'
         expect(stairs.go).to eq ( { go: false, going: 'The dangerous stairs are impassable.' } )
-      end
-
-    end
-
-    # it 'new character' do
-    #   world = Woyo::World.new do
-    #     location :home do
-    #       character :jim do
-    #       end
-    #     end
-    #   end
-    #   home = world.locations[:home]
-    #   home.characters.count.should eq 1
-    #   jim = home.characters[:jim]
-    #   jim.location.should be home
-    # end
-
-    # it 'existing character' do
-    #   world = Woyo::World.new do
-    #     location :home do
-    #       character :jim do
-    #         name 'James'
-    #         description 'Jolly'
-    #       end
-    #       character :jim do
-    #         description 'Jovial'
-    #       end
-    #     end
-    #   end
-    #   home = world.locations[:home]
-    #   home.characters.count.should eq 1
-    #   jim = home.characters[:jim]
-    #   jim.location.should be home
-    #   jim.name.should eq 'James'
-    #   jim.description.should eq 'Jovial'
-    # end
-
-    context 'character' do
-
-      it 'new' do
-        world = Woyo::World.new do
-          character :jim do
-            name 'James'
-            description 'Jolly'
-          end
-        end
-        expect(world.characters.count).to eq 1
-        expect(world.characters[:jim]).to be_instance_of Woyo::Character
-        jim = world.characters[:jim]
-        expect(jim.location).to be_nil
-        expect(jim.name).to eq 'James'
-        expect(jim.description).to eq 'Jolly'
-      end
-
-      it 'existing' do
-        world = Woyo::World.new do
-          character :jim do
-            name 'James'
-            description 'Jolly'
-          end
-          character :jim do
-            description 'Jovial'
-          end
-        end
-        expect(world.characters.count).to eq 1
-        expect(world.characters[:jim]).to be_instance_of Woyo::Character
-        jim = world.characters[:jim]
-        expect(jim.location).to be_nil
-        expect(jim.name).to eq 'James'
-        expect(jim.description).to eq 'Jovial'
       end
 
     end

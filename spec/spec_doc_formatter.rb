@@ -72,7 +72,9 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
   def collect_example example_notification, result
     this_example = example_notification.example
     this_specdoc = this_example.metadata[:specdoc]
-    this_specdoc[:heading] ||= this_example.description.capitalize
+    unless this_specdoc.first.respond_to?(:keys) && this_specdoc.first.keys.first == :head 
+      this_specdoc.unshift({ head: this_example.description.capitalize }) 
+    end
     @specdoc_group[:examples] << this_specdoc 
   end
 
