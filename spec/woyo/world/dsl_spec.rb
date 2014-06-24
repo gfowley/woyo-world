@@ -7,8 +7,8 @@ describe 'DSL', stuff: true  do
   tagline "World of Your Own"
   url     "https://github.com/iqeo/woyo-world"
 
-  heading      "WOYO : World of Your Own"
-  introduction "This gem woyo-world is a Ruby-based DSL (Domain Specific Language) for creating and interacting with a virtual world. A world is comprised of locations to visit, and ways to go between locations."
+  head "WOYO : World of Your Own"
+  text "This gem woyo-world is a Ruby-based DSL (Domain Specific Language) for creating and interacting with a virtual world. A world is comprised of locations to visit, and ways to go between locations."
 
   context 'world' do
 
@@ -18,22 +18,9 @@ describe 'DSL', stuff: true  do
 
     def world ; @world ; end
 
-    introduction "A world is comprised of attributes and objects, including locations, items, characters, etc.."
+    head "World"
+    text "A world is comprised of attributes and objects, including locations, items, characters, etc.."
   
-    # example 'has attributes' do
-    #   heading      "Attributes"
-    #   introduction "A world has attributes that describe and define it's operation."
-    #   codes [ { pre:  "world.evaluate do",
-    #             code:   "name 'Small'
-    #                      description 'A small world.'
-    #                      start :home",
-    #             post: "end" } ]
-    #   before_results "Attributes may be accessed from the world."
-    #   results [ { code: "world.name",        value: "'Small'",          before: "The 'name' attribute is to be presented to the user" }, 
-    #             { code: "world.description", value: "'A small world.'", before: "The 'description' attrbute is to be presented to the user" }, 
-    #             { code: "world.start",       value: ":home",            before: "The 'start' attribute refers to the location the user will start at in the world...", after: "...in this case 'home'." } ]
-    # end
-    
     example 'also has attributes' do
       head "Attributes"
       text "A world has attributes that describe and define it's operation."
@@ -52,7 +39,7 @@ describe 'DSL', stuff: true  do
       text "...in this case 'home'."
     end
     
-    conclusion "The most interesting worlds contain locations to visit."
+    text "The most interesting worlds contain locations to visit."
 
   end
 
@@ -64,30 +51,9 @@ describe 'DSL', stuff: true  do
 
     def world ; @world ; end
 
-    introduction "A location is a place to visit in a world."
+    text "A location is a place to visit in a world."
 
-    # example 'home' do
-    #   heading      "From humble beginnings"
-    #   introduction "A single location"
-    #   codes [ { pre:  "world.evaluate do",
-    #             code:   "location :home do
-    #                        name 'My Home'
-    #                        description 'This old house.'
-    #                      end",
-    #             post: "end" } ]
-    #   before_results "Locations have an identifier (in this case :home) that is unique within the world." 
-    #   results [ { before: "A location may be referenced like this...",
-    #               code:   "home = world.locations[:home]" },
-    #             { before: "...or this...",
-    #               code:   "home = world.location :home",
-    #               after: "To get information about the location..." } ]
-    #   result "home.id" => ":home"
-    #   result "home.name" => "'My Home'"
-    #   result "home.description" => "'This old house.'"
-    #   conclusion "This is a nice old house, but let's make some changes to it..."
-    # end
-
-    example 'also home' do
+    example 'home' do
       head "From humble beginnings"
       text "A single location"
       code pre:  "world.evaluate do",
@@ -108,25 +74,7 @@ describe 'DSL', stuff: true  do
       text "This is a nice old house, but let's make some changes to it..."
     end
 
-    # example 'making changes' do
-    #   heading      "Change begins at home"
-    #   introduction "Let's make some changes to this location."
-    #   codes [ { pre:  "home = world.location :home
-    #                    world.evaluate do",
-    #             code:   "location :home do
-    #                        description 'Sweet home.'
-    #                      end",
-    #             post: "end" } ]
-    #   after_codes "The new description replaces the old one."
-    #   before_results "Now our home looks like this..."
-    #   result "home.name" => "'My Home'"
-    #   result "home.description" => "'Sweet home.'"
-    #   results [ { before: "No matter how sweet, this little world is not very interesting...",
-    #               code: "world.locations.count", value:  "1" } ]
-    #   conclusion "Let's expand our horizons..."
-    # end
-
-    example 'also making changes' do
+    example 'making changes' do
       head "Change begins at home"
       text "Let's make some changes to this location."
       code pre:  "home = world.location :home
@@ -144,30 +92,7 @@ describe 'DSL', stuff: true  do
       text "Let's expand our horizons..."
     end
 
-#     example 'second' do
-#       heading "Expandng horizons" 
-#       introduction "Add a location to our world"
-#       codes [ { pre:  "home = world.location :home
-#                        world.evaluate do",
-#                 code:   "location :garden do
-#                            name 'Garden'
-#                            description 'A green leafy place.'
-#                          end",
-#                 post: "end" } ]
-#       before_results "Now our world is a little more interesting..."
-#       result "world.locations.count" => "2"
-#       result "garden = world.location :garden" => nil
-#       results [ { before: "This seems like a nice garden...",
-#                   code:   "garden.id", value: ":garden" } ]
-#       result "garden.name" => "'Garden'"
-#       result "garden.description" => "'A green leafy place.'"
-#       results [ { before: "We'd like to visit this garden, but there's no way, no really..",
-#                   code:   "home.ways",   value: "{}" },
-#                 { code:   "garden.ways", value: "{}" } ]
-#       conclusion "To go from location to location we need Ways"
-#     end
-
-    example 'also second' do
+    example 'second' do
       head "Expandng horizons" 
       text "Add a location to our world"
       code pre:  "home = world.location :home
@@ -200,7 +125,7 @@ describe 'DSL', stuff: true  do
 
     def world ; @world ; end
 
-    introduction "A Woyo::Way is a directional path between locations."
+    text "A Woyo::Way is a directional path between locations."
 
     # example "from here to there" do
     #   introduction "A way is defined within a location."

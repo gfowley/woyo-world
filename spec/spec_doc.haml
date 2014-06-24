@@ -1,64 +1,62 @@
 
-- def render_groups groups
-  - if groups && !groups.empty?
-    - groups.each do |group|
-      - render_group group
+- def render_specdoc specdoc
+  - specdoc.each do |element|
+    - case
+    - when element.keys.first == :head    then render_head    element
+    - when element.keys.first == :text    then render_text    element
+    - when element.keys.first == :group   then render_group   element
+    - when element.keys.first == :example then render_example element
 
-- def render_group group
-  - unless group[:hide]
+- def render_group group_element
+  - group = group_element.values.first
+  - unless group.first == :hide
     - haml_tag :div do
-      - haml_tag :h1, group[:heading]
-      - haml_tag :p, group[:introduction]
-      - render_examples group[:examples]
-      - render_groups group[:groups]
-      - haml_tag :p, group[:conclusion]
+      - group.each do |element|
+        - case
+        - when element.keys.first == :head    then render_head    element
+        - when element.keys.first == :text    then render_text    element
+        - when element.keys.first == :group   then render_group   element
+        - when element.keys.first == :example then render_example element
 
-- def render_examples examples
-  - if examples && !examples.empty?
-    - examples.each do |example|
-      - render_example example
-
-- def render_example example
+- def render_example example_element
+  - example = example_element.values.first
   - unless example.first == :hide
     - haml_tag :div do
       - example.each do |element|
         - case 
-        - when element.keys.first == :head 
-          - render_head element
-        - when element.keys.first == :text
-          - render_text element
-        - when element.keys.include?(:code)
-          - render_code element
+        - when element.keys.first == :head  then render_head element
+        - when element.keys.first == :text  then render_text element
+        - when element.keys.include?(:code) then render_code element
 
-- def render_head element
-  - haml_tag :h1, element.values.first
+- def render_head head_element
+  - haml_tag :h1, head_element.values.first
    
-- def render_text element
-  - haml_tag :p, element.values.first
+- def render_text text_element
+  - haml_tag :p, text_element.values.first
    
-- def render_code element
-  - unless element[:hide]
+- def render_code code_element
+  - unless code_element[:hide]
     - haml_tag :div do
-      - haml_tag :pre, "<code>#{preserve(element[:code])}#{' #=> ' + element[:value].to_s if element[:value]}</code>"
+      - haml_tag :pre, "<code>#{preserve(code_element[:code])}#{' #=> ' + code_element[:value].to_s if code_element[:value]}</code>"
 
 %html
 
   %head
     %meta{ charset: 'utf-8' }
     %meta{ 'http-equiv' => "X-UA-Compatible", content: "chrome=1" }
-    %meta{ name: "description", content: "#{specdoc[:groups].first[:title]} : #{specdoc[:groups].first[:tagline]}" }
+    %meta{ name: "description", content: specdoc.first[:group].collect { |element| element[:title] }.compact.first + ' : ' +  specdoc.first[:group].collect { |element| element[:tagline] }.compact.first }
     %link{ rel: "stylesheet", type: "text/css", media: "screen", href: "stylesheets/stylesheet.css" }
-    %title= specdoc[:groups].first[:title]
+    %title= specdoc.first[:group].collect { |element| element[:title] }.compact.first
 
   %body
 
     %div#header_wrap.outer
       %header.inner
-        %a#forkme_banner{ href: specdoc[:groups].first[:url] } View on GitHub
-        %h1#project_title= specdoc[:groups].first[:title]
-        %h2#project_tagline= specdoc[:groups].first[:tagline]
+        %a#forkme_banner{ href: specdoc.first[:group].collect { |element| element[:url] }.compact.first } View on GitHub
+        %h1#project_title= specdoc.first[:group].collect { |element| element[:title] }.compact.first 
+        %h2#project_tagline= specdoc.first[:group].collect { |element| element[:tagline] }.compact.first 
 
     %div#main_content_wrap.outer
       %section#main_content.inner
-        - render_groups specdoc[:groups]
+        - render_specdoc specdoc
 

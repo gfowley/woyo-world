@@ -8,7 +8,6 @@ RSpec.configure do |config|
 
   config.around :example do |example|
     @example = example
-    #@example.metadata[:specdoc] = {}
     @example.metadata[:specdoc] = []
     @binding = @example.example_group_instance.eval_binding
 
@@ -57,73 +56,6 @@ RSpec.configure do |config|
 
     example.run
 
-    # def results array = nil
-    #   if array
-    #     @example.metadata[:specdoc][:results] ||= []
-    #     @example.metadata[:specdoc][:results]  += array
-    #     results.each do |result|
-    #       if result[:value] 
-    #         expect(@binding.eval result[:code]).to eq @binding.eval result[:value]
-    #       else
-    #         @binding.eval result[:code]
-    #       end
-    #     end
-    #   end
-    #   @example.metadata[:specdoc][:results]
-    # end
-
-    # def result rhash
-    #   results [ { code: rhash.keys.first, value: rhash.values.first } ]
-    # end
-
-    # def hide
-    #   @example.metadata[:specdoc][:hide] = true
-    # end
-
-    # def heading text
-    #   @example.metadata[:specdoc][:heading] = text
-    # end
-
-    # def introduction text
-    #   @example.metadata[:specdoc][:introduction] = text
-    # end
-
-    # def before_codes text
-    #   @example.metadata[:specdoc][:before_codes] = text
-    # end
-
-    # def codes array = nil
-    #   if array 
-    #     @example.metadata[:specdoc][:codes] ||= []
-    #     @example.metadata[:specdoc][:codes]  += array
-    #     codes.each do |code|
-    #       code[:code] = fix_indent(code[:code])
-    #       @binding.eval code.values_at(:pre,:code,:post).join "\n"
-    #     end
-    #   end
-    #   @example.metadata[:specdoc][:codes]
-    # end
-
-    # def code text
-    #   codes [ { code: text } ]
-    # end
-
-    # def after_codes text
-    #   @example.metadata[:specdoc][:after_codes] = text
-    # end
-
-    # def before_results text
-    #   @example.metadata[:specdoc][:before_results] = text
-    # end
-    
-    # def after_results text
-    #   @example.metadata[:specdoc][:after_results] = text
-    # end
-
-    # def conclusion text
-    #   @example.metadata[:specdoc][:conclusion] = text
-    # end
-
   end
 
 end
@@ -134,44 +66,39 @@ class RSpec::Core::ExampleGroup
     binding
   end
 
-  def self.title text
+  def self.title title
     init_specdoc
-    metadata[:specdoc][self][:title] = text
+    metadata[:specdoc][self] << { title: title }
   end
 
-  def self.tagline text
+  def self.tagline tagline
     init_specdoc
-    metadata[:specdoc][self][:tagline] = text
+    metadata[:specdoc][self] << { tagline: tagline }
   end
 
-  def self.url text
+  def self.url url
     init_specdoc
-    metadata[:specdoc][self][:url] = text
+    metadata[:specdoc][self] << { url: url }
   end
 
-  def self.hide text
+  def self.hide
     init_specdoc
-    metadata[:specdoc][self][:hide] = true
+    metadata[:specdoc][self] << :hide
   end
 
-  def self.heading text
+  def self.head head
     init_specdoc
-    metadata[:specdoc][self][:heading] = text
+    metadata[:specdoc][self] << { head: head }
   end
 
-  def self.introduction text
+  def self.text text
     init_specdoc
-    metadata[:specdoc][self][:introduction] = text
-  end
-
-  def self.conclusion text
-    init_specdoc
-    metadata[:specdoc][self][:conclusion] = text
+    metadata[:specdoc][self] << { text: text }
   end
 
   def self.init_specdoc
     metadata[:specdoc] = {} unless metadata[:specdoc]
-    metadata[:specdoc][self] = {} unless metadata[:specdoc][self]
+    metadata[:specdoc][self] = [] unless metadata[:specdoc][self]
   end
 
 end

@@ -17,8 +17,7 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
   end
   
   def start(start_notification)
-    @specdoc_root = {}
-    @specdoc_root[:groups] = []
+    @specdoc_root = []
     @specdoc_group = @specdoc_root
     @specdoc_parents = []
   end
@@ -44,13 +43,11 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
     this_group = group_notification.group
     this_group.init_specdoc
     this_group_specdoc = this_group.metadata[:specdoc][this_group] 
-    @specdoc_group[:groups] << this_group_specdoc
+    @specdoc_group << { group: this_group_specdoc }
     @specdoc_parents << @specdoc_group
     @specdoc_group = this_group_specdoc
-    @specdoc_group[:description]   = this_group.description
-    @specdoc_group[:heading]     ||= this_group.description.capitalize
-    @specdoc_group[:examples]      = []
-    @specdoc_group[:groups]        = []
+    @specdoc_group << { description: this_group.description }
+    @specdoc_group << { head:        this_group.description.capitalize }
   end
 
   def example_group_finished(group_notification)
@@ -75,7 +72,7 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
     unless this_specdoc.first.respond_to?(:keys) && this_specdoc.first.keys.first == :head 
       this_specdoc.unshift({ head: this_example.description.capitalize }) 
     end
-    @specdoc_group[:examples] << this_specdoc 
+    @specdoc_group << { example: this_specdoc }
   end
 
   def indent
@@ -83,41 +80,4 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
   end
   
 end
-
-  # def example_started(example_notification)
-  #   output.puts "### example started : #{current_indentation}#{example_notification.example.description}"
-  # end
-
-  # def message(message_notification)
-  #   output.puts "### message         : #{message_notification.message}"
-  # end
-
-  # def start_dump(null_notification)
-  #   output.puts null_notification
-  # end
-
-  # def dump_pending(examples_notification)
-  #   return if examples_notification.pending_examples.empty?
-  #   output.puts examples_notification.fully_formatted_pending_examples
-  # end
-
-  # def dump_failures(examples_notification)
-  #   return if examples_notification.failure_notifications.empty?
-  #   output.puts examples_notification.fully_formatted_failed_examples
-  # end
-
-  # def dump_summary(summary_notification)
-  #   output.puts summary_notification.fully_formatted
-  # end
-
-  # def seed(seed_notification)
-  #   return unless seed_notification.seed_used?
-  #   output.puts seed_notification.fully_formatted
-  # end
-
-  # def close(null_notification)
-  #   return unless IO === output
-  #   return if output.closed? || output == $stdout
-  #   output.close
-  # end
 
