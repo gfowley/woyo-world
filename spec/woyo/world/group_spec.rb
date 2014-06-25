@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'woyo/world/group'
 
 describe Woyo::Attributes::AttributesHash do
@@ -19,14 +20,14 @@ describe Woyo::Attributes::AttributesHash do
   end
 
   it 'is a kind of hash' do
-    @attributes.should be_kind_of Hash
-    @attributes[:test].should be nil
+    expect(@attributes).to be_kind_of Hash
+    expect(@attributes[:test]).to be nil
     @attributes[:test] = true
-    @attributes[:test].should be true
+    expect(@attributes[:test]).to be true
   end
 
   it 'provides list of attribute names' do
-    @attributes.names.should eq [:test]
+    expect(@attributes.names).to eq [:test]
   end
 
   it 'registers attribute listeners' do
@@ -34,27 +35,27 @@ describe Woyo::Attributes::AttributesHash do
   end
 
   it 'maintains list of attribute listeners' do
-    @attributes.listeners.should be_kind_of Hash
-    @attributes.listeners[:test].should be @listener
+    expect(@attributes.listeners).to be_kind_of Hash
+    expect(@attributes.listeners[:test]).to be @listener
   end
 
   it 'notifies listeners of attribute change' do
-    @listener.notified.should be false
-    @listener.attr.should be nil
-    @listener.value.should be nil
+    expect(@listener.notified).to be false
+    expect(@listener.attr).to be nil
+    expect(@listener.value).to be nil
     @attributes[:test] = :new_value
-    @listener.notified.should eq true
-    @listener.attr.should eq :test
-    @listener.value.should eq :new_value
+    expect(@listener.notified).to eq true
+    expect(@listener.attr).to eq :test
+    expect(@listener.value).to eq :new_value
   end
 
   it 'does not notify listener if attribute does not change' do
     @attributes[:test] = :same_value
     @listener = Listener.new
     @attributes.add_attribute_listener :test, @listener
-    @listener.notified.should be false
+    expect(@listener.notified).to be false
     @attributes[:test] = :same_value
-    @listener.notified.should be false
+    expect(@listener.notified).to be false
   end
 
 end
@@ -72,27 +73,27 @@ describe Woyo::Attributes::Group do
   end
 
   it 'maintains list of members' do
-    @group.members.should eq [ :larry, :curly, :moe ]
+    expect(@group.members).to eq [ :larry, :curly, :moe ]
   end
 
   it 'member names can be listed' do
-    @group.names.should eq [ :larry, :curly, :moe ]
+    expect(@group.names).to eq [ :larry, :curly, :moe ]
   end
 
   it 'members are backed by attributes' do
     @group[:larry] = 'dumb'
     @group[:curly] = 'bald'
     @group[:moe] = 'smart'
-    @group[:larry].should eq 'dumb'
-    @group[:curly].should eq 'bald'
-    @group[:moe].should eq 'smart'
-    @attributes[:larry].should eq 'dumb'
-    @attributes[:curly].should eq 'bald'
-    @attributes[:moe].should eq 'smart'
+    expect(@group[:larry]).to eq 'dumb'
+    expect(@group[:curly]).to eq 'bald'
+    expect(@group[:moe]).to eq 'smart'
+    expect(@attributes[:larry]).to eq 'dumb'
+    expect(@attributes[:curly]).to eq 'bald'
+    expect(@attributes[:moe]).to eq 'smart'
   end
   
   it 'member values can be listed' do
-    @group.values.should eq %w( dumb bald smart )
+    expect(@group.values).to eq %w( dumb bald smart )
   end
 
 end
@@ -104,42 +105,42 @@ describe Woyo::Attributes::Exclusion do
   end
 
   it 'has default' do
-    @group.default.should eq :warm
+    expect(@group.default).to eq :warm
   end
 
   it 'defaults to first member true, the rest false' do
-    @group[:warm].should be true
-    @group[:cool].should be false
-    @group[:cold].should be false
+    expect(@group[:warm]).to be true
+    expect(@group[:cool]).to be false
+    expect(@group[:cold]).to be false
   end
   
   it 'registers as listener for attributes' do
     @group.members.each do |member|
-      @group.attributes.listeners[member].should be @group
+      expect(@group.attributes.listeners[member]).to be @group
     end
   end
 
   it 'setting a member true changes the rest to false' do
     @group[:cold] = true
-    @group[:warm].should be false
-    @group[:cool].should be false
-    @group[:cold].should be true
+    expect(@group[:warm]).to be false
+    expect(@group[:cool]).to be false
+    expect(@group[:cold]).to be true
   end
 
   it 'for a group > 2 members setting a true member false reverts to default' do
     @group[:cold] = false
-    @group[:warm].should be true
-    @group[:cool].should be false
-    @group[:cold].should be false
+    expect(@group[:warm]).to be true
+    expect(@group[:cool]).to be false
+    expect(@group[:cold]).to be false
   end
 
   it 'for a binary group setting a true member false sets the other true' do
     @binary_group = Woyo::Attributes::Exclusion.new Woyo::Attributes::AttributesHash.new, :yes, :no
-    @binary_group[:yes].should be true
-    @binary_group[:no].should be false
+    expect(@binary_group[:yes]).to be true
+    expect(@binary_group[:no]).to be false
     @binary_group[:yes] = false
-    @binary_group[:yes].should be false
-    @binary_group[:no].should be true
+    expect(@binary_group[:yes]).to be false
+    expect(@binary_group[:no]).to be true
   end
 
   it 'can only set existing members' do
@@ -149,14 +150,14 @@ describe Woyo::Attributes::Exclusion do
   it 'can be reset to default!' do
     @group[:cool] = true 
     @group.default!
-    @group[:warm].should eq true
+    expect(@group[:warm]).to eq true
   end
 
   it '#value returns name of true member' do
     @group[:warm] = true
-    @group.value.should eq :warm
+    expect(@group.value).to eq :warm
     @group[:cold] = true
-    @group.value.should eq :cold
+    expect(@group.value).to eq :cold
   end
 
 end

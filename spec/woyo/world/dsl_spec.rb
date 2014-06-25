@@ -1,378 +1,219 @@
+require 'spec_helper'
 require 'woyo/world/world'
 
 describe 'DSL' do
 
-  let(:world) { Woyo::World.new }
+  title   "Woyo World"
+  tagline "World of Your Own"
+  url     "https://github.com/iqeo/woyo-world"
+
+  head "WOYO : World of Your Own"
+  text "This gem woyo-world is a Ruby-based DSL (Domain Specific Language) for creating and interacting with a virtual world. A world is comprised of locations to visit, and ways to go between locations."
 
   context 'world' do
-  
-    it 'has attributes' do
-      world.evaluate do
-        name 'Small'
-        description 'A small world'
-        start :home
-      end
-      world.name.should eq 'Small'
-      world.description.should eq 'A small world'
-      world.start.should eq :home
+
+    before :all do
+      @world = Woyo::World.new
     end
 
-    it 'contains locations' do
-      world.evaluate do
-        location :one
-        location :two do ; end
-        location :three do
-          name '3'
-        end
-      end
-      world.locations.count.should eq 3
-      world.locations[:one].should be_instance_of Woyo::Location
-      world.locations[:two].should be_instance_of Woyo::Location
-      world.locations[:three].should be_instance_of Woyo::Location
-      world.locations[:three].name.should eq '3'
+    def world ; @world ; end
+
+    head "World"
+    text "A world is comprised of attributes and objects, including locations, items, characters, etc.."
+  
+    doc 'has attributes' do
+      head "Attributes"
+      text "A world has attributes that describe and define it's operation."
+      code pre:  "world.evaluate do",
+           code:   "name 'Small'
+                    description 'A small world.'
+                    start :home",
+           post: "end"
+      text "Attributes may be accessed from the world."
+      text "The 'name' attribute is to be presented to the user" 
+      code "world.name" => "'Small'"
+      text "The 'description' attrbute is to be presented to the user"
+      code "world.description" => "'A small world.'"
+      text "The 'start' attribute refers to the location the user will start at in the world..."
+      code "world.start" => ":home"
+      text "...in this case 'home'."
     end
+    
+    text "The most interesting worlds contain locations to visit."
 
   end
 
-  context 'location' do 
+  context 'locations' do 
 
-    # it 'new without block' do
-    #   world = Woyo::World.new do
-    #     location :home
-    #     location :away
-    #     location :lost
-    #   end
-    #   world.should be_instance_of Woyo::World
-    #   world.locations.count.should eq 3
-    # end
-
-    # it 'new with empty block' do
-    #   world = Woyo::World.new do
-    #     location :home do ; end
-    #     location :away do ; end
-    #     location :lost do ; end
-    #   end
-    #   world.should be_instance_of Woyo::World
-    #   world.locations.count.should eq 3
-    # end
-
-    it 'defined with attributes' do
-      world.evaluate do
-        location :house do
-          name 'Home'
-          description 'Sweet'
-        end
-      end
-      location = world.locations[:house]
-      location.id.should eq :house
-      location.name.should eq 'Home'
-      location.description.should eq 'Sweet'
+    before :all do
+      @world = Woyo::World.new
     end
 
-    it 'redefined' do
-      world.evaluate do
-        location :house do
-          name 'Home'
-        end
-      end
-      world.evaluate do
-        location :house do
-          description 'Old'
-        end
-      end
-      world.evaluate do
-        location :house do
-          description 'Sweet'
-        end
-      end
-      world.locations.count.should eq 1
-      location = world.locations[:house]
-      location.id.should eq :house
-      location.name.should eq 'Home'
-      location.description.should eq 'Sweet'
+    def world ; @world ; end
+
+    text "A location is a place to visit in a world."
+
+    doc 'home' do
+      head "From humble beginnings"
+      text "A single location"
+      code pre:  "world.evaluate do",
+           code:   "location :home do
+                      name 'My Home'
+                      description 'This old house.'
+                    end",
+           post: "end"
+      text "Locations have an identifier (in this case :home) that is unique within the world." 
+      text "A location may be referenced like this..."
+      code "home = world.locations[:home]"
+      text "...or this..."
+      code "home = world.location :home"
+      text "To get information about the location..."
+      code "home.id" => ":home"
+      code "home.name" => "'My Home'"
+      code "home.description" => "'This old house.'"
+      text "This is a nice old house, but let's make some changes to it..."
     end
 
-    it 'multiple with attributes' do
-      world = Woyo::World.new do
-        location :home do
-          name 'Home'
-          description 'Sweet'
-        end
-        location :away do
-          name 'Away'
-          description 'Okay'
-        end
-      end
-      world.should be_instance_of Woyo::World
-      world.locations.count.should eq 2
-      home = world.locations[:home]
-      home.id.should eq :home
-      home.name.should eq 'Home'
-      home.description.should eq 'Sweet'
-      away = world.locations[:away]
-      away.id.should eq :away
-      away.name.should eq 'Away'
-      away.description.should eq 'Okay'
+    doc 'making changes' do
+      head "Change begins at home"
+      text "Let's make some changes to this location."
+      code pre:  "home = world.location :home
+                  world.evaluate do",
+           code:   "location :home do
+                      description 'Sweet home.'
+                    end",
+           post: "end"
+      text "The new description replaces the old one."
+      text "Now our home looks like this..."
+      code "home.name" => "'My Home'"
+      code "home.description" => "'Sweet home.'"
+      text "No matter how sweet, this little world is not very interesting..."
+      code "world.locations.count" => "1"
+      text "Let's expand our horizons..."
+    end
+
+    doc 'second' do
+      head "Expandng horizons" 
+      text "Add a location to our world"
+      code pre:  "home = world.location :home
+                    world.evaluate do",
+           code:   "location :garden do
+                      name 'Garden'
+                      description 'A green leafy place.'
+                    end",
+           post: "end"
+      text "Now our world is a little more interesting..."
+      code "world.locations.count" => "2"
+      code "garden = world.location :garden"
+      text "This seems like a nice garden..."
+      code "garden.id" => ":garden"
+      code "garden.name" => "'Garden'"
+      code "garden.description" => "'A green leafy place.'"
+      text "We'd like to visit this garden, but there's no way, really..."
+      code "home.ways"   => "{}"
+      code "garden.ways" => "{}"
+      text "To go from location to location we need Ways"
     end
 
   end
 
   context 'ways' do
 
-    context 'new way' do
-
-      it 'to new location' do
-        world = Woyo::World.new do
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              to :away
-            end
-          end
-        end
-        home = world.locations[:home]
-        home.ways.count.should eq 1
-        door = home.ways[:door]
-        door.should be_instance_of Woyo::Way
-        door.name.should eq 'Large Wooden Door'
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :away
-        away = world.locations[:away]
-        away.ways.count.should eq 0
-        door.to.should eq away
-      end
-
-      it 'to existing location' do
-        world = Woyo::World.new do
-          location :away do
-          end
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              to :away
-            end
-          end
-        end
-        home = world.locations[:home]
-        home.ways.count.should eq 1
-        door = home.ways[:door]
-        door.should be_instance_of Woyo::Way
-        door.name.should eq 'Large Wooden Door'
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :away
-        away = world.locations[:away]
-        away.ways.count.should eq 0
-        door.to.should eq away
-      end
-
-      it 'to same location' do
-        world = Woyo::World.new do
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              to :home
-            end
-          end
-        end
-        home = world.locations[:home]
-        home.ways.count.should eq 1
-        door = home.ways[:door]
-        door.should be_instance_of Woyo::Way
-        door.name.should eq 'Large Wooden Door'
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :home
-        door.to.should eq home
-      end
-
+    before :all do
+      @world = Woyo::World.new
     end
 
-    context 'existing way' do
+    def world ; @world ; end
 
-      it 'to new location' do
-        world = Woyo::World.new do
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              description "Big, real big!"
-            end
-            way :door do
-              description 'Nicer'
-              to :away
-            end
-          end
-        end
-        home = world.locations[:home]
-        home.ways.count.should eq 1
-        door = home.ways[:door]
-        door.name.should eq 'Large Wooden Door'
-        door.description.should eq "Nicer"
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :away
-        away = world.locations[:away]
-        away.ways.count.should eq 0
-        door.to.should eq away
-      end
+    text "A Woyo::Way is a directional path between locations."
 
-      it 'to existing location' do
-        world = Woyo::World.new do
-          location :away do
-          end
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              description "Big, real big!"
-            end
-            way :door do
-              description 'Nicer'
-              to :away
-            end
-          end
-        end
-        home = world.locations[:home]
-        home.ways.count.should eq 1
-        door = home.ways[:door]
-        door.name.should eq 'Large Wooden Door'
-        door.description.should eq "Nicer"
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :away
-        away = world.locations[:away]
-        away.ways.count.should eq 0
-        door.to.should eq away
-      end
-
-      it 'to same location' do
-        world = Woyo::World.new do
-          location :home do
-            way :door do
-              name 'Large Wooden Door'
-              description "Big, real big!"
-            end
-            way :door do
-              description 'Nicer'
-              to :home
-            end
-          end
-        end
-        home = world.locations[:home]
-        home.ways.count.should eq 1
-        door = home.ways[:door]
-        door.name.should eq 'Large Wooden Door'
-        door.description.should eq "Nicer"
-        door.to.should be_instance_of Woyo::Location
-        door.to.id.should eq :home
-        door.to.should eq home
-      end
-
+    doc "from here to there" do
+      text "A way is defined within a location."
+      code pre:  "world.evaluate do",
+           code:   "location :here do
+                      way :road do
+                        to :there
+                        description 'A short road'
+                        going       'Takes a long time'
+                      end
+                    end",
+           post: "end"
+      text "Ways have an identifier (in this case :road) that is unique within that location."
+      text "A way may be referenced like this..."
+      code "here = world.locations[:here]" => nil
+      code "way = here.ways[:road]" => nil
+      text "...or this..."
+      code "here = world.location :here"
+      code "way = here.way :road"
+      text "The way's attributes include a description that may be included in location representation to the user."
+      code "way.description" => "'A short road'"
+      text "The location the way is defined within is the location the way is 'from'."
+      code "way.from.id" => ":here"
+      text "Ways connect 'to' a location (in this case :there). This location is created if it does not already exist."
+      code "way.to.id" => ":there"
     end
 
-    context 'going' do
-
-      before :all do
-        @world = Woyo::World.new do
-          location :room do
-            way :stairs do
-              to :cellar
-              description   open: 'Rickety stairs lead down into darkness.',
-                closed: 'Broken stairs end in darkness.'
-              going         open: 'Creaky steps lead uncertainly downwards...',
-                closed: 'The dangerous stairs are impassable.'
-            end
-          end
-          location :cellar do
-            description 'Dark and damp, as expected.'
-          end
-        end
-      end
-
-      it 'an open way' do
-        room = @world.locations[:room]
-        stairs = room.ways[:stairs]
-        stairs.to.id.should eq :cellar
-        stairs.should be_open
-        stairs.description.should eq 'Rickety stairs lead down into darkness.'
-        stairs.go.should eq ( { go: true, going: 'Creaky steps lead uncertainly downwards...' } )
-      end
-
-      it 'a closed way' do
-        room = @world.locations[:room]
-        stairs = room.ways[:stairs]
-        stairs.to.id.should eq :cellar
-        stairs.close!
-        stairs.should be_closed
-        stairs.description.should eq 'Broken stairs end in darkness.'
-        stairs.go.should eq ( { go: false, going: 'The dangerous stairs are impassable.' } )
-      end
-
+    doc "hit the road" do
+      text "Ways connect locations so that a user can move about in your world. Usually upon user input, the user goes a way from location to location. An optional description of the 'going' may be presented."
+      code pre:  "world.evaluate do",
+           code:   "location :room do
+                      way :stairs do
+                        to :cellar
+                        description 'Rickety stairs lead down into darkness.'
+                        going       'Creaky steps lead uncertainly downwards...'
+                      end
+                    end
+                    location :cellar do
+                      description 'Dark and damp, as expected.'
+                    end",
+           post: "end"
+      text "Accessing the location and way..."
+      code "room = world.location :room" => nil
+      code "stairs = room.way :stairs" => nil
+      text "When we try to 'go' a way, the result describes the attempt."
+      code "attempt = stairs.go" => "{ go: true, going: 'Creaky steps lead uncertainly downwards...' }"
+      text "Whether successful or not (true in this case)..."
+      code "attempt[:go]" => "true"
+      text "And a description of the attempt (none in this case)..."
+      code "attempt[:going]" => "'Creaky steps lead uncertainly downwards...'"
     end
 
-    # it 'new character' do
-    #   world = Woyo::World.new do
-    #     location :home do
-    #       character :jim do
-    #       end
-    #     end
-    #   end
-    #   home = world.locations[:home]
-    #   home.characters.count.should eq 1
-    #   jim = home.characters[:jim]
-    #   jim.location.should be home
-    # end
-
-    # it 'existing character' do
-    #   world = Woyo::World.new do
-    #     location :home do
-    #       character :jim do
-    #         name 'James'
-    #         description 'Jolly'
-    #       end
-    #       character :jim do
-    #         description 'Jovial'
-    #       end
-    #     end
-    #   end
-    #   home = world.locations[:home]
-    #   home.characters.count.should eq 1
-    #   jim = home.characters[:jim]
-    #   jim.location.should be home
-    #   jim.name.should eq 'James'
-    #   jim.description.should eq 'Jovial'
-    # end
-
-    context 'character' do
-
-      it 'new' do
-        world = Woyo::World.new do
-          character :jim do
-            name 'James'
-            description 'Jolly'
-          end
-        end
-        world.characters.count.should eq 1
-        world.characters[:jim].should be_instance_of Woyo::Character
-        jim = world.characters[:jim]
-        jim.location.should be_nil
-        jim.name.should eq 'James'
-        jim.description.should eq 'Jolly'
-      end
-
-      it 'existing' do
-        world = Woyo::World.new do
-          character :jim do
-            name 'James'
-            description 'Jolly'
-          end
-          character :jim do
-            description 'Jovial'
-          end
-        end
-        world.characters.count.should eq 1
-        world.characters[:jim].should be_instance_of Woyo::Character
-        jim = world.characters[:jim]
-        jim.location.should be_nil
-        jim.name.should eq 'James'
-        jim.description.should eq 'Jovial'
-      end
-
+    doc "going a way" do
+      text "Ways may be open or closed, optionally with descriptions for each state. A user cannot go a closed way, and an alternative 'going' description may be presented if attempted."
+      code pre:  "world.evaluate do",
+           code:   "location :room do
+                      way :stairs do
+                        to :cellar
+                        description   open:   'Rickety stairs lead down into darkness.',
+                                      closed: 'Broken stairs end in darkness.'
+                        going         open:   'Creaky steps lead uncertainly downwards...',
+                                      closed: 'The dangerous stairs are impassable.'
+                      end
+                    end
+                    location :cellar do
+                      description 'Dark and damp, as expected.'
+                    end",
+           post: "end"
+      text "Accessing the location and way..."
+      code "room = world.location :room" => nil
+      code "stairs = room.way :stairs" => nil
+      text "Ways that go 'to' a location are open by default."
+      code "stairs.open?" => "true"
+      text "With an appropriate description."
+      code "stairs.description" => "'Rickety stairs lead down into darkness.'"
+      text "Going an open way succeeds."
+      code "attempt = stairs.go" => "{ go: true, going: 'Creaky steps lead uncertainly downwards...' }"
+      code "attempt[:go]" => "true"
+      code "attempt[:going]" => "'Creaky steps lead uncertainly downwards...'"
+      text "A way may be closed."
+      code "stairs.close!"
+      code "stairs.closed?" => "true"
+      text "The way has an appropriate description."
+      code "stairs.description" => "'Broken stairs end in darkness.'"
+      text "Going a closed way fails."
+      code "attempt = stairs.go" => "{ go: false, going: 'The dangerous stairs are impassable.' }"
+      code "attempt[:go]" => "false"
+      code "attempt[:going]" => "'The dangerous stairs are impassable.'"
     end
 
   end
