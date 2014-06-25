@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'woyo/world/world'
 
-describe 'DSL', stuff: true  do
+describe 'DSL' do
 
   title   "Woyo World"
   tagline "World of Your Own"
