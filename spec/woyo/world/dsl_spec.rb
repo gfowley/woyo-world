@@ -21,7 +21,7 @@ describe 'DSL' do
     head "World"
     text "A world is comprised of attributes and objects, including locations, items, characters, etc.."
   
-    doc 'also has attributes' do
+    doc 'has attributes' do
       head "Attributes"
       text "A world has attributes that describe and define it's operation."
       code pre:  "world.evaluate do",
