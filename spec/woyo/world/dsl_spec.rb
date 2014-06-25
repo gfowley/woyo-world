@@ -197,7 +197,7 @@ describe 'DSL' do
       text "Accessing the location and way..."
       code "room = world.location :room" => nil
       code "stairs = room.way :stairs" => nil
-      text "Ways that go 'to' somewhere are open by default."
+      text "Ways that go 'to' a location are open by default."
       code "stairs.open?" => "true"
       text "With an appropriate description."
       code "stairs.description" => "'Rickety stairs lead down into darkness.'"
@@ -205,47 +205,15 @@ describe 'DSL' do
       code "attempt = stairs.go" => "{ go: true, going: 'Creaky steps lead uncertainly downwards...' }"
       code "attempt[:go]" => "true"
       code "attempt[:going]" => "'Creaky steps lead uncertainly downwards...'"
-      # results... for closed
-    end
-
-    context 'going' do
-
-      before :all do
-        @world = Woyo::World.new do
-          location :room do
-            way :stairs do
-              to :cellar
-              description   open: 'Rickety stairs lead down into darkness.',
-                closed: 'Broken stairs end in darkness.'
-              going         open: 'Creaky steps lead uncertainly downwards...',
-                closed: 'The dangerous stairs are impassable.'
-            end
-          end
-          location :cellar do
-            description 'Dark and damp, as expected.'
-          end
-        end
-      end
-
-      it 'an open way' do
-        room = @world.locations[:room]
-        stairs = room.ways[:stairs]
-        expect(stairs.to.id).to eq :cellar
-        expect(stairs).to be_open
-        expect(stairs.description).to eq 'Rickety stairs lead down into darkness.'
-        expect(stairs.go).to eq ( { go: true, going: 'Creaky steps lead uncertainly downwards...' } )
-      end
-
-      it 'a closed way' do
-        room = @world.locations[:room]
-        stairs = room.ways[:stairs]
-        expect(stairs.to.id).to eq :cellar
-        stairs.close!
-        expect(stairs).to be_closed
-        expect(stairs.description).to eq 'Broken stairs end in darkness.'
-        expect(stairs.go).to eq ( { go: false, going: 'The dangerous stairs are impassable.' } )
-      end
-
+      text "A way may be closed."
+      code "stairs.close!"
+      code "stairs.closed?" => "true"
+      text "The way has an appropriate description."
+      code "stairs.description" => "'Broken stairs end in darkness.'"
+      text "Going a closed way fails."
+      code "attempt = stairs.go" => "{ go: false, going: 'The dangerous stairs are impassable.' }"
+      code "attempt[:go]" => "false"
+      code "attempt[:going]" => "'The dangerous stairs are impassable.'"
     end
 
   end
