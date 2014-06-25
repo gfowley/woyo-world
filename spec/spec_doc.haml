@@ -9,7 +9,7 @@
 
 - def render_group group_element
   - group = group_element.values.first
-  - unless group.first == :hide
+  - unless group.first[:hide]
     - haml_tag :div do
       - group.each do |element|
         - case
@@ -20,7 +20,7 @@
 
 - def render_example example_element
   - example = example_element.values.first
-  - unless example.first == :hide
+  - unless example.first[:hide]
     - haml_tag :div do
       - example.each do |element|
         - case 

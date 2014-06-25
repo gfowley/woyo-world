@@ -68,12 +68,16 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
   def collect_example example_notification, result
     this_example = example_notification.example
     this_specdoc = this_example.metadata[:specdoc]
-    # unless this_specdoc.first.respond_to?(:keys) && this_specdoc.first.keys.first == :head 
-    unless this_specdoc.any? { |e| e[:head] }
+    unless this_specdoc.any? { |element| element[:head] }
       description = this_example.description
       this_specdoc.unshift({ head: description == description.upcase ? description : description.capitalize  }) 
     end
-    @specdoc_group << { example: this_specdoc }
+    placeholder = @specdoc_group.detect { |element| element[:example] == false }
+    if placeholder 
+      placeholder[:example] = this_specdoc
+    else
+      @specdoc_group << { example: this_specdoc }
+    end
   end
 
   def indent

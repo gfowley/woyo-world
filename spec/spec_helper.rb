@@ -11,6 +11,10 @@ RSpec.configure do |config|
     @example.metadata[:specdoc] = []
     @binding = @example.example_group_instance.eval_binding
 
+    def hide
+      @example.metadata[:specdoc] << { hide: true }
+    end
+
     def head text
       @example.metadata[:specdoc] << { head: text }
     end
@@ -83,7 +87,7 @@ class RSpec::Core::ExampleGroup
 
   def self.hide
     init_specdoc
-    metadata[:specdoc][self] << :hide
+    metadata[:specdoc][self] << { hide: true }
   end
 
   def self.head head
@@ -99,6 +103,12 @@ class RSpec::Core::ExampleGroup
   def self.init_specdoc
     metadata[:specdoc] = {} unless metadata[:specdoc]
     metadata[:specdoc][self] = [] unless metadata[:specdoc][self]
+  end
+
+  def self.doc *args, &block
+    init_specdoc
+    metadata[:specdoc][self] << { example: false } # empty example order placeholder
+    example *args, &block
   end
 
 end

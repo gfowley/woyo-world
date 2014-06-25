@@ -21,7 +21,7 @@ describe 'DSL' do
     head "World"
     text "A world is comprised of attributes and objects, including locations, items, characters, etc.."
   
-    example 'also has attributes' do
+    doc 'also has attributes' do
       head "Attributes"
       text "A world has attributes that describe and define it's operation."
       code pre:  "world.evaluate do",
@@ -53,7 +53,7 @@ describe 'DSL' do
 
     text "A location is a place to visit in a world."
 
-    example 'home' do
+    doc 'home' do
       head "From humble beginnings"
       text "A single location"
       code pre:  "world.evaluate do",
@@ -74,7 +74,7 @@ describe 'DSL' do
       text "This is a nice old house, but let's make some changes to it..."
     end
 
-    example 'making changes' do
+    doc 'making changes' do
       head "Change begins at home"
       text "Let's make some changes to this location."
       code pre:  "home = world.location :home
@@ -92,7 +92,7 @@ describe 'DSL' do
       text "Let's expand our horizons..."
     end
 
-    example 'second' do
+    doc 'second' do
       head "Expandng horizons" 
       text "Add a location to our world"
       code pre:  "home = world.location :home
@@ -127,89 +127,86 @@ describe 'DSL' do
 
     text "A Woyo::Way is a directional path between locations."
 
-    # example "from here to there" do
-    #   introduction "A way is defined within a location."
-    #   codes [ { pre:  "world.evaluate do",
-    #             code:   "location :here do
-    #                        way :road do
-    #                          to :there
-    #                          description 'A short road'
-    #                          going       'Takes a long time'
-    #                        end
-    #                      end",
-    #             post: "end" } ]
-    #   after_codes "Ways have an identifier (in this case :road) that is unique within that location."
-    #   before_results "A way may be referenced like this..."
-    #   result "here = world.locations[:here]" => nil
-    #   result "way = here.ways[:road]" => nil
-    #   results [ { before: "...or this...",
-    #               code:   "here = world.location :here" },
-    #             { code:   "way = here.way :road" } ]
-    #   results [ { before: "The way's attributes include a description that may be included in location representation to the user.",
-    #               code:   "way.description", value: "'A short road'" } ]
-    #   results [ { before: "The location the way is defined within is the location the way is 'from'.",
-    #               code:   "way.from" },
-    #             { code:   "way.from.id", value: ":here" } ]
-    #   results [ { before: "Ways connect 'to' a location (in this case :there). This location is created if it does not already exist.",
-    #               code:   "way.to" },
-    #             { code:   "way.to.id", value: ":there" } ]
-    # end
+    doc "from here to there" do
+      text "A way is defined within a location."
+      code pre:  "world.evaluate do",
+           code:   "location :here do
+                      way :road do
+                        to :there
+                        description 'A short road'
+                        going       'Takes a long time'
+                      end
+                    end",
+           post: "end"
+      text "Ways have an identifier (in this case :road) that is unique within that location."
+      text "A way may be referenced like this..."
+      code "here = world.locations[:here]" => nil
+      code "way = here.ways[:road]" => nil
+      text "...or this..."
+      code "here = world.location :here"
+      code "way = here.way :road"
+      text "The way's attributes include a description that may be included in location representation to the user."
+      code "way.description" => "'A short road'"
+      text "The location the way is defined within is the location the way is 'from'."
+      code "way.from.id" => ":here"
+      text "Ways connect 'to' a location (in this case :there). This location is created if it does not already exist."
+      code "way.to.id" => ":there"
+    end
 
-    # example "hit the road" do
-    #   introduction "Ways connect locations so that a user can move about in your world. Usually upon user input, the user goes a way from location to location. An optional description of the 'going' may be presented."
-    #   codes [ { pre:  "world.evaluate do",
-    #             code:   "location :room do
-    #                        way :stairs do
-    #                          to :cellar
-    #                          description 'Rickety stairs lead down into darkness.'
-    #                          going       'Creaky steps lead uncertainly downwards...'
-    #                        end
-    #                      end
-    #                      location :cellar do
-    #                        description 'Dark and damp, as expected.'
-    #                      end",
-    #             post: "end" } ]
-    #   before_results "Accessing the location and way..."
-    #   result "room = world.location :room" => nil
-    #   result "stairs = room.way :stairs" => nil
-    #   results [ { before: "When we try to 'go' a way, the result describes the attempt.",
-    #               code:   "attempt = stairs.go", value: "{ go: true, going: 'Creaky steps lead uncertainly downwards...' }" },
-    #             { before: "Whether successful or not (true in this case)...",
-    #               code:   "attempt[:go]", value: "true" },
-    #             { before: "And a description of the attempt (none in this case)...",
-    #               code:   "attempt[:going]", value: "'Creaky steps lead uncertainly downwards...'" } ]
-    # end
+    doc "hit the road" do
+      text "Ways connect locations so that a user can move about in your world. Usually upon user input, the user goes a way from location to location. An optional description of the 'going' may be presented."
+      code pre:  "world.evaluate do",
+           code:   "location :room do
+                      way :stairs do
+                        to :cellar
+                        description 'Rickety stairs lead down into darkness.'
+                        going       'Creaky steps lead uncertainly downwards...'
+                      end
+                    end
+                    location :cellar do
+                      description 'Dark and damp, as expected.'
+                    end",
+           post: "end"
+      text "Accessing the location and way..."
+      code "room = world.location :room" => nil
+      code "stairs = room.way :stairs" => nil
+      text "When we try to 'go' a way, the result describes the attempt."
+      code "attempt = stairs.go" => "{ go: true, going: 'Creaky steps lead uncertainly downwards...' }"
+      text "Whether successful or not (true in this case)..."
+      code "attempt[:go]" => "true"
+      text "And a description of the attempt (none in this case)..."
+      code "attempt[:going]" => "'Creaky steps lead uncertainly downwards...'"
+    end
 
-    # example "going a way" do
-    #   introduction "Ways may be open or closed, optionally with descriptions for each state. A user cannot go a closed way, and an alternative 'going' description may be presented if attempted."
-    #   codes [ { pre:  "world.evaluate do",
-    #             code:   "location :room do
-    #                        way :stairs do
-    #                          to :cellar
-    #                          description   open:   'Rickety stairs lead down into darkness.',
-    #                                        closed: 'Broken stairs end in darkness.'
-    #                          going         open:   'Creaky steps lead uncertainly downwards...',
-    #                                        closed: 'The dangerous stairs are impassable.'
-    #                        end
-    #                      end
-    #                      location :cellar do
-    #                        description 'Dark and damp, as expected.'
-    #                      end",
-    #             post: "end" } ]
-    #   before_results "Accessing the location and way..."
-    #   result "room = world.location :room" => nil
-    #   result "stairs = room.way :stairs" => nil
-    #   results [ { before: "Ways that go 'to' somewhere are open by default.",
-    #               code:   "stairs.open?", value: "true" },
-    #             { before: "With an appropriate description.",
-    #               code:   "stairs.description", value: "'Rickety stairs lead down into darkness.'" },
-    #             { before: "Going an open way succeeds.",
-    #               code:   "attempt = stairs.go", value: "{ go: true, going: 'Creaky steps lead uncertainly downwards...' }" },
-    #             { code:   "attempt[:go]", value: "true" },
-    #             { code:   "attempt[:going]", value: "'Creaky steps lead uncertainly downwards...'" } ]
-    #   # results... for closed
-    #   #
-    # end
+    doc "going a way" do
+      text "Ways may be open or closed, optionally with descriptions for each state. A user cannot go a closed way, and an alternative 'going' description may be presented if attempted."
+      code pre:  "world.evaluate do",
+           code:   "location :room do
+                      way :stairs do
+                        to :cellar
+                        description   open:   'Rickety stairs lead down into darkness.',
+                                      closed: 'Broken stairs end in darkness.'
+                        going         open:   'Creaky steps lead uncertainly downwards...',
+                                      closed: 'The dangerous stairs are impassable.'
+                      end
+                    end
+                    location :cellar do
+                      description 'Dark and damp, as expected.'
+                    end",
+           post: "end"
+      text "Accessing the location and way..."
+      code "room = world.location :room" => nil
+      code "stairs = room.way :stairs" => nil
+      text "Ways that go 'to' somewhere are open by default."
+      code "stairs.open?" => "true"
+      text "With an appropriate description."
+      code "stairs.description" => "'Rickety stairs lead down into darkness.'"
+      text "Going an open way succeeds."
+      code "attempt = stairs.go" => "{ go: true, going: 'Creaky steps lead uncertainly downwards...' }"
+      code "attempt[:go]" => "true"
+      code "attempt[:going]" => "'Creaky steps lead uncertainly downwards...'"
+      # results... for closed
+    end
 
     context 'going' do
 
