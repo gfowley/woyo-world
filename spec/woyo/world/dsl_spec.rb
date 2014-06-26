@@ -51,6 +51,7 @@ describe 'DSL' do
 
     def world ; @world ; end
 
+    head "Locations"
     text "A location is a place to visit in a world."
 
     doc 'home' do
@@ -125,6 +126,7 @@ describe 'DSL' do
 
     def world ; @world ; end
 
+    head "Ways"
     text "A Woyo::Way is a directional path between locations."
 
     doc "from here to there" do

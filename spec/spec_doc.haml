@@ -13,7 +13,7 @@
     - haml_tag :div do
       - group.each do |element|
         - case
-        - when element.keys.first == :head    then render_head    element
+        - when element.keys.first == :head    then render_head    element, 2
         - when element.keys.first == :text    then render_text    element
         - when element.keys.first == :group   then render_group   element
         - when element.keys.first == :example then render_example element
@@ -24,13 +24,19 @@
     - haml_tag :div do
       - example.each do |element|
         - case 
-        - when element.keys.first == :head  then render_head element
+        - when element.keys.first == :head  then render_head element, 3
         - when element.keys.first == :text  then render_text element
         - when element.keys.include?(:code) then render_code element
 
-- def render_head head_element
-  - haml_tag :h1, head_element.values.first
-   
+- def render_head head_element, size = 1
+  - case size
+  - when 1 then haml_tag :h1, head_element.values.first
+  - when 2 then haml_tag :h2, head_element.values.first
+  - when 3 then haml_tag :h3, head_element.values.first
+  - when 4 then haml_tag :h4, head_element.values.first
+  - when 5 then haml_tag :h5, head_element.values.first
+  - else        haml_tag :h6, head_element.values.first
+
 - def render_text text_element
   - haml_tag :p, text_element.values.first
    
