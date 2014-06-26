@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'woyo/world/world'
 require 'woyo/world/location'
+require 'woyo/world/item'
 require 'woyo/world/way'
 
 describe Woyo::Location do
@@ -20,6 +21,17 @@ describe Woyo::Location do
     wo = nil
     expect { wo = Woyo::Location.new(:my_id, context: Woyo::World.new) }.to_not raise_error
     expect(wo.context).to be_instance_of Woyo::World
+  end
+
+  it '#here' do
+    home = Woyo::Location.new :home 
+    expect(home.here).to be home
+  end
+
+  it '#world' do
+    world = Woyo::World.new
+    home = Woyo::Location.new :home, context: world
+    expect(home.world).to eq world
   end
 
   context 'ways' do
@@ -57,15 +69,26 @@ describe Woyo::Location do
 
   end
 
-  it '#here' do
-    home = Woyo::Location.new :home 
-    expect(home.here).to be home
-  end
+  context 'items' do
 
-  it '#world' do
-    world = Woyo::World.new
-    home = Woyo::Location.new :home, context: world
-    expect(home.world).to eq world
+    let( :home ) do
+      home = Woyo::Location.new :home do
+        item( :thing1 ) { description 'Thing One' }
+        item( :thing2 ) { description 'Thing two' }
+      end
+    end
+
+    it 'are listed' do
+      expect(home.items.count).to eq 2
+      expect(home.items.keys).to eq [ :thing1, :thing2 ]
+    end
+
+    it 'are accessible' do
+      expect(thing = home.items[:thing1]).to be_instance_of Woyo::Item
+      expect(thing.id).to eq :thing1
+      expect(thing.description).to eq 'Thing One'
+    end
+
   end
 
   # it '#characters' do

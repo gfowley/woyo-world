@@ -1,6 +1,7 @@
 require_relative 'world_object'
 require_relative 'location'
 require_relative 'way'
+require_relative 'item'
 require_relative 'character'
 
 module Woyo

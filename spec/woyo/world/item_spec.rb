@@ -8,7 +8,7 @@ describe Woyo::Item do
 
     let(:item) { Woyo::Item.new :thing }
 
-    it 'has attributes' do
+    it 'has default attributes' do
       expect(item.attributes).to be_instance_of Woyo::Attributes::AttributesHash
       expect(item.attributes.names.sort).to eq [:description,:name]
     end
@@ -34,6 +34,24 @@ describe Woyo::Item do
     end
 
   end
+
+  context 'attributes' do
+
+    let(:item) do
+      Woyo::Item.new :thing do
+        attribute color: :red
+      end
+    end
+
+    it 'are accessible' do
+      expect(item.color).to eq :red
+      item.color = :blue
+      expect(item.color).to eq :blue
+    end
+
+  end
+
+  it 'connect ?'
 
 end
  
