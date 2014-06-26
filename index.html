@@ -17,13 +17,13 @@
     <div class='outer' id='main_content_wrap'>
       <section class='inner' id='main_content'>
         <div>
-          <h1>WOYO : World of Your Own</h1>
+          <h2>WOYO : World of Your Own</h2>
           <p>This gem woyo-world is a Ruby-based DSL (Domain Specific Language) for creating and interacting with a virtual world. A world is comprised of locations to visit, and ways to go between locations.</p>
           <div>
-            <h1>World</h1>
+            <h2>World</h2>
             <p>A world is comprised of attributes and objects, including locations, items, characters, etc..</p>
             <div>
-              <h1>Attributes</h1>
+              <h3>Attributes</h3>
               <p>A world has attributes that describe and define it's operation.</p>
               <div>
                 <pre><code>name 'Small'&#x000A;description 'A small world.'&#x000A;start :home</code></pre>
@@ -46,9 +46,10 @@
             <p>The most interesting worlds contain locations to visit.</p>
           </div>
           <div>
+            <h2>Locations</h2>
             <p>A location is a place to visit in a world.</p>
             <div>
-              <h1>From humble beginnings</h1>
+              <h3>From humble beginnings</h3>
               <p>A single location</p>
               <div>
                 <pre><code>location :home do&#x000A;  name 'My Home'&#x000A;  description 'This old house.'&#x000A;end</code></pre>
@@ -75,7 +76,7 @@
               <p>This is a nice old house, but let's make some changes to it...</p>
             </div>
             <div>
-              <h1>Change begins at home</h1>
+              <h3>Change begins at home</h3>
               <p>Let's make some changes to this location.</p>
               <div>
                 <pre><code>location :home do&#x000A;  description 'Sweet home.'&#x000A;end</code></pre>
@@ -95,7 +96,7 @@
               <p>Let's expand our horizons...</p>
             </div>
             <div>
-              <h1>Expandng horizons</h1>
+              <h3>Expandng horizons</h3>
               <p>Add a location to our world</p>
               <div>
                 <pre><code>location :garden do&#x000A;  name 'Garden'&#x000A;  description 'A green leafy place.'&#x000A;end</code></pre>
@@ -128,9 +129,10 @@
             </div>
           </div>
           <div>
+            <h2>Ways</h2>
             <p>A Woyo::Way is a directional path between locations.</p>
             <div>
-              <h1>From here to there</h1>
+              <h3>From here to there</h3>
               <p>A way is defined within a location.</p>
               <div>
                 <pre><code>location :here do&#x000A;  way :road do&#x000A;    to :there&#x000A;    description 'A short road'&#x000A;    going       'Takes a long time'&#x000A;  end&#x000A;end</code></pre>
@@ -164,7 +166,7 @@
               </div>
             </div>
             <div>
-              <h1>Hit the road</h1>
+              <h3>Hit the road</h3>
               <p>Ways connect locations so that a user can move about in your world. Usually upon user input, the user goes a way from location to location. An optional description of the 'going' may be presented.</p>
               <div>
                 <pre><code>location :room do&#x000A;  way :stairs do&#x000A;    to :cellar&#x000A;    description 'Rickety stairs lead down into darkness.'&#x000A;    going       'Creaky steps lead uncertainly downwards...'&#x000A;  end&#x000A;end&#x000A;location :cellar do&#x000A;  description 'Dark and damp, as expected.'&#x000A;end</code></pre>
@@ -190,7 +192,7 @@
               </div>
             </div>
             <div>
-              <h1>Going a way</h1>
+              <h3>Going a way</h3>
               <p>Ways may be open or closed, optionally with descriptions for each state. A user cannot go a closed way, and an alternative 'going' description may be presented if attempted.</p>
               <div>
                 <pre><code>location :room do&#x000A;  way :stairs do&#x000A;    to :cellar&#x000A;    description   open:   'Rickety stairs lead down into darkness.',&#x000A;                  closed: 'Broken stairs end in darkness.'&#x000A;    going         open:   'Creaky steps lead uncertainly downwards...',&#x000A;                  closed: 'The dangerous stairs are impassable.'&#x000A;  end&#x000A;end&#x000A;location :cellar do&#x000A;  description 'Dark and damp, as expected.'&#x000A;end</code></pre>
