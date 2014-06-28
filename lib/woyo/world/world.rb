@@ -8,7 +8,7 @@ module Woyo
 
 class World < WorldObject
 
-  children :location, :character
+  children :location, :character, :item
 
   def initialize_object
     super

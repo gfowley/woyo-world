@@ -15,7 +15,6 @@ describe 'DSL' do
     before :all do
       @world = Woyo::World.new
     end
-
     def world ; @world ; end
 
     head "World"
@@ -48,7 +47,6 @@ describe 'DSL' do
     before :all do
       @world = Woyo::World.new
     end
-
     def world ; @world ; end
 
     head "Locations"
@@ -216,6 +214,96 @@ describe 'DSL' do
       code "attempt = stairs.go" => "{ go: false, going: 'The dangerous stairs are impassable.' }"
       code "attempt[:go]" => "false"
       code "attempt[:going]" => "'The dangerous stairs are impassable.'"
+    end
+
+  end
+
+  context "actions" do
+
+    before :all do
+      @world = Woyo::World.new
+    end
+    def world ; @world ; end
+
+    head "Actions"
+    text "World objects may have actions that can be invoked, usually via user interaction."
+    text "Actions change the state of the world, usually by changing the value of attributes on world objects"
+
+    doc "change attributes" do
+
+      text "Actions may be defined for a world object, in this case, an item."
+      code pre:  "world.evaluate do",
+        code:   "item :thing do
+                     name 'Thing?'
+                     action two: proc { name = 'Thing Two' }
+                     action one: proc { name = 'Thing One' }
+                   end",
+                   post: "end"
+      text "Initially the name is as defined"
+      code "thing = world.item :thing" => "world.items[:thing]"
+      code "thing.name" => "'Thing?'"
+      text "Invoking action 'one', changes the name."
+      code "thing.one!"
+      code "thing.name" => "'Thing One'"
+      text "Invoking action 'two', changes the name again."
+      code "thing.Two!"
+      code "thing.name" => "'Thing Two'"
+    end
+
+  end
+
+  context 'context' do
+
+    before :all do
+      @world = Woyo::World.new
+    end
+    def world ; @world ; end
+
+    head 'Context'
+    text "Other objects may be referred to in different ways."
+
+    doc 'world' do
+
+    end
+
+    doc 'location' do
+
+    end
+
+    doc 'context' do
+
+    end
+
+  end
+
+  context 'attributes' do
+
+    before :all do
+      @world = Woyo::World.new
+    end
+    def world ; @world ; end
+
+    head "Attributes"
+
+    doc "can track attributes" do
+
+      text "Attribute values may track other attributes. This allows values to be easily communicated between world objects."
+      code pre:  "world.evaluate do",
+           code:   "item :bulb do
+                      attribute color: 'red'
+                    end
+                    item :lamp do    
+                      attribute light: proc { world.items[:bulb].color } 
+                    end",
+           post: "end"
+      text "The lamp's light depends on the bulb color."
+      code "lamp = world.item :lamp"
+      code "lamp.light" => "'red'"
+      text "Let's change the bulb."
+      code "bulb = world.item :bulb"
+      code "bulb.color = 'green'"
+      text "New we see the lamp in a new light."
+      code "lamp.light" => "'green'"
     end
 
   end

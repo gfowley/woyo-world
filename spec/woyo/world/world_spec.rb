@@ -10,12 +10,16 @@ describe Woyo::World do
     expect(world.attributes.names.sort).to eq [:description,:name,:start]
   end
 
-  it 'initializes with no locations' do
+  it 'can have locations' do
     expect(world.locations).to be_empty
   end
 
-  it 'initializes with no characters' do
+  it 'can have characters' do
     expect(world.characters).to be_empty
+  end
+
+  it 'can have items' do
+    expect(world.items).to be_empty
   end
 
 end

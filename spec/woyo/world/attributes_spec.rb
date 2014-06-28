@@ -36,7 +36,7 @@ describe Woyo::Attributes do
 
   it '#attributes returns AttributesHash with names and default values for instance with unpopulated attributes' do
     attr_test = AttrTest.new
-    attr_test.attributes one: 1, two: 2, three: proc { 3 } 
+    attr_test.attributes one: 1, two: 2, three: 3 
     expect(attr_test.attributes).to be_instance_of Woyo::Attributes::AttributesHash
     expect(attr_test.attributes.keys).to eq [ :one, :two, :three ]  
     expect(attr_test.attributes.values).to eq [ 1, 2, 3 ]
@@ -130,6 +130,19 @@ describe Woyo::Attributes do
     attr_test.define_singleton_method(:my_method) { "okay" }
     attr_test.attributes attr_with_proc_default: proc { |this| this.my_method }
     expect(attr_test.attr_with_proc_default).to eq "okay"
+  end
+
+  it 'proc runs on each access via method' do
+    attr_test = AttrTest.new
+    attr_test.attributes time_proc: proc { Time.now }
+    old_time = attr_test.time_proc
+    expect(attr_test.time_proc).to be > old_time
+  end
+
+  it 'proc returned on direct access to attribute' do
+    attr_test = AttrTest.new
+    attr_test.attributes time_proc: proc { Time.now }
+    expect(attr_test.attributes[:time_proc]).to respond_to :call
   end
 
   it 'can have a default lambda' do
@@ -230,7 +243,7 @@ describe Woyo::Attributes do
     end
 
     it 'names and default values can be retrieved' do
-      gat.group :numbers, one: 1, two: 2, three: proc { 3 } 
+      gat.group :numbers, one: 1, two: 2, three: 3  
       expect(gat.numbers).to be_instance_of Woyo::Attributes::Group
       expect(gat.numbers.count).to eq 3
       expect(gat.numbers.names).to eq [ :one, :two, :three ]  

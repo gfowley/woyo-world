@@ -87,9 +87,9 @@ module Attributes
 
   def define_attr_default attr, default
     define_singleton_method "#{attr}_default" do
-      if default.respond_to? :call
-        return default.arity == 0 ? default.call : default.call(self)
-      end
+      # if default.respond_to? :call
+      #   return default.arity == 0 ? default.call : default.call(self)
+      # end
       default
     end
   end
@@ -102,11 +102,17 @@ module Attributes
 
   def define_attr attr
     define_singleton_method attr do |arg = nil|
-    return @attributes[attr] = arg unless arg.nil?
-    return @attributes[attr]       unless @attributes[attr].kind_of? Hash
-    true_attribute_match = @attributes[attr].detect { |name,value| @attributes[name] == true }
-    return true_attribute_match[1] if true_attribute_match
-    @attributes[attr]
+      return @attributes[attr] = arg unless arg.nil?
+      case
+      when @attributes[attr].kind_of?( Hash )
+        true_attribute_match = @attributes[attr].detect { |name,value| @attributes[name] == true }
+        return true_attribute_match[1] if true_attribute_match
+        @attributes[attr]
+      when @attributes[attr].respond_to?( :call )
+        return @attributes[attr].arity == 0 ? @attributes[attr].call : @attributes[attr].call(self)
+      else
+        @attributes[attr]
+      end
     end
   end
 

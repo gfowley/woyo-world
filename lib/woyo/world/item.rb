@@ -10,7 +10,15 @@ class Item < WorldObject
   end
 
   def location
-    self.context
+    self.context.instance_of?( Location ) ? self.context : nil
+  end
+
+  def world
+    case
+    when self.context.instance_of?( World )   then self.context
+    when self.context.instance_of?( Location) then self.context.world
+    else nil
+    end
   end
 
 end
