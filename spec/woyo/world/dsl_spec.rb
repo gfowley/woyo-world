@@ -285,9 +285,25 @@ describe 'DSL' do
 
     head "Attributes"
 
-    doc "can track attributes" do
+    doc "may be dynamic" do
+      text "Attribute values may be dynamic, their value determined by a Ruby code block. The value of the last expression in the block is the value assigned to the attribte."
+      code pre:  "world.evaluate do",
+           code:   "item :clock do
+                      attribute time: proc { Time.now.to_s }
+                    end",
+           post: "end"
+      text "'Time.now.to_s' is a Ruby expression that returns the current time in human readable string. Since it is the last (only) expression in the code block, it's value will be assigned to the attribute ':time'."
+      code "clock = world.item :clock"
+      code "clock.time" => "Time.now.to_s"
+      text "The code block will be evaluated each time the attribute is accessed, returning the current time. Let's wait a second and check the time again."
+      code "sleep 1"
+      code "clock.time" => "Time.now.to_s"
+    end
 
-      text "Attribute values may track other attributes. This allows values to be easily communicated between world objects."
+    # doc "may track attributes of this object" do
+
+    doc "may track attributes of other objects" do
+      text "This provides a mechanism for one object to affect another. The Ruby code block may simply refer to an attribute of another object."
       code pre:  "world.evaluate do",
            code:   "item :bulb do
                       attribute color: 'red'
@@ -305,6 +321,8 @@ describe 'DSL' do
       text "New we see the lamp in a new light."
       code "lamp.light" => "'green'"
     end
+
+    # doc "may do anything in Ruby"
 
   end
 
