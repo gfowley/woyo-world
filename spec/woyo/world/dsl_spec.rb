@@ -218,70 +218,6 @@ describe 'DSL' do
 
   end
 
-  context "actions" do
-
-    before :all do
-      @world = Woyo::World.new
-    end
-    def world ; @world ; end
-
-    head "Actions"
-    text "World objects may have actions that can be invoked, usually via user interaction."
-    text "Actions change the state of the world, usually by changing the value of attributes on world objects"
-
-    it "change attributes"
-    # doc "change attributes" do
-    #   text "Actions may be defined for a world object, in this case, an item."
-    #   code pre:  "world.evaluate do",
-    #        code:   "item :thing do
-    #                   name 'Thing?'
-    #                   action two: proc { name = 'Thing Two' }
-    #                   action one: proc { name = 'Thing One' }
-    #                 end",
-    #        post: "end"
-    #   text "Initially the name is as defined"
-    #   code "thing = world.item :thing" => "world.items[:thing]"
-    #   code "thing.name" => "'Thing?'"
-    #   text "Invoking action 'one', changes the name."
-    #   code "thing.one!"
-    #   code "thing.name" => "'Thing One'"
-    #   text "Invoking action 'two', changes the name again."
-    #   code "thing.two!"
-    #   code "thing.name" => "'Thing Two'"
-    # end
-
-    it "may be defined as a block"
-
-    it "may be invoked via #do :action"
-
-    it "are listed"
-  
-  end
-
-  context 'context' do
-
-    before :all do
-      @world = Woyo::World.new
-    end
-    def world ; @world ; end
-
-    head 'Context'
-    text "Other objects may be referred to in different ways."
-
-    doc 'world' do
-
-    end
-
-    doc 'location' do
-
-    end
-
-    doc 'context' do
-
-    end
-
-  end
-
   context 'attributes' do
 
     before :all do
@@ -349,6 +285,63 @@ describe 'DSL' do
       text "New we see the lamp in a new light."
       code "lamp.light" => "'green'"
     end
+
+    text "To access attributes of other objects, see 'Context'."
+    text "Being Ruby code, dynamic attributes could be used to make changes to other world objects, attributes, etc.., even to execute any arbitrary Ruby code. Don't do it, this way lies madness."
+    text "Dynamic attributes are intended only to provide a dynamic value to a attribute, not to change other attributes or world objects. Another mechanism: 'Actions', is intended to modify the world."
+
+  end
+
+  context 'context' do
+
+    before :all do
+      @world = Woyo::World.new
+    end
+    def world ; @world ; end
+
+    head 'Context'
+    text "Other objects may be referred to in different ways."
+
+    doc 'world'
+
+    doc 'location'
+
+    doc 'context'
+
+  end
+
+  context "actions" do
+
+    before :all do
+      @world = Woyo::World.new
+    end
+    def world ; @world ; end
+
+    head "Actions"
+    text "World objects may have actions that can be invoked, usually via user interaction."
+    text "Actions change the state of the world, usually by changing the value of attributes on world objects"
+
+    doc "change attributes"
+    
+    # do
+    #   text "Actions may be defined for a world object, in this case, an item."
+    #   code pre:  "world.evaluate do",
+    #        code:   "item :thing do
+    #                   name 'Thing?'
+    #                   action two: proc { name = 'Thing Two' }
+    #                   action one: proc { name = 'Thing One' }
+    #                 end",
+    #        post: "end"
+    #   text "Initially the name is as defined"
+    #   code "thing = world.item :thing" => "world.items[:thing]"
+    #   code "thing.name" => "'Thing?'"
+    #   text "Invoking action 'one', changes the name."
+    #   code "thing.one!"
+    #   code "thing.name" => "'Thing One'"
+    #   text "Invoking action 'two', changes the name again."
+    #   code "thing.two!"
+    #   code "thing.name" => "'Thing Two'"
+    # end
 
   end
 
