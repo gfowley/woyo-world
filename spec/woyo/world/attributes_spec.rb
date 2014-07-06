@@ -8,181 +8,221 @@ describe Woyo::Attributes do
       include Woyo::Attributes
     end
   end
-  
-  it '#attributes returns empty AttributesHash for instance with no attributes' do
-    attr_test = AttrTest.new
-    expect(attr_test.attributes).to be_instance_of Woyo::Attributes::AttributesHash
-    expect(attr_test.attributes.count).to eq 0
-  end
 
-  it '#attributes returns AttributesHash with names and nil values for instance with unpopulated attributes' do
-    attr_test = AttrTest.new
-    attr_test.attributes :attr1, :attr2, :attr3
-    expect(attr_test.attributes).to be_instance_of Woyo::Attributes::AttributesHash
-    expect(attr_test.attributes.keys).to eq [ :attr1, :attr2, :attr3 ]  
-    expect(attr_test.attributes.values).to eq [ nil, nil, nil ]
-  end
+  context '#attributes' do
 
-  it '#attributes returns AttributeHash with names and values for instance with populated attributes' do
-    attr_test = AttrTest.new
-    attr_test.attributes :attr1, :attr2, :attr3
-    expect(attr_test.attributes).to be_instance_of Woyo::Attributes::AttributesHash
-    expect(attr_test.attributes.keys).to eq [ :attr1, :attr2, :attr3 ]
-    attr_test.attributes.keys.each do |attr|
-      attr_test.send(attr, attr.to_s.upcase)
+    it 'returns empty AttributesHash for instance with no attributes' do
+      attr_test = AttrTest.new
+      expect(attr_test.attributes).to be_instance_of Woyo::Attributes::AttributesHash
+      expect(attr_test.attributes.count).to eq 0
     end
-    expect(attr_test.attributes.values).to eq [ 'ATTR1', 'ATTR2', 'ATTR3' ]
-  end
 
-  it '#attributes returns AttributesHash with names and default values for instance with unpopulated attributes' do
-    attr_test = AttrTest.new
-    attr_test.attributes one: 1, two: 2, three: 3 
-    expect(attr_test.attributes).to be_instance_of Woyo::Attributes::AttributesHash
-    expect(attr_test.attributes.keys).to eq [ :one, :two, :three ]  
-    expect(attr_test.attributes.values).to eq [ 1, 2, 3 ]
-  end
-
-  it 'have convenience accessor :names for :keys' do
-    attr_test = AttrTest.new
-    attr_test.attributes :attr1, :attr2, :attr3
-    expect(attr_test.attributes.names).to eq [ :attr1, :attr2, :attr3 ]  
-  end
-
-  it 'can be written via method with =' do
-    attr_test = AttrTest.new
-    attr_test.attributes :attr1, :attr2, :attr3
-    attr_test.attributes.names.each do |attr|
-      attr_test.send("#{attr}=", attr.to_s.upcase)
+    it 'returns AttributesHash with names and nil values for instance with unpopulated attributes' do
+      attr_test = AttrTest.new
+      attr_test.attributes :attr1, :attr2, :attr3
+      expect(attr_test.attributes).to be_instance_of Woyo::Attributes::AttributesHash
+      expect(attr_test.attributes.keys).to eq [ :attr1, :attr2, :attr3 ]  
+      expect(attr_test.attributes.values).to eq [ nil, nil, nil ]
     end
-    attr_test.attributes.each do |name,value|
-      expect(value).to eq name.to_s.upcase
+
+    it 'returns AttributesHash with names and values for instance with populated attributes' do
+      attr_test = AttrTest.new
+      attr_test.attributes :attr1, :attr2, :attr3
+      expect(attr_test.attributes).to be_instance_of Woyo::Attributes::AttributesHash
+      expect(attr_test.attributes.keys).to eq [ :attr1, :attr2, :attr3 ]
+      attr_test.attributes.keys.each do |attr|
+        attr_test.send(attr, attr.to_s.upcase)
+      end
+      expect(attr_test.attributes.values).to eq [ 'ATTR1', 'ATTR2', 'ATTR3' ]
     end
+
+    it 'returns AttributesHash with names and default values for instance with unpopulated attributes' do
+      attr_test = AttrTest.new
+      attr_test.attributes one: 1, two: 2, three: 3 
+      expect(attr_test.attributes).to be_instance_of Woyo::Attributes::AttributesHash
+      expect(attr_test.attributes.keys).to eq [ :one, :two, :three ]  
+      expect(attr_test.attributes.values).to eq [ 1, 2, 3 ]
+    end
+
+    it 'provides convenience accessor :names for :keys' do
+      attr_test = AttrTest.new
+      attr_test.attributes :attr1, :attr2, :attr3
+      expect(attr_test.attributes.names).to eq [ :attr1, :attr2, :attr3 ]  
+    end
+
   end
 
-  it 'can be written via method without =' do
-    attr_test = AttrTest.new
-    attr_test.attributes :attr1, :attr2, :attr3
-    attr_test.attributes.names.each do |attr|
-      attr_test.send(attr, attr.to_s.upcase)
+  context 'can be accessed' do
+    
+    it 'to write via method with =' do
+      attr_test = AttrTest.new
+      attr_test.attributes :attr1, :attr2, :attr3
+      attr_test.attributes.names.each do |attr|
+        attr_test.send("#{attr}=", attr.to_s.upcase)
+      end
+      attr_test.attributes.each do |name,value|
+        expect(value).to eq name.to_s.upcase
+      end
     end
-    attr_test.attributes.each do |name,value|
-      expect(value).to eq name.to_s.upcase
+
+    it 'to write via method without =' do
+      attr_test = AttrTest.new
+      attr_test.attributes :attr1, :attr2, :attr3
+      attr_test.attributes.names.each do |attr|
+        attr_test.send(attr, attr.to_s.upcase)
+      end
+      attr_test.attributes.each do |name,value|
+        expect(value).to eq name.to_s.upcase
+      end
     end
+
+    it 'to read via method' do
+      attr_test = AttrTest.new
+      attr_test.attributes :attr1, :attr2, :attr3
+      attr_test.attributes.names.each do |attr|
+        attr_test.send(attr, attr.to_s.upcase)
+      end
+      attr_test.attributes.each do |name,value|
+        expect(eval("attr_test.#{name}")).to eq value
+      end
+    end
+
   end
 
-  it 'can be read via method' do
-    attr_test = AttrTest.new
-    attr_test.attributes :attr1, :attr2, :attr3
-    attr_test.attributes.names.each do |attr|
-      attr_test.send(attr, attr.to_s.upcase)
+  context 'can be defined' do
+
+    it 'via "attribute"' do
+      attr_test = AttrTest.new
+      attr_test.attribute :open
+      expect(attr_test.open).to be_nil
+      attr_test.open = true
+      expect(attr_test.open).to be true
     end
-    attr_test.attributes.each do |name,value|
-      expect(eval("attr_test.#{name}")).to eq value
+
+    it 'attribute list can be added to' do
+      attr_test = AttrTest.new
+      attr_test.attributes :attr1, :attr2, :attr3
+      attr_test.attributes :attr4, :attr5, :attr6
+      expect(attr_test.attributes.count).to eq 6
+      expect(attr_test.attributes.names).to eq [ :attr1, :attr2, :attr3, :attr4, :attr5, :attr6 ]
     end
-  end
 
-  it 'list can be added to' do
-    attr_test = AttrTest.new
-    attr_test.attributes :attr1, :attr2, :attr3
-    attr_test.attributes :attr4, :attr5, :attr6
-    expect(attr_test.attributes.count).to eq 6
-    expect(attr_test.attributes.names).to eq [ :attr1, :attr2, :attr3, :attr4, :attr5, :attr6 ]
-  end
+    it 'attribute list can be added to without duplication' do
+      attr_test = AttrTest.new
+      attr_test.attributes :attr1, :attr2, :attr3
+      attr_test.attributes :attr2, :attr3, :attr4
+      expect(attr_test.attributes.count).to eq 4
+      expect(attr_test.attributes.names).to eq [ :attr1, :attr2, :attr3, :attr4 ]
+    end
+        
+    it 'with a default value' do
+      attr_test = AttrTest.new
+      attr_test.attributes attr_with_array___default: [ 1, 2, 3 ]
+      attr_test.attributes attr_with_hash____default: { a: 1, b: 2, c: 3 }
+      attr_test.attributes attr_with_number__default: 12345
+      attr_test.attributes attr_with_string__default: "abcde"
+      attr_test.attributes attr_with_boolean_default: true
+      expect(attr_test.attr_with_array___default).to eq [ 1, 2, 3 ]
+      expect(attr_test.attr_with_hash____default).to eq ( { a: 1, b: 2, c: 3 } )
+      expect(attr_test.attr_with_number__default).to eq 12345
+      expect(attr_test.attr_with_string__default).to eq "abcde"
+      expect(attr_test.attr_with_boolean_default).to eq true
+    end
 
-  it 'list can be added to without duplication' do
-    attr_test = AttrTest.new
-    attr_test.attributes :attr1, :attr2, :attr3
-    attr_test.attributes :attr2, :attr3, :attr4
-    expect(attr_test.attributes.count).to eq 4
-    expect(attr_test.attributes.names).to eq [ :attr1, :attr2, :attr3, :attr4 ]
-  end
+    context 'wth a dynamic value' do
 
-  it 'can be defined with "attribute"' do
-    attr_test = AttrTest.new
-    attr_test.attribute :open
-    expect(attr_test.open).to be_nil
-    attr_test.open = true
-    expect(attr_test.open).to be true
-  end
+      context 'a proc' do
+
+        it 'runs' do
+          attr_test = AttrTest.new
+          attr_test.attributes attr_with_proc_default: proc { Time.now }
+          expect(attr_test.attr_with_proc_default).to be < Time.now
+        end
+
+        it 'runs in instance scope' do
+          attr_test = AttrTest.new
+          attr_test.define_singleton_method(:my_method) { "okay" }
+          attr_test.attributes attr_with_proc_default: proc { |this| this.my_method }
+          expect(attr_test.attr_with_proc_default).to eq "okay"
+        end
+
+        it 'runs on each access via method' do
+          attr_test = AttrTest.new
+          attr_test.attributes time_proc: proc { Time.now }
+          old_time = attr_test.time_proc
+          expect(attr_test.time_proc).to be > old_time
+        end
+
+        it 'is returned on direct access to attribute' do
+          attr_test = AttrTest.new
+          attr_test.attributes time_proc: proc { Time.now }
+          expect(attr_test.attributes[:time_proc]).to respond_to :call
+        end
+
+      end
+
+      context 'a lambda' do
+        
+        it 'runs' do
+          attr_test = AttrTest.new
+          attr_test.attributes attr_with_lambda_default: lambda { Time.now }
+          expect(attr_test.attr_with_lambda_default).to be < Time.now
+        end
+
+        it 'runs in instance scope' do
+          attr_test = AttrTest.new
+          attr_test.define_singleton_method(:my_method) { "okay" }
+          attr_test.attributes attr_with_lambda_default: lambda { |this| this.my_method }
+          expect(attr_test.attr_with_lambda_default).to eq "okay"
+        end
+
+        it 'runs on each access via method' do
+          attr_test = AttrTest.new
+          attr_test.attributes time_lambda: lambda { Time.now }
+          old_time = attr_test.time_lambda
+          expect(attr_test.time_lambda).to be > old_time
+        end
+
+        it 'is returned on direct access to attribute' do
+          attr_test = AttrTest.new
+          attr_test.attributes time_lambda: lambda { Time.now }
+          expect(attr_test.attributes[:time_lambda]).to respond_to :call
+        end
+
+      end
       
-  it 'can have a default value' do
-    attr_test = AttrTest.new
-    attr_test.attributes attr_with_array___default: [ 1, 2, 3 ]
-    attr_test.attributes attr_with_hash____default: { a: 1, b: 2, c: 3 }
-    attr_test.attributes attr_with_number__default: 12345
-    attr_test.attributes attr_with_string__default: "abcde"
-    attr_test.attributes attr_with_boolean_default: true
-    expect(attr_test.attr_with_array___default).to eq [ 1, 2, 3 ]
-    expect(attr_test.attr_with_hash____default).to eq ( { a: 1, b: 2, c: 3 } )
-    expect(attr_test.attr_with_number__default).to eq 12345
-    expect(attr_test.attr_with_string__default).to eq "abcde"
-    expect(attr_test.attr_with_boolean_default).to eq true
-  end
+      context 'a block' do
 
-  it 'can have a default proc' do
-    attr_test = AttrTest.new
-    attr_test.attributes attr_with_proc_default: proc { Time.now }
-    expect(attr_test.attr_with_proc_default).to be < Time.now
-  end
+        it 'runs' do
+          attr_test = AttrTest.new
+          attr_test.attribute( :attr_with_block_default ) { Time.now }
+          expect(attr_test.attr_with_block_default).to be < Time.now
+        end
 
-  it 'default proc runs in instance scope' do
-    attr_test = AttrTest.new
-    attr_test.define_singleton_method(:my_method) { "okay" }
-    attr_test.attributes attr_with_proc_default: proc { |this| this.my_method }
-    expect(attr_test.attr_with_proc_default).to eq "okay"
-  end
+        it 'runs in instance scope' do
+          attr_test = AttrTest.new
+          attr_test.define_singleton_method(:my_method) { "okay" }
+          attr_test.attribute( :attr_with_block_default )  { |this| this.my_method }
+          expect(attr_test.attr_with_block_default).to eq "okay"
+        end
 
-  it 'default proc runs on each access via method' do
-    attr_test = AttrTest.new
-    attr_test.attributes time_proc: proc { Time.now }
-    old_time = attr_test.time_proc
-    expect(attr_test.time_proc).to be > old_time
-  end
+        it 'runs on each access via method' do
+          attr_test = AttrTest.new
+          attr_test.attribute( :time_block ) { Time.now }
+          old_time = attr_test.time_block
+          expect(attr_test.time_block).to be > old_time
+        end
 
-  it 'proc returned on direct access to attribute' do
-    attr_test = AttrTest.new
-    attr_test.attributes time_proc: proc { Time.now }
-    expect(attr_test.attributes[:time_proc]).to respond_to :call
-  end
+        it 'is returned on direct access to attribute' do
+          attr_test = AttrTest.new
+          attr_test.attribute( :time_block ) { Time.now }
+          expect(attr_test.attributes[:time_block]).to respond_to :call
+        end
 
-  it 'can have a default lambda' do
-    attr_test = AttrTest.new
-    attr_test.attributes attr_with_lambda_default: lambda { Time.now }
-    expect(attr_test.attr_with_lambda_default).to be < Time.now
-  end
+      end
 
-  it 'default lambda runs in instance scope' do
-    attr_test = AttrTest.new
-    attr_test.define_singleton_method(:my_method) { "okay" }
-    attr_test.attributes attr_with_lambda_default: lambda { |this| this.my_method }
-    expect(attr_test.attr_with_lambda_default).to eq "okay"
-  end
+    end
 
-  it 'default lambda runs on each access via method' do
-    attr_test = AttrTest.new
-    attr_test.attributes time_lambda: lambda { Time.now }
-    old_time = attr_test.time_lambda
-    expect(attr_test.time_lambda).to be > old_time
-  end
-
-  it 'can have a default block' do
-    attr_test = AttrTest.new
-    attr_test.attribute( :attr_with_block_default ) { Time.now }
-    expect(attr_test.attr_with_block_default).to be < Time.now
-  end
-
-  it 'default block runs in instance scope' do
-    attr_test = AttrTest.new
-    attr_test.define_singleton_method(:my_method) { "okay" }
-    attr_test.attribute( :attr_with_block_default )  { |this| this.my_method }
-    expect(attr_test.attr_with_block_default).to eq "okay"
-  end
-
-  it 'default block runs on each access via method' do
-    attr_test = AttrTest.new
-    attr_test.attribute( :time_block ) { Time.now }
-    old_time = attr_test.time_block
-    expect(attr_test.time_block).to be > old_time
   end
 
   context 'that are boolean have convenient instance accessors' do
