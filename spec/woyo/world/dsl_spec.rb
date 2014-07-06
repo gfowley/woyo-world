@@ -229,27 +229,33 @@ describe 'DSL' do
     text "World objects may have actions that can be invoked, usually via user interaction."
     text "Actions change the state of the world, usually by changing the value of attributes on world objects"
 
-    doc "change attributes" do
+    it "change attributes"
+    # doc "change attributes" do
+    #   text "Actions may be defined for a world object, in this case, an item."
+    #   code pre:  "world.evaluate do",
+    #        code:   "item :thing do
+    #                   name 'Thing?'
+    #                   action two: proc { name = 'Thing Two' }
+    #                   action one: proc { name = 'Thing One' }
+    #                 end",
+    #        post: "end"
+    #   text "Initially the name is as defined"
+    #   code "thing = world.item :thing" => "world.items[:thing]"
+    #   code "thing.name" => "'Thing?'"
+    #   text "Invoking action 'one', changes the name."
+    #   code "thing.one!"
+    #   code "thing.name" => "'Thing One'"
+    #   text "Invoking action 'two', changes the name again."
+    #   code "thing.two!"
+    #   code "thing.name" => "'Thing Two'"
+    # end
 
-      text "Actions may be defined for a world object, in this case, an item."
-      code pre:  "world.evaluate do",
-        code:   "item :thing do
-                     name 'Thing?'
-                     action two: proc { name = 'Thing Two' }
-                     action one: proc { name = 'Thing One' }
-                   end",
-                   post: "end"
-      text "Initially the name is as defined"
-      code "thing = world.item :thing" => "world.items[:thing]"
-      code "thing.name" => "'Thing?'"
-      text "Invoking action 'one', changes the name."
-      code "thing.one!"
-      code "thing.name" => "'Thing One'"
-      text "Invoking action 'two', changes the name again."
-      code "thing.Two!"
-      code "thing.name" => "'Thing Two'"
-    end
+    it "may be defined as a block"
 
+    it "may be invoked via #do :action"
+
+    it "are listed"
+  
   end
 
   context 'context' do
@@ -289,7 +295,9 @@ describe 'DSL' do
       text "Attribute values may be dynamic, their value determined by a Ruby code block. The value of the last expression in the block is the value assigned to the attribte."
       code pre:  "world.evaluate do",
            code:   "item :clock do
-                      attribute time: proc { Time.now.to_s }
+                      attribute :time do
+                        Time.now.to_s
+                      end
                     end",
            post: "end"
       text "'Time.now.to_s' is a Ruby expression that returns the current time in human readable string. Since it is the last (only) expression in the code block, it's value will be assigned to the attribute ':time'."
@@ -300,16 +308,36 @@ describe 'DSL' do
       code "clock.time" => "Time.now.to_s"
     end
 
-    # doc "may track attributes of this object" do
+    doc "may access attributes of this object" do
+      text "A dynamic attribute can access other attributes of the same object."
+      text "A simple calculator."
+      code pre:  "world.evaluate do",
+           code:   "item :calculator do
+                      attribute a: 1, b: 2
+                      attribute :sum do
+                        a + b
+                      end
+                    end",
+           post: "end"
+      text "Attribute 'sum' accesses attributes 'a' and 'b' and adds them."
+      code "calculator = world.item :calculator"
+      code "calculator.sum" => "3"
+      text "Being a dynamic attribute, changes to the related attributes affect the result."
+      code "calculator.a = 4"
+      code "calculator.b = 5"
+      code "calculator.sum" => "9"
+    end
 
-    doc "may track attributes of other objects" do
+    doc "may access attributes of other objects" do
       text "This provides a mechanism for one object to affect another. The Ruby code block may simply refer to an attribute of another object."
       code pre:  "world.evaluate do",
            code:   "item :bulb do
                       attribute color: 'red'
                     end
                     item :lamp do    
-                      attribute light: proc { world.items[:bulb].color } 
+                      attribute :light do
+                        ( world.item :bulb ).color
+                      end
                     end",
            post: "end"
       text "The lamp's light depends on the bulb color."
@@ -321,8 +349,6 @@ describe 'DSL' do
       text "New we see the lamp in a new light."
       code "lamp.light" => "'green'"
     end
-
-    # doc "may do anything in Ruby"
 
   end
 

@@ -132,7 +132,7 @@ describe Woyo::Attributes do
     expect(attr_test.attr_with_proc_default).to eq "okay"
   end
 
-  it 'proc runs on each access via method' do
+  it 'default proc runs on each access via method' do
     attr_test = AttrTest.new
     attr_test.attributes time_proc: proc { Time.now }
     old_time = attr_test.time_proc
@@ -156,6 +156,33 @@ describe Woyo::Attributes do
     attr_test.define_singleton_method(:my_method) { "okay" }
     attr_test.attributes attr_with_lambda_default: lambda { |this| this.my_method }
     expect(attr_test.attr_with_lambda_default).to eq "okay"
+  end
+
+  it 'default lambda runs on each access via method' do
+    attr_test = AttrTest.new
+    attr_test.attributes time_lambda: lambda { Time.now }
+    old_time = attr_test.time_lambda
+    expect(attr_test.time_lambda).to be > old_time
+  end
+
+  it 'can have a default block' do
+    attr_test = AttrTest.new
+    attr_test.attribute( :attr_with_block_default ) { Time.now }
+    expect(attr_test.attr_with_block_default).to be < Time.now
+  end
+
+  it 'default block runs in instance scope' do
+    attr_test = AttrTest.new
+    attr_test.define_singleton_method(:my_method) { "okay" }
+    attr_test.attribute( :attr_with_block_default )  { |this| this.my_method }
+    expect(attr_test.attr_with_block_default).to eq "okay"
+  end
+
+  it 'default block runs on each access via method' do
+    attr_test = AttrTest.new
+    attr_test.attribute( :time_block ) { Time.now }
+    old_time = attr_test.time_block
+    expect(attr_test.time_block).to be > old_time
   end
 
   context 'that are boolean have convenient instance accessors' do

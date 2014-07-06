@@ -73,7 +73,5 @@ describe Woyo::Item do
 
   end
 
-  it 'connect ?'
-
 end
  

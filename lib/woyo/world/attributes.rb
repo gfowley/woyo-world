@@ -87,9 +87,6 @@ module Attributes
 
   def define_attr_default attr, default
     define_singleton_method "#{attr}_default" do
-      # if default.respond_to? :call
-      #   return default.arity == 0 ? default.call : default.call(self)
-      # end
       default
     end
   end
@@ -136,19 +133,23 @@ module Attributes
     send "#{attr}=", true
   end
 
-  def attribute *attrs
-    attributes *attrs
+  def attribute *attrs, &block
+    send :attributes, *attrs, &block
   end
 
-  def attributes *attrs
+  def attributes *attrs, &block
     @attributes ||= Woyo::Attributes::AttributesHash.new
     return @attributes if attrs.empty?
     attrs.each do |attr|
-      if attr.kind_of? Hash
+      case
+      when attr.kind_of?( Hash )
         attr.each do |attr_sym,default|
           define_attr_methods attr_sym, default
           @attributes[attr_sym] = send "#{attr_sym}_default"
         end
+      when block
+        define_attr_methods attr, block
+        @attributes[attr] = send "#{attr}_default"
       else
         unless @attributes.include? attr
           define_attr_methods attr
