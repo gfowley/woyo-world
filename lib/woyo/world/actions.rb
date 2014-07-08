@@ -4,13 +4,19 @@ module Woyo
 
 module Actions
 
-  # def action *acts, &block
-  #   send :attribute, *attrs, &block
-  # end
+  include Attributes
 
-  # def actions *acts, &block
-  #   send :attributes, *attrs, &block
-  # end
+  def action *acts, &block
+    send :_attributes, acts, ivn: '@actions', &block
+  end
+
+  def actions *acts, &block
+    send :_attributes, acts, ivn: '@actions', &block
+  end
+
+  def do act
+    send act
+  end
 
 end
 
