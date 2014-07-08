@@ -75,10 +75,44 @@ module Attributes
 
 =end
 
-  def define_attr_methods attr, default = nil
+  def attribute *attrs, &block
+    send :_attributes, attrs, ivn: '@attributes', &block
+  end
+
+  def attributes *attrs, &block
+    send :_attributes, attrs, ivn: '@attributes', &block
+  end
+
+  def _attributes attrs, ivn:, &block
+    if instance_variable_defined? ivn
+      ivar = instance_variable_get ivn
+    else
+      ivar = instance_variable_set ivn, Woyo::Attributes::AttributesHash.new 
+    end
+    return ivar if attrs.empty?
+    attrs.each do |attr|
+      case
+      when attr.kind_of?( Hash )
+        attr.each do |attr_sym,default|
+          define_attr_methods attr_sym, default, ivn: ivn
+          ivar[attr_sym] = send "#{attr_sym}_default"
+        end
+      when block
+        define_attr_methods attr, block, ivn: ivn
+        ivar[attr] = send "#{attr}_default"
+      else
+        unless ivar.include? attr
+          define_attr_methods attr, ivn: ivn
+          ivar[attr] = nil
+        end
+      end
+    end
+  end
+
+  def define_attr_methods( attr, default = nil, ivn: )
     define_attr_default attr, default
-    define_attr_equals attr
-    define_attr attr
+    define_attr_equals attr, ivn: ivn
+    define_attr attr, ivn: ivn
     if default == true || default == false    # boolean convenience methods
       define_attr? attr
       define_attr! attr
@@ -91,24 +125,26 @@ module Attributes
     end
   end
 
-  def define_attr_equals attr
+  def define_attr_equals( attr, ivn: )
     define_singleton_method "#{attr}=" do |arg|
-      @attributes[attr] = arg
+      ivar = instance_variable_get ivn
+      ivar[attr] = arg
     end
   end
 
-  def define_attr attr
+  def define_attr( attr, ivn: )
     define_singleton_method attr do |arg = nil|
-      return @attributes[attr] = arg unless arg.nil?
+      ivar = instance_variable_get ivn
+      return ivar[attr] = arg unless arg.nil?
       case
-      when @attributes[attr].kind_of?( Hash )
-        true_attribute_match = @attributes[attr].detect { |name,value| @attributes[name] == true }
+      when ivar[attr].kind_of?( Hash )
+        true_attribute_match = ivar[attr].detect { |name,value| ivar[name] == true }
         return true_attribute_match[1] if true_attribute_match
-        @attributes[attr]
-      when @attributes[attr].respond_to?( :call )
-        return @attributes[attr].arity == 0 ? @attributes[attr].call : @attributes[attr].call(self)
+        ivar[attr]
+      when ivar[attr].respond_to?( :call )
+        return ivar[attr].arity == 0 ? ivar[attr].call : ivar[attr].call(self)
       else
-        @attributes[attr]
+        ivar[attr]
       end
     end
   end
@@ -131,32 +167,6 @@ module Attributes
 
   def is attr
     send "#{attr}=", true
-  end
-
-  def attribute *attrs, &block
-    send :attributes, *attrs, &block
-  end
-
-  def attributes *attrs, &block
-    @attributes ||= Woyo::Attributes::AttributesHash.new
-    return @attributes if attrs.empty?
-    attrs.each do |attr|
-      case
-      when attr.kind_of?( Hash )
-        attr.each do |attr_sym,default|
-          define_attr_methods attr_sym, default
-          @attributes[attr_sym] = send "#{attr_sym}_default"
-        end
-      when block
-        define_attr_methods attr, block
-        @attributes[attr] = send "#{attr}_default"
-      else
-        unless @attributes.include? attr
-          define_attr_methods attr
-          @attributes[attr] = nil
-        end
-      end
-    end
   end
 
   def groups
