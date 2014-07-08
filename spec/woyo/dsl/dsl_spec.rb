@@ -215,6 +215,14 @@ describe 'DSL' do
 
   end
 
+  context 'items' do
+
+    head 'Items'
+
+    it 'stuff here'
+
+  end
+
   context 'attributes' do
 
     before :all do
@@ -241,7 +249,7 @@ describe 'DSL' do
       code "clock.time" => "Time.now.to_s"
     end
 
-    doc "things here" do
+    doc "these things" do
       text "A dynamic attribute can access other attributes of the same object."
       text "A simple calculator."
       code pre:  "world.evaluate do",
@@ -261,8 +269,8 @@ describe 'DSL' do
       code "calculator.sum" => "9"
     end
 
-    doc "things there" do
-      text "This provides a mechanism for one object to affect another. The Ruby code block may simply refer to an attribute of another object."
+    doc "those things" do
+      text "Dynamic attributes provide a mechanism for one object to affect another. The Ruby code block may simply refer to an attribute of another object."
       code pre:  "world.evaluate do",
            code:   "item :bulb do
                       attribute color: 'red'
@@ -283,13 +291,9 @@ describe 'DSL' do
       code "lamp.light" => "'green'"
     end
 
-    text "Things everywhere... to access attributes of other objects, see 'Context'."
+    text "All things... to access attributes of other objects, see 'Context'."
     text "Being Ruby code, dynamic attributes could be used to make changes to other world objects, attributes, etc.., even to execute any arbitrary Ruby code. Don't do it, this way lies madness."
     text "Dynamic attributes are intended only to provide a dynamic value to a attribute, not to change other attributes or world objects. Another mechanism: 'Actions', is intended to modify the world."
-
-  end
-
-  context 'items' do
 
   end
 
@@ -325,18 +329,21 @@ describe 'DSL' do
     doc "making changes" do
       text "Actions may be defined for a world object, in this case, an item."
       code pre:  "world.evaluate do",
-           code:   "item :thing do
-                      name 'Thing?'
-                      action :one do
-                        name 'Thing One'
-                      end
-                      action :two do
-                        name 'Thing Two'
+           code:   "location :here do
+                      item :thing do
+                        name 'Thing?'
+                        action :one do
+                          name 'Thing One'
+                        end
+                        action :two do
+                          name 'Thing Two'
+                        end
                       end
                     end",
            post: "end"
       text "Initially the name is as defined"
-      code "thing = world.item :thing" => "world.items[:thing]"
+      code "location = world.location :here"
+      code "thing = location.item :thing" => "world.locations[:here].items[:thing]"
       code "thing.name" => "'Thing?'"
       text "Invoking action 'one', changes the name."
       code "thing.one"
