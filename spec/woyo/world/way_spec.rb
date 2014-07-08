@@ -7,13 +7,20 @@ describe Woyo::Way do
 
   let(:way) { Woyo::Way.new :door }
 
-  it 'has attributes' do
-    expect(way.attributes).to be_instance_of Woyo::Attributes::AttributesHash
-    expect(way.attributes.names.sort).to eq [:closed,:description,:going,:name,:open]
-  end
+  context 'has attributes' do
 
-  it 'name attribute defaults to id' do
-    expect(way.name).to eq 'Door'
+    it ':open' do
+      expect(way.attributes.names).to include :open
+    end
+
+    it ':closed' do
+      expect(way.attributes.names).to include :closed
+    end
+
+    it ':going' do
+      expect(way.attributes.names).to include :going
+    end
+
   end
 
   it 'accepts location for parameter context:' do

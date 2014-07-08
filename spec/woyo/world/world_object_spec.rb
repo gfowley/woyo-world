@@ -70,5 +70,24 @@ describe Woyo::WorldObject do
 
   end
 
+  context 'has attributes' do
+
+    it 'name' do
+      wo = Woyo::WorldObject.new( :thing ) { name 'Thingy' }
+      expect(wo.name).to eq 'Thingy'
+    end
+
+    it 'default name' do
+      wo = Woyo::WorldObject.new( :thing )
+      expect(wo.name).to eq 'Thing'
+    end
+
+    it 'description' do
+      wo = Woyo::WorldObject.new( :thing ) { description 'A thing.' }
+      expect(wo.description).to eq 'A thing.'
+    end
+
+  end
+
 end
 

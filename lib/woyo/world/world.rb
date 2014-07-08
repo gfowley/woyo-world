@@ -12,7 +12,7 @@ class World < WorldObject
 
   def initialize_object
     super
-    attributes :name, :description, :start
+    attributes :start
   end
 
   def initialize &block

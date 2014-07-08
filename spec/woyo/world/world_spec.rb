@@ -5,9 +5,9 @@ describe Woyo::World do
 
   let(:world) { Woyo::World.new }
 
-  it 'has attributes :name, :description, :start', gf: "works" do
+  it 'has attribute :start' do
     expect(world.attributes).to be_instance_of Woyo::Attributes::AttributesHash
-    expect(world.attributes.names.sort).to eq [:description,:name,:start]
+    expect(world.attributes.names).to include :start
   end
 
   it 'has locations' do

@@ -17,6 +17,7 @@ class WorldObject
   def initialize id, context: nil, &block
     @id = id.to_s.downcase.to_sym
     @context = context
+    attributes :description, name: proc { id.to_s.capitalize }
     initialize_object
     evaluate &block
   end

@@ -4,21 +4,6 @@ require 'woyo/world/item'
 
 describe Woyo::Item do
 
-  context 'itself' do
-
-    let(:item) { Woyo::Item.new :thing }
-
-    it 'has default attributes' do
-      expect(item.attributes).to be_instance_of Woyo::Attributes::AttributesHash
-      expect(item.attributes.names.sort).to eq [:description,:name]
-    end
-
-    it 'name attribute defaults to id' do
-      expect(item.name).to eq 'Thing'
-    end
-
-  end
-
   context 'in world' do
 
     let(:item) { Woyo::Item.new :thing, context: Woyo::World.new }

@@ -8,15 +8,6 @@ describe Woyo::Location do
 
   let(:location) { Woyo::Location.new :home }
 
-  it 'has attributes' do
-    expect(location.attributes).to be_instance_of Woyo::Attributes::AttributesHash
-    expect(location.attributes.names.sort).to eq [:description,:name]
-  end
-
-  it 'name attribute defaults to id' do
-    expect(location.name).to eq 'Home'
-  end
-
   it 'accepts world for parameter context:' do
     wo = nil
     expect { wo = Woyo::Location.new(:my_id, context: Woyo::World.new) }.to_not raise_error

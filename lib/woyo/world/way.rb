@@ -6,7 +6,6 @@ class Way < WorldObject
 
   def initialize_object
     super
-    attributes :description, name: lambda { |this| this.id.to_s.capitalize }
     attribute :going 
     exclusion :passable, :closed, :open  # defaults to closed: true 
   end

@@ -8,11 +8,10 @@ class Location < WorldObject
 
   def initialize_object
     super
-    attributes :description, name: lambda { |this| this.id.to_s.capitalize }
   end
 
   def world
-    self.context
+    context
   end
 
   def here
