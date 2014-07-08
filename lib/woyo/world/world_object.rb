@@ -1,5 +1,6 @@
 
 require_relative 'attributes'
+require_relative 'actions'
 require_relative 'evaluate'
 
 module Woyo
@@ -7,6 +8,7 @@ module Woyo
 class WorldObject
 
   include Attributes
+  include Actions
   include Evaluate
 
   attr_reader :id, :context

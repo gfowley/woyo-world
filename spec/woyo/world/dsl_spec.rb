@@ -52,8 +52,7 @@ describe 'DSL' do
     head "Locations"
     text "A location is a place to visit in a world."
 
-    doc 'home' do
-      head "From humble beginnings"
+    doc  "from humble beginnings" do
       text "A single location"
       code pre:  "world.evaluate do",
            code:   "location :home do
@@ -73,8 +72,7 @@ describe 'DSL' do
       text "This is a nice old house, but let's make some changes to it..."
     end
 
-    doc 'making changes' do
-      head "Change begins at home"
+    doc "change begins at home" do
       text "Let's make some changes to this location."
       code pre:  "home = world.location :home
                   world.evaluate do",
@@ -91,8 +89,7 @@ describe 'DSL' do
       text "Let's expand our horizons..."
     end
 
-    doc 'second' do
-      head "Expandng horizons" 
+    doc "expandng horizons" do
       text "Add a location to our world"
       code pre:  "home = world.location :home
                     world.evaluate do",
@@ -125,7 +122,7 @@ describe 'DSL' do
     def world ; @world ; end
 
     head "Ways"
-    text "A Woyo::Way is a directional path between locations."
+    text "A way is a directional path between locations."
 
     doc "from here to there" do
       text "A way is defined within a location."
@@ -153,7 +150,7 @@ describe 'DSL' do
       code "way.to.id" => ":there"
     end
 
-    doc "hit the road" do
+    doc "going a way" do
       text "Ways connect locations so that a user can move about in your world. Usually upon user input, the user goes a way from location to location. An optional description of the 'going' may be presented."
       code pre:  "world.evaluate do",
            code:   "location :room do
@@ -174,11 +171,11 @@ describe 'DSL' do
       code "attempt = stairs.go" => "{ go: true, going: 'Creaky steps lead uncertainly downwards...' }"
       text "Whether successful or not (true in this case)..."
       code "attempt[:go]" => "true"
-      text "And a description of the attempt (none in this case)..."
+      text "And a description of the attempt..."
       code "attempt[:going]" => "'Creaky steps lead uncertainly downwards...'"
     end
 
-    doc "going a way" do
+    doc "on the way" do
       text "Ways may be open or closed, optionally with descriptions for each state. A user cannot go a closed way, and an alternative 'going' description may be presented if attempted."
       code pre:  "world.evaluate do",
            code:   "location :room do
@@ -227,7 +224,7 @@ describe 'DSL' do
 
     head "Attributes"
 
-    doc "may be dynamic" do
+    doc "things change" do
       text "Attribute values may be dynamic, their value determined by a Ruby code block. The value of the last expression in the block is the value assigned to the attribte."
       code pre:  "world.evaluate do",
            code:   "item :clock do
@@ -244,7 +241,7 @@ describe 'DSL' do
       code "clock.time" => "Time.now.to_s"
     end
 
-    doc "may access attributes of this object" do
+    doc "things here" do
       text "A dynamic attribute can access other attributes of the same object."
       text "A simple calculator."
       code pre:  "world.evaluate do",
@@ -264,7 +261,7 @@ describe 'DSL' do
       code "calculator.sum" => "9"
     end
 
-    doc "may access attributes of other objects" do
+    doc "things there" do
       text "This provides a mechanism for one object to affect another. The Ruby code block may simply refer to an attribute of another object."
       code pre:  "world.evaluate do",
            code:   "item :bulb do
@@ -286,9 +283,13 @@ describe 'DSL' do
       code "lamp.light" => "'green'"
     end
 
-    text "To access attributes of other objects, see 'Context'."
+    text "Things everywhere... to access attributes of other objects, see 'Context'."
     text "Being Ruby code, dynamic attributes could be used to make changes to other world objects, attributes, etc.., even to execute any arbitrary Ruby code. Don't do it, this way lies madness."
     text "Dynamic attributes are intended only to provide a dynamic value to a attribute, not to change other attributes or world objects. Another mechanism: 'Actions', is intended to modify the world."
+
+  end
+
+  context 'items' do
 
   end
 
@@ -302,11 +303,11 @@ describe 'DSL' do
     head 'Context'
     text "Other objects may be referred to in different ways."
 
-    doc 'world'
+    it 'world'
 
-    doc 'location'
+    it 'location'
 
-    doc 'context'
+    it 'context'
 
   end
 
@@ -321,27 +322,29 @@ describe 'DSL' do
     text "World objects may have actions that can be invoked, usually via user interaction."
     text "Actions change the state of the world, usually by changing the value of attributes on world objects"
 
-    doc "change attributes"
-    
-    # do
-    #   text "Actions may be defined for a world object, in this case, an item."
-    #   code pre:  "world.evaluate do",
-    #        code:   "item :thing do
-    #                   name 'Thing?'
-    #                   action two: proc { name = 'Thing Two' }
-    #                   action one: proc { name = 'Thing One' }
-    #                 end",
-    #        post: "end"
-    #   text "Initially the name is as defined"
-    #   code "thing = world.item :thing" => "world.items[:thing]"
-    #   code "thing.name" => "'Thing?'"
-    #   text "Invoking action 'one', changes the name."
-    #   code "thing.one!"
-    #   code "thing.name" => "'Thing One'"
-    #   text "Invoking action 'two', changes the name again."
-    #   code "thing.two!"
-    #   code "thing.name" => "'Thing Two'"
-    # end
+    doc "making changes" do
+      text "Actions may be defined for a world object, in this case, an item."
+      code pre:  "world.evaluate do",
+           code:   "item :thing do
+                      name 'Thing?'
+                      action :one do
+                        name 'Thing One'
+                      end
+                      action :two do
+                        name 'Thing Two'
+                      end
+                    end",
+           post: "end"
+      text "Initially the name is as defined"
+      code "thing = world.item :thing" => "world.items[:thing]"
+      code "thing.name" => "'Thing?'"
+      text "Invoking action 'one', changes the name."
+      code "thing.one"
+      code "thing.name" => "'Thing One'"
+      text "Invoking action 'two', changes the name again."
+      code "thing.two"
+      code "thing.name" => "'Thing Two'"
+    end
 
   end
 

@@ -10,15 +10,15 @@ describe Woyo::World do
     expect(world.attributes.names.sort).to eq [:description,:name,:start]
   end
 
-  it 'can have locations' do
+  it 'has locations' do
     expect(world.locations).to be_empty
   end
 
-  it 'can have characters' do
+  it 'has characters' do
     expect(world.characters).to be_empty
   end
 
-  it 'can have items' do
+  it 'has items' do
     expect(world.items).to be_empty
   end
 

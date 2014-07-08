@@ -57,21 +57,5 @@ describe Woyo::Item do
 
   end
 
-  context 'attributes' do
-
-    let(:item) do
-      Woyo::Item.new :thing do
-        attribute color: :red
-      end
-    end
-
-    it 'are accessible' do
-      expect(item.color).to eq :red
-      item.color = :blue
-      expect(item.color).to eq :blue
-    end
-
-  end
-
 end
  

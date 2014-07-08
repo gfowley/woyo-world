@@ -6,7 +6,7 @@ class Item < WorldObject
 
   def initialize_object
     super
-    attributes :description, name: lambda { |this| this.id.to_s.capitalize }
+    attributes :description, name: proc { id.to_s.capitalize }
   end
 
   def location

@@ -48,5 +48,27 @@ describe Woyo::WorldObject do
     expect(wo.context).to eq :just_a_test
   end
 
+  context 'has' do
+
+    it 'attributes' do
+      wo = Woyo::WorldObject.new :thing do
+        attribute color: :red
+      end
+      expect(wo.color).to eq :red
+      wo.color = :blue
+      expect(wo.color).to eq :blue
+    end
+
+    it 'actions' do
+      wo = Woyo::WorldObject.new :thing do
+        action :time do
+          Time.now
+        end
+      end
+      expect(wo.time).to be < Time.now
+    end
+
+  end
+
 end
 
