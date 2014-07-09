@@ -219,7 +219,9 @@ describe 'DSL' do
 
     head 'Items'
 
-    it 'stuff here'
+    doc 'stuff here' do
+      pending
+    end
 
   end
 
@@ -307,11 +309,17 @@ describe 'DSL' do
     head 'Context'
     text "Other objects may be referred to in different ways."
 
-    it 'world'
+    doc 'world' do
+      pending
+    end             
 
-    it 'location'
+    doc 'location' do
+      pending
+    end             
 
-    it 'context'
+    doc 'context' do
+      pending
+    end             
 
   end
 

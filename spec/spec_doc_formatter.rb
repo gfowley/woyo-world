@@ -72,6 +72,7 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
       description = this_example.description
       this_specdoc.unshift({ head: description == description.upcase ? description : description.capitalize }) 
     end
+    this_specdoc.unshift( { result: result } )
     placeholder = @specdoc_group.detect { |element| element[:example] == false }
     if placeholder 
       placeholder[:example] = this_specdoc
