@@ -130,7 +130,7 @@
           </div>
           <div>
             <h2>Ways</h2>
-            <p>A Woyo::Way is a directional path between locations.</p>
+            <p>A way is a directional path between locations.</p>
             <div>
               <h3>From here to there</h3>
               <p>A way is defined within a location.</p>
@@ -166,7 +166,7 @@
               </div>
             </div>
             <div>
-              <h3>Hit the road</h3>
+              <h3>Going a way</h3>
               <p>Ways connect locations so that a user can move about in your world. Usually upon user input, the user goes a way from location to location. An optional description of the 'going' may be presented.</p>
               <div>
                 <pre><code>location :room do&#x000A;  way :stairs do&#x000A;    to :cellar&#x000A;    description 'Rickety stairs lead down into darkness.'&#x000A;    going       'Creaky steps lead uncertainly downwards...'&#x000A;  end&#x000A;end&#x000A;location :cellar do&#x000A;  description 'Dark and damp, as expected.'&#x000A;end</code></pre>
@@ -186,13 +186,13 @@
               <div>
                 <pre><code>attempt[:go] #=> true</code></pre>
               </div>
-              <p>And a description of the attempt (none in this case)...</p>
+              <p>And a description of the attempt...</p>
               <div>
                 <pre><code>attempt[:going] #=> 'Creaky steps lead uncertainly downwards...'</code></pre>
               </div>
             </div>
             <div>
-              <h3>Going a way</h3>
+              <h3>On the way</h3>
               <p>Ways may be open or closed, optionally with descriptions for each state. A user cannot go a closed way, and an alternative 'going' description may be presented if attempted.</p>
               <div>
                 <pre><code>location :room do&#x000A;  way :stairs do&#x000A;    to :cellar&#x000A;    description   open:   'Rickety stairs lead down into darkness.',&#x000A;                  closed: 'Broken stairs end in darkness.'&#x000A;    going         open:   'Creaky steps lead uncertainly downwards...',&#x000A;                  closed: 'The dangerous stairs are impassable.'&#x000A;  end&#x000A;end&#x000A;location :cellar do&#x000A;  description 'Dark and damp, as expected.'&#x000A;end</code></pre>
@@ -242,6 +242,138 @@
               </div>
               <div>
                 <pre><code>attempt[:going] #=> 'The dangerous stairs are impassable.'</code></pre>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h2>Items</h2>
+            <div>
+              <h3>Stuff here</h3>
+            </div>
+          </div>
+          <div>
+            <h2>Attributes</h2>
+            <div>
+              <h3>Things change</h3>
+              <p>Attribute values may be dynamic, their value determined by a Ruby code block. The value of the last expression in the block is the value assigned to the attribte.</p>
+              <div>
+                <pre><code>item :clock do&#x000A;  attribute :time do&#x000A;    Time.now.to_s&#x000A;  end&#x000A;end</code></pre>
+              </div>
+              <p>'Time.now.to_s' is a Ruby expression that returns the current time in human readable string. Since it is the last (only) expression in the code block, it's value will be assigned to the attribute ':time'.</p>
+              <div>
+                <pre><code>clock = world.item :clock</code></pre>
+              </div>
+              <div>
+                <pre><code>clock.time #=> Time.now.to_s</code></pre>
+              </div>
+              <p>The code block will be evaluated each time the attribute is accessed, returning the current time. Let's wait a second and check the time again.</p>
+              <div>
+                <pre><code>sleep 1</code></pre>
+              </div>
+              <div>
+                <pre><code>clock.time #=> Time.now.to_s</code></pre>
+              </div>
+            </div>
+            <div>
+              <h3>These things</h3>
+              <p>A dynamic attribute can access other attributes of the same object.</p>
+              <p>A simple calculator.</p>
+              <div>
+                <pre><code>item :calculator do&#x000A;  attribute a: 1, b: 2&#x000A;  attribute :sum do&#x000A;    a + b&#x000A;  end&#x000A;end</code></pre>
+              </div>
+              <p>Attribute 'sum' accesses attributes 'a' and 'b' and adds them.</p>
+              <div>
+                <pre><code>calculator = world.item :calculator</code></pre>
+              </div>
+              <div>
+                <pre><code>calculator.sum #=> 3</code></pre>
+              </div>
+              <p>Being a dynamic attribute, changes to the related attributes affect the result.</p>
+              <div>
+                <pre><code>calculator.a = 4</code></pre>
+              </div>
+              <div>
+                <pre><code>calculator.b = 5</code></pre>
+              </div>
+              <div>
+                <pre><code>calculator.sum #=> 9</code></pre>
+              </div>
+            </div>
+            <div>
+              <h3>Those things</h3>
+              <p>Dynamic attributes provide a mechanism for one object to affect another. The Ruby code block may simply refer to an attribute of another object.</p>
+              <div>
+                <pre><code>item :bulb do&#x000A;  attribute color: 'red'&#x000A;end&#x000A;item :lamp do    &#x000A;  attribute :light do&#x000A;    ( world.item :bulb ).color&#x000A;  end&#x000A;end</code></pre>
+              </div>
+              <p>The lamp's light depends on the bulb color.</p>
+              <div>
+                <pre><code>lamp = world.item :lamp</code></pre>
+              </div>
+              <div>
+                <pre><code>lamp.light #=> 'red'</code></pre>
+              </div>
+              <p>Let's change the bulb.</p>
+              <div>
+                <pre><code>bulb = world.item :bulb</code></pre>
+              </div>
+              <div>
+                <pre><code>bulb.color = 'green'</code></pre>
+              </div>
+              <p>New we see the lamp in a new light.</p>
+              <div>
+                <pre><code>lamp.light #=> 'green'</code></pre>
+              </div>
+            </div>
+            <p>All things... to access attributes of other objects, see 'Context'.</p>
+            <p>Being Ruby code, dynamic attributes could be used to make changes to other world objects, attributes, etc.., even to execute any arbitrary Ruby code. Don't do it, this way lies madness.</p>
+            <p>Dynamic attributes are intended only to provide a dynamic value to a attribute, not to change other attributes or world objects. Another mechanism: 'Actions', is intended to modify the world.</p>
+          </div>
+          <div>
+            <h2>Context</h2>
+            <p>Other objects may be referred to in different ways.</p>
+            <div>
+              <h3>World</h3>
+            </div>
+            <div>
+              <h3>Location</h3>
+            </div>
+            <div>
+              <h3>Context</h3>
+            </div>
+          </div>
+          <div>
+            <h2>Actions</h2>
+            <p>World objects may have actions that can be invoked, usually via user interaction.</p>
+            <p>Actions change the state of the world, usually by changing the value of attributes on world objects</p>
+            <div>
+              <h3>Making changes</h3>
+              <p>Actions may be defined for a world object, in this case, an item.</p>
+              <div>
+                <pre><code>location :here do&#x000A;  item :thing do&#x000A;    name 'Thing?'&#x000A;    action :one do&#x000A;      name 'Thing One'&#x000A;    end&#x000A;    action :two do&#x000A;      name 'Thing Two'&#x000A;    end&#x000A;  end&#x000A;end</code></pre>
+              </div>
+              <p>Initially the name is as defined</p>
+              <div>
+                <pre><code>location = world.location :here</code></pre>
+              </div>
+              <div>
+                <pre><code>thing = location.item :thing #=> world.locations[:here].items[:thing]</code></pre>
+              </div>
+              <div>
+                <pre><code>thing.name #=> 'Thing?'</code></pre>
+              </div>
+              <p>Invoking action 'one', changes the name.</p>
+              <div>
+                <pre><code>thing.one</code></pre>
+              </div>
+              <div>
+                <pre><code>thing.name #=> 'Thing One'</code></pre>
+              </div>
+              <p>Invoking action 'two', changes the name again.</p>
+              <div>
+                <pre><code>thing.two</code></pre>
+              </div>
+              <div>
+                <pre><code>thing.name #=> 'Thing Two'</code></pre>
               </div>
             </div>
           </div>
