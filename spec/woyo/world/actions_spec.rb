@@ -8,7 +8,6 @@ describe Woyo::Actions do
     let( :at ) { class ActionTest ; include Woyo::Actions ; end.new }
 
     it "intially empty" do
-      expect(at.actions).to be_instance_of Woyo::Attributes::AttributesHash
       expect(at.actions).to be_empty
     end
 

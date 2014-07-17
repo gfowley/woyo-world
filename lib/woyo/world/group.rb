@@ -4,31 +4,6 @@ module Woyo
 
 module Attributes
 
-  class AttributesHash < Hash
-
-    alias_method :names, :keys
-    alias_method :set, :[]=
-
-    attr_reader :listeners
-
-    def initialize
-      @listeners = {}
-    end
-
-    def add_attribute_listener attr, listener
-      @listeners[attr] = listener
-    end
-    
-    def []= attr, value
-      old_value = self[attr]
-      super
-      if ( listener = @listeners[attr] ) && value != old_value
-        listener.notify attr, value
-      end
-    end
-
-  end
-
   class Group
 
     extend Forwardable
@@ -108,6 +83,54 @@ module Attributes
       self[@default] = true
     end
 
+  end
+
+  def groups
+    @groups
+  end
+
+  def group sym, *attrs
+    @groups ||= {}
+    grp = @groups[sym] ? @groups[sym] : ( @groups[sym] = Woyo::Attributes::Group.new attributes )
+    attributes *attrs
+    attrs.each do |attr|
+      if attr.kind_of? Hash
+        attr.each do |attr_sym,default_value|
+          grp << attr_sym
+        end
+      else
+        grp << attr
+      end
+    end
+    define_singleton_method sym do
+      @groups[sym]  
+    end
+    grp
+  end
+
+  def exclusions
+    @exclusions
+  end
+ 
+  def exclusion sym, *attrs
+    @exclusions ||= {}
+    exc = @exclusions[sym] ? @exclusions[sym] : ( @exclusions[sym] = Woyo::Attributes::Exclusion.new attributes )
+    attributes *attrs
+    attrs.each do |attr|
+      define_attr? attr
+      define_attr! attr
+      if attr.kind_of? Hash
+        attr.each do |attr_sym,default_value|
+          exc << attr_sym
+        end
+      else
+        exc << attr
+      end
+    end
+    define_singleton_method sym do
+      @exclusions[sym]
+    end
+    exc
   end
 
 end
