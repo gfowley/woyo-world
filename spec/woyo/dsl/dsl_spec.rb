@@ -339,16 +339,20 @@ describe 'DSL' do
     text "Actions change the state of the world, usually by changing the value of attributes on world objects"
 
     doc "making changes" do
-      text "Actions may be defined for a world object, in this case, an item."
+      text "Actions may be defined for a world object, in this case, an item. Actions have an id, and optionally a name and description. The steps an action is to perform is contained within an 'execution' block, which executes in the context of the containing world object."
       code pre:  "world.evaluate do",
            code:   "location :here do
                       item :thing do
                         name 'Thing?'
                         action :one do
-                          name 'Thing One'
+                          execution do
+                            name 'Thing One'
+                          end
                         end
                         action :two do
-                          name 'Thing Two'
+                          execution do
+                            name 'Thing Two'
+                          end
                         end
                       end
                     end",
@@ -358,14 +362,61 @@ describe 'DSL' do
       code "thing = location.item :thing" => "world.locations[:here].items[:thing]"
       code "thing.name" => "'Thing?'"
       text "Invoking action 'one', changes the name."
-      code "thing.one"
+      code "thing.one.execute"
       code "thing.name" => "'Thing One'"
       text "Invoking action 'two', changes the name again."
-      code "thing.two"
+      code "thing.two.execute"
       code "thing.name" => "'Thing Two'"
     end
 
+    doc "getting results" do
+      pending
+      text "When an action is invoked it returns information about the action, including whether the action succeeded, and a description of the action."
+      code pre:  "world.evaluate do",
+           code:   "location :here do
+                      item :thing do
+                        name 'Thing?'
+                        action :one do
+                          name ' One'
+                        end
+                        action :two do
+                          name 'Thing Two'
+                        end
+                      end
+                    end",
+           post: "end"
+      
+    end
   end
+
+=begin
+
+  action :do_something do
+
+    name        "Do something!"
+    description "Don't just stand there..."
+
+    describe    success: "I am doing something.",
+                failure: "I can't do anything."
+                
+    # execution is wrapped by execute method which returns hash:
+    # { result: :success,
+    #   description: "matching description" } 
+    # caller should know how to handle resulti !?
+    
+    execution do
+      # runs in parent object context
+      # return result, matching description will be returned to user
+      :success 
+    end
+
+  end
+
+
+
+
+=end
+
 
 end
 
