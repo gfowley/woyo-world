@@ -47,7 +47,6 @@ class Way < WorldObject
       raise "Symbol required, but #{arg.class} : '#{arg}' given."
     end
   end
-
   
   def go
     { go: open?, going: self.going }

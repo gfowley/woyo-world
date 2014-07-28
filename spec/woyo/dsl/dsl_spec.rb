@@ -343,13 +343,9 @@ describe 'DSL' do
       code pre:  "world.evaluate do",
            code:   "location :here do
                       item :thing do
-                        name 'Thing?'
-                        action :one do
-                          execution do
-                            name 'Thing One'
-                          end
-                        end
-                        action :two do
+                        name 'Thing One'
+                        description 'Rename thing 1 to thing 2'
+                        action :rename do
                           execution do
                             name 'Thing Two'
                           end
@@ -360,33 +356,42 @@ describe 'DSL' do
       text "Initially the name is as defined"
       code "location = world.location :here"
       code "thing = location.item :thing" => "world.locations[:here].items[:thing]"
-      code "thing.name" => "'Thing?'"
-      text "Invoking action 'one', changes the name."
-      code "thing.one.execute"
       code "thing.name" => "'Thing One'"
-      text "Invoking action 'two', changes the name again."
-      code "thing.two.execute"
+      text "Executing rename action changes the name."
+      code "thing.action(:rename).execute"
+      code "thing.name" => "'Thing Two'"
+    end
+
+    doc "describing the action " do
+      text "When an action is executed it returns information about the action, including a description of the action."
+      code pre:  "world.evaluate do",
+           code:   "location :here do
+                      item :thing do
+                        name 'Thing One'
+                        action :rename do
+                          description 'Rename thing 1 to thing 2'
+                          describe 'Thing is renamed'
+                          execution do
+                            name 'Thing Two'
+                          end
+                        end
+                      end
+                    end",
+           post: "end"
+      text "Initially the name is as defined"
+      code "location = world.location :here"
+      code "thing = location.item :thing" => "world.locations[:here].items[:thing]"
+      code "thing.name" => "'Thing One'"
+      text "Executing rename action returns a result."
+      code "result = thing.action(:rename).execute" => "'placeholder for results hash'" 
+      text "Of course, the name was changed as expected"
       code "thing.name" => "'Thing Two'"
     end
 
     doc "getting results" do
       pending
-      text "When an action is invoked it returns information about the action, including whether the action succeeded, and a description of the action."
-      code pre:  "world.evaluate do",
-           code:   "location :here do
-                      item :thing do
-                        name 'Thing?'
-                        action :one do
-                          name ' One'
-                        end
-                        action :two do
-                          name 'Thing Two'
-                        end
-                      end
-                    end",
-           post: "end"
-      
     end
+
   end
 
 =begin
@@ -396,8 +401,8 @@ describe 'DSL' do
     name        "Do something!"
     description "Don't just stand there..."
 
-    describe    success: "I am doing something.",
-                failure: "I can't do anything."
+    result success: "I am doing something.",
+           failure: "I can't do anything."
                 
     # execution is wrapped by execute method which returns hash:
     # { result: :success,
@@ -411,9 +416,6 @@ describe 'DSL' do
     end
 
   end
-
-
-
 
 =end
 

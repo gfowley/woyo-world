@@ -1,4 +1,5 @@
 require_relative 'world_object'
+require_relative 'action'
 require_relative 'location'
 require_relative 'way'
 require_relative 'item'

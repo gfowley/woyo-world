@@ -62,10 +62,12 @@ describe Woyo::WorldObject do
     it 'actions' do
       wo = Woyo::WorldObject.new :thing do
         action :time do
-          Time.now
+          execution do
+            Time.now
+          end
         end
       end
-      expect(wo.time).to be < Time.now
+      expect(wo.action(:time).execution.call).to be < Time.now
     end
 
   end

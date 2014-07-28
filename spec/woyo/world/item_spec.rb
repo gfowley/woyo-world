@@ -42,5 +42,26 @@ describe Woyo::Item do
 
   end
 
+  context 'actions' do
+
+    let( :item ) do
+      item = Woyo::Item.new :item do
+        action( :action1 ) { :empty }
+        action( :action2 ) { :empty }
+      end
+    end
+
+    it 'are listed' do
+      expect(item.actions.count).to eq 2
+      expect(item.actions.keys).to eq [ :action1, :action2 ]
+    end
+
+    it 'are accessible' do
+      expect(action = item.actions[:action1]).to be_instance_of Woyo::Action
+      expect(action.id).to eq :action1
+    end
+
+  end
+
 end
  
