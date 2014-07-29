@@ -15,16 +15,16 @@ class Action < WorldObject
     proc_result = if @proc.arity < 1
       @context.instance_eval &@proc
     else
-      @proc.call(self)  # how would this be used ???
+      @context.instance_exec self, &@proc
     end
     if proc_result.kind_of? Symbol
       unless exclusion(:result).members.include? proc_result
         raise "action result #{proc_result.inspect} not an expected result... #{exclusion(:result).members.inspect}"   
       end
       send proc_result, true 
-      { result: proc_result, description: describe }
+      { result: result.value, describe: describe, execution: proc_result }
     else
-      proc_result
+      { result: result.value, describe: describe, execution: proc_result }
     end
   end
 

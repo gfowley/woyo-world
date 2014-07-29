@@ -344,7 +344,7 @@ describe 'DSL' do
            code:   "location :here do
                       item :thing do
                         name 'Thing One'
-                        description 'Rename thing 1 to thing 2'
+                        description 'Rename thing'
                         action :rename do
                           execution do
                             name 'Thing Two'
@@ -369,7 +369,7 @@ describe 'DSL' do
                       item :thing do
                         name 'Thing One'
                         action :rename do
-                          description 'Rename thing 1 to thing 2'
+                          description 'Rename thing'
                           describe 'Thing is renamed'
                           execution do
                             name 'Thing Two'
@@ -382,43 +382,56 @@ describe 'DSL' do
       code "location = world.location :here"
       code "thing = location.item :thing" => "world.locations[:here].items[:thing]"
       code "thing.name" => "'Thing One'"
-      text "Executing rename action returns a result."
-      code "result = thing.action(:rename).execute" => "'placeholder for results hash'" 
-      text "Of course, the name was changed as expected"
+      text "Executing the rename action returns a result hash."
+      code "result = thing.action(:rename).execute" => "{ result: :success, execution: 'Thing Two', describe: 'Thing is renamed' }" 
+      text "The name was changed as expected"
+      code "thing.name" => "'Thing Two'"
+      text "The contents of the result hash are useful to an application such as Woyo::Server that interacts with the world."
+      text "The :result is usually :success, it can also be :failure. They are actually the default members of an exclusion group :result that actions have. The :result group and member can be overridden by more sophisticated actions."
+      code "result[:result]" => ":success"
+      text "Action execution may be described with a default text (as in this case), or the value of :result can determine the describing text (as we'll see in the next example)."
+      code "result[:describe]" => "'Thing is renamed'"
+      text "The actual value returned by the execution block is also provided, this may be any kind of object."
+      code "result[:execution]" => "'Thing Two'" 
+    end
+
+    doc "multiple descriptions" do
+      text "An action may be decribed for different results. An exclusion group of results ensures that only one description will be chosen. Actions have a default exclusion group containing :success and :failure which we are using here:"
+      code pre:  "world.evaluate do",
+           code:   "location :here do
+                      item :thing do
+                        name 'Thing One'
+                        action :rename do
+                          description 'Rename thing'
+                          describe success: 'Thing is renamed',
+                                   failure: 'Not renamed'
+                          execution do |this|
+                            if name == 'Thing One'
+                              name 'Thing Two'
+                              this.success!
+                            else
+                              this.failure!
+                            end
+                          end
+                        end
+                      end
+                    end",
+           post: "end"
+      text "Initially the name is as defined"
+      code "location = world.location :here"
+      code "thing = location.item :thing" => "world.locations[:here].items[:thing]"
+      code "thing.name" => "'Thing One'"
+      text "Executing the rename action one succeeds."
+      code "result = thing.action(:rename).execute" => "{ result: :success, describe: 'Thing is renamed', execution: true }"
+      text "The name was changed as expected"
+      code "thing.name" => "'Thing Two'"
+      text "Executing the rename action one succeeds."
+      code "result = thing.action(:rename).execute" => "{ result: :failure, describe: 'Not renamed', execution: true }"
+      text "The name is unchanged."
       code "thing.name" => "'Thing Two'"
     end
 
-    doc "getting results" do
-      pending
-    end
-
   end
-
-=begin
-
-  action :do_something do
-
-    name        "Do something!"
-    description "Don't just stand there..."
-
-    result success: "I am doing something.",
-           failure: "I can't do anything."
-                
-    # execution is wrapped by execute method which returns hash:
-    # { result: :success,
-    #   description: "matching description" } 
-    # caller should know how to handle resulti !?
-    
-    execution do
-      # runs in parent object context
-      # return result, matching description will be returned to user
-      :success 
-    end
-
-  end
-
-=end
-
 
 end
 

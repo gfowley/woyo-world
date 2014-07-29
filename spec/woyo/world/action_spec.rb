@@ -52,20 +52,20 @@ describe Woyo::Action do
     context 'by calling #execute wrapper' do
 
       it 'returning result hash for success' do
-        action.execution { :success } 
+        action.execution { |this| this.success! } 
         action.describe success: "Succeeded"
-        expect(action.execute).to eq( { result: :success, description: "Succeeded" } )
+        expect(action.execute).to eq( { result: :success, describe: "Succeeded", execution: true } )
       end
 
       it 'returning result hash for failure' do
-        action.execution { :failure } 
+        action.execution { |this| this.failure! } 
         action.describe failure: "Failed"
-        expect(action.execute).to eq( { result: :failure, description: "Failed" } )
+        expect(action.execute).to eq( { result: :failure, describe: "Failed", execution: true } )
       end
    
       it 'raising error for unexpected execution result' do
         action.execution { :surprise }
-        expect{ action.execute }.to raise_error
+        expect{ action.execute }.to_not raise_error
       end
 
     end
