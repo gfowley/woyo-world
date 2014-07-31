@@ -399,8 +399,10 @@ describe Woyo::Attributes do
     it 'return a list values of the multiple keys that are truthy attributes' do
       hat.reaction hot: 'Sweat', warm: 'Relax', cool: 'Huddle', cold: 'Shiver' 
       expect(hat.reaction).to eq [ ]
-      hat.cool = true
       hat.cold = true
+      hat.cool = proc { 'truthy' }
+      hat.warm = proc { nil } # falsey
+      hat.hot  = false
       expect(hat.reaction).to eq [ 'Huddle', 'Shiver' ]
     end
 
