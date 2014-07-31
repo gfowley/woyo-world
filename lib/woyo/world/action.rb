@@ -8,7 +8,7 @@ class Action < WorldObject
     super
     attribute :describe
     exclusion :result, :success, :failure
-    @proc = nil
+    @proc = proc { nil }
   end
 
   def execute
@@ -17,15 +17,9 @@ class Action < WorldObject
     else
       @context.instance_exec self, &@proc
     end
-    if proc_result.kind_of? Symbol
-      unless exclusion(:result).members.include? proc_result
-        raise "action result #{proc_result.inspect} not an expected result... #{exclusion(:result).members.inspect}"   
-      end
-      send proc_result, true 
-      { result: result.value, describe: describe, execution: proc_result }
-    else
-      { result: result.value, describe: describe, execution: proc_result }
-    end
+    true_members = result.members.select { |member| result[member] }
+    true_members = true_members[0] if true_members.count == 1
+    { result: true_members, describe: describe, execution: proc_result }
   end
 
   def execution &block

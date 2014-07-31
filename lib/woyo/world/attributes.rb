@@ -86,9 +86,10 @@ module Attributes
       return @attributes[attr] = arg unless arg.nil?
       case
       when @attributes[attr].kind_of?( Hash )
-        true_attribute_match = @attributes[attr].detect { |name,value| @attributes[name] == true }
-        return true_attribute_match[1] if true_attribute_match
-        @attributes[attr]
+        truthy_matches = @attributes[attr].collect { |name,value| @attributes[name] ? value : nil }.compact
+        truthy_matches = truthy_matches.count == 1 ? truthy_matches[0] : truthy_matches
+        return truthy_matches
+        #@attributes[attr]
       when @attributes[attr].respond_to?( :call )
         return @attributes[attr].arity == 0 ? @attributes[attr].call : @attributes[attr].call(self)
       else

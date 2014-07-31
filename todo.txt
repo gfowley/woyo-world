@@ -1,40 +1,24 @@
 
-world object features...
+World featutes...
 
-# world
+# actions
 
+  action.execute #=> { 
+    result:   :symbol,                           # from result exclusion 
+    describe: 'text'                             # first (only) matching symbol
+    execution: return_value_from_execution_block
+  }
+ 
+  action.execute #=> { 
+    result:   [ :symbol1, :symbol2, :symbol3 ]   # from result group
+    describe: [ 'text1', 'text2', 'text3' ]      # all true/truthy members 
+    execution: return_value_from_execution_block
+  }
+ 
 # attributes
 
-
-  default procs will be called upon access, not at initialization
-    this will fix the problem of WorldObject#id being nil when Attributes is prepended and Attributes#initialize is run first 
-
-  boolean attributes
-
-ok    detected by class level definition boolean default value
-
-      attribute open: true
-      attribute dark: false
-
-ok    after defintion, set boolean attribute values...
-
-      open = true
-      open true
-      open!       # ... open true
-
-ok    query boolean attribute values... ?
-
-      dark
-      dark?        # ... dark ? true : false
-      is? :dark    # ... def is? attr ; attributes[attr] ? true : false ; end
-
-ok    additional class level define (and detect?) boolean attribute values... 
-
-      is :open
-      is :dark
-      is :warm, :bright
-
-  group...
+  attribute returns whole attribute hash
+  attribute.render returns array of values with truthy keys
 
     group weapons: [ :sword, :knife, :rock, :fists ]   # hash - key will be group name, value an array of symbols for members
     group :weapons, [ :sword, :knife, :rock, :fists ]  # symbol will be group name, array of symbols for members
@@ -43,45 +27,11 @@ ok    group :weapons, :sword, :knife, :rock, :fists      # symbols, first will b
     group stats: [ speed: 10, charisma: 20, strength: 30 ]  # defaults like attributes (these are attributes)
 ok    group :stats, speed: 10, charisma: 20, strength: 30     # ditto
 
-ok    group is hash-like
-       alias :names, :keys
+ok    exclusion passable: , :open, :close 
+    exclusion light: [ :dark, :dim, :bright ]
+    exclusion temperature: [ :cold, :cool, :warm, :hot ]
 
-        world_object.weapons.names         #=> weapons.keys
-        world_object.weapons.values        #=> weapons.values
-
-ok    group is not an enum, it has no value itself
-ok    attribute methods for members in parent
-
-      world_object.sword
-      world_object.knife
-
-no    is group a namespace ? - optional ... attribute methods in group
-
-      world_object.weapons.sword
-      world_object.weapons.knife
-
-ok   access attributes via group hash
-
-      world_object.weapons[:sword]                #=> rusty_sword
-      world_object.weapons[:sword] = sharp_sword
-
-ok  exclusive group (booleans)...
-  
-ok    exclusive_group passable: , :open, :close 
-    exclusive_group light: [ :dark, :dim, :bright ]
-    exclusive_group temperature: [ :cold, :cool, :warm, :hot ]
-
-ok    same as regular group +...
-
-ok    first member will be true, the rest false
-ok    additional convenience methods for members...
-
-      world_object.open?
-      world_object.close?
-      world_object.open!
-      world_object.close!
-
-# descriptions
+# descriptions (an attribute)
   
   displayed everytime a location is visited...
 
@@ -136,17 +86,7 @@ ok    additional convenience methods for members...
 
 # location 
 
-  locations do NOT contain locations
-  locations are a graph, linked by ways
-
-  location :here do
-    name 'Home'
-    description 'Cosy'
-  end
-
   location :here, name: 'Home', description: 'cosy'
-
-  mass assignment...
 
   locations do
     home   name: 'Home',     description: 'Cosy'
@@ -156,38 +96,7 @@ ok    additional convenience methods for members...
 
 # way
 
-  a way leads one-way to a location
-
-  way :out do
-    name 'Door'
-    description 'Big strong'
-    to :garden
-  end
-
-  way can describe being open closed
-
-    way :out do
-      name 'Door'
-      to :garden
-      description 'Wooden door'
-      description :open   => 'An open wooden door leading to sunlit garden',
-                  :closed => 'A closed solid wooden door'
-    end
-
-  way can describe going (open) or not (closed)
-
-    way :out do
-      name 'Door'
-      to :garden
-      go  :open   => 'Stepping into the warm sunlight',
-          :closed => 'The solid wooden door remains stubbornly closed' 
-    end
-
   way :door, to: :other_location, description: 'Big'
-
-  is openable, default open
-
-  mass assignment...  
 
   ways do
     east to: :china,     name: 'slow boat'
@@ -196,17 +105,13 @@ ok    additional convenience methods for members...
     down to: :pit,       name: 'hole'
   end
 
-  standard ways map to directions and movements ?
-  - north,south,east,west,up,down,forward,back,left,right 
+  absolute directions
+  - north, south, east, west, high, low
+
+  relative directions
+  - forward, back, left, right, up, down
 
 # items
-
-  items may be in a location
-
-  item :id do
-    name 'Thing'
-    description 'Useful object'
-  end
 
   item :id, name: 'Thing', description: "...", detail: "..."
 
@@ -222,14 +127,6 @@ ok    additional convenience methods for members...
 
     longer description when examined
     detail "....."
-
-  have attributes
-
-    attributes :small, :light
-
-  may know their location ?
-
-    if item.location == :home
 
   may know their relation to other items ?
 
@@ -247,8 +144,6 @@ ok    additional convenience methods for members...
   # module for this 'Relation' feature ?
 
 end
-
-# code for ... triggers, events, handlers, conditions, etc...
 
 # can locations, items be subclassed in DSL ?
 

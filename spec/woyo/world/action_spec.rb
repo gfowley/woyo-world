@@ -45,27 +45,36 @@ describe Woyo::Action do
       expect(action.execution.call).to eq :answer 
     end
 
-    it '- #execution returns nil if not defined' do
-      expect(action.execution).to be_nil
+    it 'calling #execution returns nil by default' do
+      expect(action.execution.call).to be_nil
     end
 
     context 'by calling #execute wrapper' do
 
-      it 'returning result hash for success' do
-        action.execution { |this| this.success! } 
-        action.describe success: "Succeeded"
-        expect(action.execute).to eq( { result: :success, describe: "Succeeded", execution: true } )
+      context 'with result exclusion (default)' do
+
+        it 'returns result hash with single values for success' do
+          action.execution { |this| this.success! } 
+          action.describe success: "Succeeded"
+          expect(action.execute).to eq( { result: :success, describe: "Succeeded", execution: true } )
+        end
+
+        it 'returns result hash with single values for failure' do
+          action.execution { |this| this.failure! } 
+          action.describe failure: "Failed"
+          expect(action.execute).to eq( { result: :failure, describe: "Failed", execution: true } )
+        end
+
       end
 
-      it 'returning result hash for failure' do
-        action.execution { |this| this.failure! } 
-        action.describe failure: "Failed"
-        expect(action.execute).to eq( { result: :failure, describe: "Failed", execution: true } )
-      end
-   
-      it 'raising error for unexpected execution result' do
-        action.execution { :surprise }
-        expect{ action.execute }.to_not raise_error
+      context 'with result group' do
+
+        it 'returns result hash with array values' do
+          action.group :result, a: true, b: false, c: true
+          action.describe a: 'aaa', b: 'bbb', c: 'ccc'
+          expect(action.execute).to eq( { result: [ :a, :c ], describe: [ 'aaa', 'ccc' ], execution: nil } )
+        end
+
       end
 
     end

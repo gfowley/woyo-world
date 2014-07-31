@@ -115,15 +115,13 @@ describe Woyo::Attributes do
       expect(attr_test.attributes.names).to eq [ :attr1, :attr2, :attr3, :attr4 ]
     end
         
-    it 'with a default value' do
+    it 'with a default value (non-hash)' do
       attr_test = AttrTest.new
       attr_test.attributes attr_with_array___default: [ 1, 2, 3 ]
-      attr_test.attributes attr_with_hash____default: { a: 1, b: 2, c: 3 }
       attr_test.attributes attr_with_number__default: 12345
       attr_test.attributes attr_with_string__default: "abcde"
       attr_test.attributes attr_with_boolean_default: true
       expect(attr_test.attr_with_array___default).to eq [ 1, 2, 3 ]
-      expect(attr_test.attr_with_hash____default).to eq ( { a: 1, b: 2, c: 3 } )
       expect(attr_test.attr_with_number__default).to eq 12345
       expect(attr_test.attr_with_string__default).to eq "abcde"
       expect(attr_test.attr_with_boolean_default).to eq true
@@ -391,26 +389,31 @@ describe Woyo::Attributes do
     let(:hat) { AttrTest.new }
 
     before :each do
-      hat.attributes :reaction, :hot, :cold
+      hat.attributes :reaction, :hot, :warm, :cool, :cold
     end
 
     it 'accept a hash as value' do
-      expect { hat.reaction hot: 'Sweat', cold: 'Shiver' }.to_not raise_error
+      expect { hat.reaction hot: 'Sweat', warm: 'Relax', cool: 'Huddle', cold: 'Shiver', not_attr: 'Nothing' }.to_not raise_error
     end
 
-    it 'return the value of the first key that evaluates as a true attribute' do
-      hat.reaction hot: 'Sweat', cold: 'Shiver' 
+    it 'return a list values of the multiple keys that are truthy attributes' do
+      hat.reaction hot: 'Sweat', warm: 'Relax', cool: 'Huddle', cold: 'Shiver' 
+      expect(hat.reaction).to eq [ ]
+      hat.cool = true
       hat.cold = true
-      expect(hat.reaction).to eq 'Shiver'
-      hat.hot = true
-      expect(hat.reaction).to eq 'Sweat'
+      expect(hat.reaction).to eq [ 'Huddle', 'Shiver' ]
     end
 
-    it 'otherwise return the hash' do
-      hat.reaction hot: 'Sweat', cold: 'Shiver' 
-      hat.cold = false
-      hat.hot = false
-      expect(hat.reaction).to eq ( { :hot => 'Sweat', :cold => 'Shiver' } )
+    it 'return a single value of a single key that is a truthy attribute' do
+      hat.reaction hot: 'Sweat', warm: 'Relax', cool: 'Huddle', cold: 'Shiver' 
+      expect(hat.reaction).to eq [ ]
+      hat.warm = true
+      expect(hat.reaction).to eq 'Relax'
+    end
+
+    it 'returns empty list if no keys are truthy attributes' do
+      hat.reaction hot: 'Sweat', warm: 'Relax', cool: 'Huddle', cold: 'Shiver' 
+      expect(hat.reaction).to eq [ ]
     end
 
   end
