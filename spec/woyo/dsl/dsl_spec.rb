@@ -395,8 +395,8 @@ describe 'DSL' do
       code "result[:execution]" => "'Thing Two'" 
     end
 
-    doc "multiple descriptions" do
-      text "An action may be decribed for different results. An exclusion group of results ensures that only one description will be chosen. Actions have a default exclusion group containing :success and :failure which we are using here:"
+    doc "one of many descriptions" do
+      text "An action may be described for different results. An exclusion group of results ensures that only one description will be chosen. Actions have a default exclusion group containing :success and :failure which we are using here:"
       code pre:  "world.evaluate do",
            code:   "location :here do
                       item :thing do
@@ -421,14 +421,60 @@ describe 'DSL' do
       code "location = world.location :here"
       code "thing = location.item :thing" => "world.locations[:here].items[:thing]"
       code "thing.name" => "'Thing One'"
-      text "Executing the rename action one succeeds."
-      code "result = thing.action(:rename).execute" => "{ result: :success, describe: 'Thing is renamed', execution: true }"
+      text "Executing the rename action once succeeds."
+      code "thing.action(:rename).execute" => "{ result: :success, describe: 'Thing is renamed', execution: true }"
       text "The name was changed as expected"
       code "thing.name" => "'Thing Two'"
-      text "Executing the rename action one succeeds."
-      code "result = thing.action(:rename).execute" => "{ result: :failure, describe: 'Not renamed', execution: true }"
+      text "Executing the rename action again fails."
+      code "thing.action(:rename).execute" => "{ result: :failure, describe: 'Not renamed', execution: true }"
       text "The name is unchanged."
       code "thing.name" => "'Thing Two'"
+    end
+
+    doc "some of many descriptions" do
+      text "An action may be described for results other than :success and :failure, and may return multiple results and descriptions. This is achieved by specifying a group :result containing expected results."
+      code pre:  "world.evaluate do",
+           code:   "location :here do
+                      item :thing do
+                        name 'Thing One'
+                        action :rename do
+                          description 'Rename thing'
+                          group :result, :renamed, :special, :same
+                          describe renamed: 'Thing is renamed',
+                                   special: 'Newly discovered thing',
+                                   same:    'Not renamed'
+                          execution do |this|
+                            case
+                            when name == 'Thing One'
+                              name 'Thing Two'
+                              this.renamed = true
+                            when name == 'Thing Two'
+                              name 'Thing Three'
+                              this.renamed = true
+                              this.special = true
+                            else
+                              this.renamed = false
+                              this.special = false
+                              this.same = true
+                            end
+                          end
+                        end
+                      end
+                    end",
+           post: "end"
+      text "Initially the name is as defined"
+      code "location = world.location :here"
+      code "thing = location.item :thing" => "world.locations[:here].items[:thing]"
+      code "thing.name" => "'Thing One'"
+      text "Executing the rename action once."
+      code "thing.action(:rename).execute" => "{ result: :renamed, describe: 'Thing is renamed', execution: true }"
+      code "thing.name" => "'Thing Two'"
+      text "Executing the rename action again."
+      code "thing.action(:rename).execute" => "{ result: [ :renamed, :special ], describe: [ 'Thing is renamed', 'Newly discovered thing' ], execution: true }"
+      code "thing.name" => "'Thing Three'"
+      text "Executing the rename action one more time."
+      code "thing.action(:rename).execute" => "{ result: :same, describe: 'Not renamed', execution: true }"
+      code "thing.name" => "'Thing Three'"
     end
 
   end
