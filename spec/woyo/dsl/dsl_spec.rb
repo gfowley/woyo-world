@@ -383,12 +383,10 @@ describe 'DSL' do
       code "thing = location.item :thing" => "world.locations[:here].items[:thing]"
       code "thing.name" => "'Thing One'"
       text "Executing the rename action returns a result hash."
-      code "result = thing.action(:rename).execute" => "{ result: :success, execution: 'Thing Two', describe: 'Thing is renamed' }" 
+      code "result = thing.action(:rename).execute" => "{ result: nil, execution: 'Thing Two', describe: 'Thing is renamed' }" 
       text "The name was changed as expected"
       code "thing.name" => "'Thing Two'"
       text "The contents of the result hash are useful to an application such as Woyo::Server that interacts with the world."
-      text "The :result is usually :success, it can also be :failure. They are actually the default members of an exclusion group :result that actions have. The :result group and member can be overridden by more sophisticated actions."
-      code "result[:result]" => ":success"
       text "Action execution may be described with a default text (as in this case), or the value of :result can determine the describing text (as we'll see in the next example)."
       code "result[:describe]" => "'Thing is renamed'"
       text "The actual value returned by the execution block is also provided, this may be any kind of object."
@@ -396,13 +394,14 @@ describe 'DSL' do
     end
 
     doc "one of many descriptions" do
-      text "An action may be described for different results. An exclusion group of results ensures that only one description will be chosen. Actions have a default exclusion group containing :success and :failure which we are using here:"
+      text "An action may be described for different results. An exclusion group of results ensures that only one description will be chosen. Here possible results are :success and :failure."
       code pre:  "world.evaluate do",
            code:   "location :here do
                       item :thing do
                         name 'Thing One'
                         action :rename do
                           description 'Rename thing'
+                          exclusion :result, :success, :failure
                           describe success: 'Thing is renamed',
                                    failure: 'Not renamed'
                           execution do |this|

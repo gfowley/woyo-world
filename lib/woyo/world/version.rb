@@ -1,3 +1,3 @@
 module Woyo
-  WORLD_VERSION = "0.0.7"
+  WORLD_VERSION = "0.0.8"
 end

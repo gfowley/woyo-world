@@ -13,16 +13,8 @@ describe Woyo::Action do
         expect(action.exclusions.names).to include :result
       end
 
-      context 'has members' do
-
-        it ':success' do
-          expect(action.attributes.names).to include :success
-        end
-
-        it ':failure' do
-          expect(action.attributes.names).to include :failure
-        end
-
+      it 'has no members' do
+        expect(action.result.members).to be_empty 
       end
 
     end
@@ -51,28 +43,45 @@ describe Woyo::Action do
 
     context 'by calling #execute wrapper' do
 
-      context 'with result exclusion (default)' do
+      context 'with result exclusion' do
 
-        it 'returns result hash with single values for success' do
+        it 'returns result hash with single values for single truthy result' do
+          action.exclusion :result, :success, :failure
           action.execution { |this| this.success! } 
           action.describe success: "Succeeded"
           expect(action.execute).to eq( { result: :success, describe: "Succeeded", execution: true } )
         end
 
-        it 'returns result hash with single values for failure' do
-          action.execution { |this| this.failure! } 
-          action.describe failure: "Failed"
-          expect(action.execute).to eq( { result: :failure, describe: "Failed", execution: true } )
+        it 'returns result hash with empty results for empty result exclusion' do
+          action.describe "Empty"
+          expect(action.execute).to eq( { result: nil, describe: "Empty", execution: nil } )
         end
 
       end
 
       context 'with result group' do
 
-        it 'returns result hash with array values' do
+        it 'returns result hash with single value for single truthy result' do
+          action.group :result, a: false, b: true, c: false
+          action.describe a: 'aaa', b: 'bbb', c: 'ccc'
+          expect(action.execute).to eq( { result: :b, describe: 'bbb', execution: nil } )
+        end
+
+        it 'returns result hash with multiple values for multiple truthy results' do
           action.group :result, a: true, b: false, c: true
           action.describe a: 'aaa', b: 'bbb', c: 'ccc'
           expect(action.execute).to eq( { result: [ :a, :c ], describe: [ 'aaa', 'ccc' ], execution: nil } )
+        end
+
+        it 'returns result hash with empty results for empty result group' do
+          action.describe "Empty"
+          expect(action.execute).to eq( { result: nil, describe: "Empty", execution: nil } )
+        end
+
+        it 'returns result hash with empty results for no truthy results' do
+          action.group :result, a: false, b: false, c: false
+          action.describe "Empty"
+          expect(action.execute).to eq( { result: nil, describe: "Empty", execution: nil } )
         end
 
       end
