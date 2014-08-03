@@ -347,9 +347,9 @@
             <p>Actions change the state of the world, usually by changing the value of attributes on world objects</p>
             <div>
               <h3>Making changes</h3>
-              <p>Actions may be defined for a world object, in this case, an item.</p>
+              <p>Actions may be defined for a world object, in this case, an item. Actions have an id, and optionally a name and description. The steps an action is to perform is contained within an 'execution' block, which executes in the context of the containing world object.</p>
               <div>
-                <pre><code>location :here do&#x000A;  item :thing do&#x000A;    name 'Thing?'&#x000A;    action :one do&#x000A;      name 'Thing One'&#x000A;    end&#x000A;    action :two do&#x000A;      name 'Thing Two'&#x000A;    end&#x000A;  end&#x000A;end</code></pre>
+                <pre><code>location :here do&#x000A;  item :thing do&#x000A;    name 'Thing One'&#x000A;    description 'Rename thing'&#x000A;    action :rename do&#x000A;      execution do&#x000A;        name 'Thing Two'&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;end</code></pre>
               </div>
               <p>Initially the name is as defined</p>
               <div>
@@ -359,21 +359,119 @@
                 <pre><code>thing = location.item :thing #=> world.locations[:here].items[:thing]</code></pre>
               </div>
               <div>
-                <pre><code>thing.name #=> 'Thing?'</code></pre>
+                <pre><code>thing.name #=> 'Thing One'</code></pre>
               </div>
-              <p>Invoking action 'one', changes the name.</p>
+              <p>Executing rename action changes the name.</p>
               <div>
-                <pre><code>thing.one</code></pre>
+                <pre><code>thing.action(:rename).execute</code></pre>
+              </div>
+              <div>
+                <pre><code>thing.name #=> 'Thing Two'</code></pre>
+              </div>
+            </div>
+            <div>
+              <h3>Describing the action </h3>
+              <p>When an action is executed it returns information about the action, including a description of the action.</p>
+              <div>
+                <pre><code>location :here do&#x000A;  item :thing do&#x000A;    name 'Thing One'&#x000A;    action :rename do&#x000A;      description 'Rename thing'&#x000A;      describe 'Thing is renamed'&#x000A;      execution do&#x000A;        name 'Thing Two'&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;end</code></pre>
+              </div>
+              <p>Initially the name is as defined</p>
+              <div>
+                <pre><code>location = world.location :here</code></pre>
+              </div>
+              <div>
+                <pre><code>thing = location.item :thing #=> world.locations[:here].items[:thing]</code></pre>
               </div>
               <div>
                 <pre><code>thing.name #=> 'Thing One'</code></pre>
               </div>
-              <p>Invoking action 'two', changes the name again.</p>
+              <p>Executing the rename action returns a result hash.</p>
               <div>
-                <pre><code>thing.two</code></pre>
+                <pre><code>result = thing.action(:rename).execute #=> { result: nil, execution: 'Thing Two', describe: 'Thing is renamed' }</code></pre>
+              </div>
+              <p>The name was changed as expected</p>
+              <div>
+                <pre><code>thing.name #=> 'Thing Two'</code></pre>
+              </div>
+              <p>The contents of the result hash are useful to an application such as Woyo::Server that interacts with the world.</p>
+              <p>Action execution may be described with a default text (as in this case), or the value of :result can determine the describing text (as we'll see in the next example).</p>
+              <div>
+                <pre><code>result[:describe] #=> 'Thing is renamed'</code></pre>
+              </div>
+              <p>The actual value returned by the execution block is also provided, this may be any kind of object.</p>
+              <div>
+                <pre><code>result[:execution] #=> 'Thing Two'</code></pre>
+              </div>
+            </div>
+            <div>
+              <h3>One of many descriptions</h3>
+              <p>An action may be described for different results. An exclusion group of results ensures that only one description will be chosen. Here possible results are :success and :failure.</p>
+              <div>
+                <pre><code>location :here do&#x000A;  item :thing do&#x000A;    name 'Thing One'&#x000A;    action :rename do&#x000A;      description 'Rename thing'&#x000A;      exclusion :result, :success, :failure&#x000A;      describe success: 'Thing is renamed',&#x000A;               failure: 'Not renamed'&#x000A;      execution do |this|&#x000A;        if name == 'Thing One'&#x000A;          name 'Thing Two'&#x000A;          this.success!&#x000A;        else&#x000A;          this.failure!&#x000A;        end&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;end</code></pre>
+              </div>
+              <p>Initially the name is as defined</p>
+              <div>
+                <pre><code>location = world.location :here</code></pre>
+              </div>
+              <div>
+                <pre><code>thing = location.item :thing #=> world.locations[:here].items[:thing]</code></pre>
+              </div>
+              <div>
+                <pre><code>thing.name #=> 'Thing One'</code></pre>
+              </div>
+              <p>Executing the rename action once succeeds.</p>
+              <div>
+                <pre><code>thing.action(:rename).execute #=> { result: :success, describe: 'Thing is renamed', execution: true }</code></pre>
+              </div>
+              <p>The name was changed as expected</p>
+              <div>
+                <pre><code>thing.name #=> 'Thing Two'</code></pre>
+              </div>
+              <p>Executing the rename action again fails.</p>
+              <div>
+                <pre><code>thing.action(:rename).execute #=> { result: :failure, describe: 'Not renamed', execution: true }</code></pre>
+              </div>
+              <p>The name is unchanged.</p>
+              <div>
+                <pre><code>thing.name #=> 'Thing Two'</code></pre>
+              </div>
+            </div>
+            <div>
+              <h3>Some of many descriptions</h3>
+              <p>An action may be described for results other than :success and :failure, and may return multiple results and descriptions. This is achieved by specifying a group :result containing expected results.</p>
+              <div>
+                <pre><code>location :here do&#x000A;  item :thing do&#x000A;    name 'Thing One'&#x000A;    action :rename do&#x000A;      description 'Rename thing'&#x000A;      group :result, :renamed, :special, :same&#x000A;      describe renamed: 'Thing is renamed',&#x000A;               special: 'Newly discovered thing',&#x000A;               same:    'Not renamed'&#x000A;      execution do |this|&#x000A;        case&#x000A;        when name == 'Thing One'&#x000A;          name 'Thing Two'&#x000A;          this.renamed = true&#x000A;        when name == 'Thing Two'&#x000A;          name 'Thing Three'&#x000A;          this.renamed = true&#x000A;          this.special = true&#x000A;        else&#x000A;          this.renamed = false&#x000A;          this.special = false&#x000A;          this.same = true&#x000A;        end&#x000A;      end&#x000A;    end&#x000A;  end&#x000A;end</code></pre>
+              </div>
+              <p>Initially the name is as defined</p>
+              <div>
+                <pre><code>location = world.location :here</code></pre>
+              </div>
+              <div>
+                <pre><code>thing = location.item :thing #=> world.locations[:here].items[:thing]</code></pre>
+              </div>
+              <div>
+                <pre><code>thing.name #=> 'Thing One'</code></pre>
+              </div>
+              <p>Executing the rename action once.</p>
+              <div>
+                <pre><code>thing.action(:rename).execute #=> { result: :renamed, describe: 'Thing is renamed', execution: true }</code></pre>
               </div>
               <div>
                 <pre><code>thing.name #=> 'Thing Two'</code></pre>
+              </div>
+              <p>Executing the rename action again.</p>
+              <div>
+                <pre><code>thing.action(:rename).execute #=> { result: [ :renamed, :special ], describe: [ 'Thing is renamed', 'Newly discovered thing' ], execution: true }</code></pre>
+              </div>
+              <div>
+                <pre><code>thing.name #=> 'Thing Three'</code></pre>
+              </div>
+              <p>Executing the rename action one more time.</p>
+              <div>
+                <pre><code>thing.action(:rename).execute #=> { result: :same, describe: 'Not renamed', execution: true }</code></pre>
+              </div>
+              <div>
+                <pre><code>thing.name #=> 'Thing Three'</code></pre>
               </div>
             </div>
           </div>
