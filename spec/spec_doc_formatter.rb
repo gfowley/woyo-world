@@ -24,7 +24,7 @@ class SpecDocFormatter < RSpec::Core::Formatters::BaseFormatter
 
   def stop(examples_notification)
     # if option[:json]
-    #output.puts json_format 
+    # output.puts json_format 
     # end
     # if option[:haml]
     output.puts haml_format
