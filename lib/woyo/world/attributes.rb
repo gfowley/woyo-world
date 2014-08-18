@@ -27,15 +27,42 @@ module Attributes
     def []= attr, value
       old_value = self[attr]
       super
-      if @listeners[attr] && value != old_value
-        @listeners[attr].each do |listener|
-          listener.notify attr, value
-        end
+      if value != old_value
+        @listeners[attr].each { |listener| listener.notify attr, value } if @listeners[attr]  # attribute listeners (groups, etc..)
+        @listeners[:*].each   { |listener| listener.notify attr, value } if @listeners[:*]    # wildcard listeners (trackers)
       end
     end
 
   end
-  
+
+  class Tracker
+
+    attr_accessor :changed
+
+    def initialize
+      clear
+    end
+
+    def clear
+      @changed = {} 
+    end
+
+    def notify attr, value
+      @changed[attr] = value  
+    end
+
+  end
+
+  def track
+    @tracker = Tracker.new
+    @attributes ||= Woyo::Attributes::AttributesHash.new
+    @attributes.add_listener :*, @tracker  # :* indicates tracker listens to all attributes
+  end
+
+  def tracker
+    @tracker
+  end
+
   def attribute *attrs, &block
     attributes *attrs, &block
   end

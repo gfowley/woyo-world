@@ -277,15 +277,27 @@ describe Woyo::Attributes do
 
   end
 
-  context 'changes' do
+  context 'tracker' do
 
-    let(:cat) { AttrTest.new }
+    let(:tat) { AttrTest.new }
 
-    it 'can be tracked' 
+    before :each do
+      tat.attributes :one, :two, :three
+    end
 
-    it 'can be not tracked'
-
-    it 'are not tracked by default'
+    it 'can track changes' do
+      expect(tat.tracker).to eq nil
+      tat.track
+      expect(tat.tracker).to be_instance_of Woyo::Attributes::Tracker
+      expect(tat.tracker.changed).to be_kind_of Hash
+      expect(tat.tracker.changed.count).to eq 0
+      tat.one = 1
+      tat.two = 2
+      changed = tat.tracker.changed
+      expect(changed.count).to eq 2
+      expect(changed[:one]).to eq 1
+      expect(changed[:two]).to eq 2
+    end
 
   end
 
