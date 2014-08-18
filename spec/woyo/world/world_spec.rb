@@ -22,7 +22,5 @@ describe Woyo::World do
     expect(world.items).to be_empty
   end
 
-  it 'can track all attribute changes'
-
 end
 

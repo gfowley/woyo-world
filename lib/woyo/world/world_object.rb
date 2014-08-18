@@ -19,6 +19,7 @@ class WorldObject
     attributes :description, name: proc { id.to_s.capitalize }
     initialize_object
     evaluate &block
+    track
   end
 
   def initialize_object ; end

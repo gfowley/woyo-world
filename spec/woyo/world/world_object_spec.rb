@@ -91,5 +91,16 @@ describe Woyo::WorldObject do
 
   end
 
+  context 'tracks' do
+
+    it 'attribute changes' do
+      wo = Woyo::WorldObject.new( :thing )
+      expect(wo.tracker.changed).to be_empty
+      wo.name = 'Other'
+      expect(wo.tracker.changed[:name]).to eq 'Other'
+    end
+
+  end
+
 end
 
