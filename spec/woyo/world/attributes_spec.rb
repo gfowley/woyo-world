@@ -223,6 +223,30 @@ describe Woyo::Attributes do
 
   end
 
+  context 'listeners' do
+
+    it 'are notified of attribute changes' do
+      fail  
+    end
+
+    it 'may be multiple' do
+      fail
+    end
+
+  end
+
+  context 'changes' do
+
+    let(:hat) { AttrTest.new }
+
+    it 'can be tracked'
+
+    it 'can be not tracked'
+
+    it 'are not tracked by default'
+
+  end
+
   context 'that are boolean have convenient instance accessors' do
 
     let(:bat) { class BooleanAttrTest; include Woyo::Attributes; end.new }
