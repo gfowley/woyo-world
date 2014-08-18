@@ -19,15 +19,18 @@ module Attributes
       @listeners = {}
     end
 
-    def add_attribute_listener attr, listener
-      @listeners[attr] = listener
+    def add_listener attr, listener
+      @listeners[attr] ||= []
+      @listeners[attr] << listener
     end
     
     def []= attr, value
       old_value = self[attr]
       super
-      if ( listener = @listeners[attr] ) && value != old_value
-        listener.notify attr, value
+      if @listeners[attr] && value != old_value
+        @listeners[attr].each do |listener|
+          listener.notify attr, value
+        end
       end
     end
 
@@ -122,6 +125,10 @@ module Attributes
 
   def is attr
     send "#{attr}=", true
+  end
+
+  def notify attr, value
+    raise '#notify not implemented'
   end
 
 end

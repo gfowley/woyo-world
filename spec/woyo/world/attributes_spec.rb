@@ -225,21 +225,63 @@ describe Woyo::Attributes do
 
   context 'listeners' do
 
+    let(:lat) { AttrTest.new }
+    let(:listener_class) do
+      class AttrListenerTest
+        attr_reader :changed_attribute, :changed_value
+        def notify attr,value
+          @changed_attribute = attr
+          @changed_value = value
+        end
+      end
+      AttrListenerTest
+    end
+
+    before :each do
+      lat.attribute say: "Hello"
+    end
+
     it 'are notified of attribute changes' do
-      fail  
+      expect(lat.say).to eq "Hello"
+      lat.attributes.add_listener :say, lat
+      expect{ lat.say "Bye" }.to raise_exception RuntimeError, '#notify not implemented'
+    end
+
+    it 'are not notified if value does not change' do
+      expect(lat.say).to eq "Hello"
+      lat.attributes.add_listener :say, lat
+      expect{ lat.say "Hello" }.to_not raise_exception
+    end
+
+    it 'are notified with attribute and value' do
+      expect(lat.say).to eq "Hello"
+      listener = listener_class.new
+      lat.attributes.add_listener :say, listener
+      expect{ lat.say "Bye" }.to_not raise_exception
+      expect(listener.changed_attribute).to eq :say
+      expect(listener.changed_value).to eq "Bye"
     end
 
     it 'may be multiple' do
-      fail
+      expect(lat.say).to eq "Hello"
+      listener1 = listener_class.new
+      lat.attributes.add_listener :say, listener1
+      listener2 = listener_class.new
+      lat.attributes.add_listener :say, listener2
+      expect{ lat.say "Bye" }.to_not raise_exception
+      expect(listener1.changed_attribute).to eq :say
+      expect(listener1.changed_value).to eq "Bye"
+      expect(listener2.changed_attribute).to eq :say
+      expect(listener2.changed_value).to eq "Bye"
     end
 
   end
 
   context 'changes' do
 
-    let(:hat) { AttrTest.new }
+    let(:cat) { AttrTest.new }
 
-    it 'can be tracked'
+    it 'can be tracked' 
 
     it 'can be not tracked'
 

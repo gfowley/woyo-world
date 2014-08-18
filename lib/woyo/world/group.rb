@@ -38,7 +38,7 @@ module Attributes
       if @members && ! @members.empty?
         @default = @members.first
         self[@default] = true
-        @members.each { |member| @attributes.add_attribute_listener member, self }
+        @members.each { |member| @attributes.add_listener member, self }
       end
     end
 
@@ -51,7 +51,7 @@ module Attributes
       else
         @attributes.set new_member, false
       end
-      @attributes.add_attribute_listener new_member, self
+      @attributes.add_listener new_member, self
       self
     end
 

@@ -31,12 +31,13 @@ describe Woyo::Attributes::AttributesHash do
   end
 
   it 'registers attribute listeners' do
-    @attributes.add_attribute_listener :test, @listener
+    @attributes.add_listener :test, @listener
   end
 
-  it 'maintains list of attribute listeners' do
+  it 'maintains lists of attribute listeners' do
     expect(@attributes.listeners).to be_kind_of Hash
-    expect(@attributes.listeners[:test]).to be @listener
+    expect(@attributes.listeners[:test]).to be_kind_of Array 
+    expect(@attributes.listeners[:test].first).to be @listener
   end
 
   it 'notifies listeners of attribute change' do
@@ -52,7 +53,7 @@ describe Woyo::Attributes::AttributesHash do
   it 'does not notify listener if attribute does not change' do
     @attributes[:test] = :same_value
     @listener = Listener.new
-    @attributes.add_attribute_listener :test, @listener
+    @attributes.add_listener :test, @listener
     expect(@listener.notified).to be false
     @attributes[:test] = :same_value
     expect(@listener.notified).to be false
@@ -116,7 +117,7 @@ describe Woyo::Attributes::Exclusion do
   
   it 'registers as listener for attributes' do
     @group.members.each do |member|
-      expect(@group.attributes.listeners[member]).to be @group
+      expect(@group.attributes.listeners[member].first).to be @group
     end
   end
 
