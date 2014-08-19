@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'woyo/world/world_object'
+require 'woyo/world/action'
 
 describe Woyo::WorldObject do
 
@@ -95,9 +96,9 @@ describe Woyo::WorldObject do
 
     it 'attribute changes' do
       wo = Woyo::WorldObject.new( :thing )
-      expect(wo.tracker.changed).to be_empty
+      expect(wo.changes).to be_empty
       wo.name = 'Other'
-      expect(wo.tracker.changed[:name]).to eq 'Other'
+      expect(wo.changes[:name]).to eq 'Other'
     end
 
   end

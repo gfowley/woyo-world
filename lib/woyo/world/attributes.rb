@@ -35,32 +35,25 @@ module Attributes
 
   end
 
-  class Tracker
+  class ChangesHash < Hash
 
-    attr_accessor :changed
-
-    def initialize
-      clear
-    end
-
-    def clear
-      @changed = {} 
-    end
+    alias_method :names, :keys
+    alias_method :set, :[]=
 
     def notify attr, value
-      @changed[attr] = value  
+      self[attr] = value  
     end
 
   end
 
-  def track
-    @tracker = Tracker.new
-    @attributes ||= Woyo::Attributes::AttributesHash.new
-    @attributes.add_listener :*, @tracker  # :* indicates tracker listens to all attributes
+  def changes
+    @changes
   end
 
-  def tracker
-    @tracker
+  def track_changes
+    @changes = ChangesHash.new
+    @attributes ||= Woyo::Attributes::AttributesHash.new
+    @attributes.add_listener :*, @changes  # :* indicates listener for changes to all attributes
   end
 
   def attribute *attrs, &block

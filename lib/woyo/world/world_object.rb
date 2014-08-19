@@ -19,7 +19,7 @@ class WorldObject
     attributes :description, name: proc { id.to_s.capitalize }
     initialize_object
     evaluate &block
-    track
+    track_changes  # begin tracking attribute changes *after* world objects are initially evaluated
   end
 
   def initialize_object ; end

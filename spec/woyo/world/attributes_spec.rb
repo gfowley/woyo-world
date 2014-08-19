@@ -286,26 +286,25 @@ describe Woyo::Attributes do
     end
 
     it 'can track changes' do
-      expect(tat.tracker).to eq nil
-      tat.track
-      expect(tat.tracker).to be_instance_of Woyo::Attributes::Tracker
-      expect(tat.tracker.changed).to be_kind_of Hash
-      expect(tat.tracker.changed).to be_empty
+      expect(tat.changes).to eq nil
+      tat.track_changes
+      expect(tat.changes).to be_instance_of Woyo::Attributes::ChangesHash
+      expect(tat.changes).to be_empty
       tat.one = 1
       tat.two = 2
-      expect(tat.tracker.changed.count).to eq 2
-      expect(tat.tracker.changed[:one]).to eq 1
-      expect(tat.tracker.changed[:two]).to eq 2
+      expect(tat.changes.count).to eq 2
+      expect(tat.changes[:one]).to eq 1
+      expect(tat.changes[:two]).to eq 2
     end
 
     it 'can clear changes' do
-      tat.track
+      tat.track_changes
       tat.three = 3
-      expect(tat.tracker.changed[:three]).to eq 3
-      tat.tracker.clear
-      expect(tat.tracker.changed).to be_empty
+      expect(tat.changes[:three]).to eq 3
+      tat.changes.clear
+      expect(tat.changes).to be_empty
       tat.one = 1
-      expect(tat.tracker.changed[:one]).to eq 1
+      expect(tat.changes[:one]).to eq 1
     end
 
   end
