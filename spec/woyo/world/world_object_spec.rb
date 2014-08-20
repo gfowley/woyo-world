@@ -49,6 +49,15 @@ describe Woyo::WorldObject do
     expect(wo.context).to eq :just_a_test
   end
 
+  it 'lists children' do
+    class Thing < Woyo::WorldObject ; end
+    class Container < Woyo::WorldObject ; children :thing ; end
+    box = Container.new :box do
+      thing :ball
+    end
+    expect(box.children).to eq({ thing: { ball: box.thing(:ball) } })
+  end
+
   context 'has' do
 
     it 'attributes' do
@@ -92,13 +101,39 @@ describe Woyo::WorldObject do
 
   end
 
-  context 'tracks' do
-
-    it 'attribute changes' do
+  context 'changes' do
+    
+    it 'tracked for own attributes' do
       wo = Woyo::WorldObject.new( :thing )
       expect(wo.changes).to be_empty
       wo.name = 'Other'
       expect(wo.changes[:name]).to eq 'Other'
+    end
+
+    it 'accessed recursively for children' do
+      class Low < Woyo::WorldObject ; end
+      class Mid < Woyo::WorldObject ; children :low ; end
+      class Top < Woyo::WorldObject ; children :mid ; end
+      t1 = Top.new :t1 do
+        mid(:m1) { low :l1 ; low :l2 ; low :l3 } 
+        mid(:m2) { low :l1 ; low :l2 ; low :l3 }
+        mid(:m3) { low :l1 ; low :l2 ; low :l3 }
+      end
+      t1.name = 'Changed t1'
+      m1 = t1.mid(:m1)
+      m2 = t1.mid(:m2)
+      m1.name = 'Changed m1'
+      m1.low(:l1).name = "Changed l1"
+      m1.low(:l2).name = "Changed l2"
+      m2.low(:l1).name = "Changed l1"
+      m2.low(:l2).name = "Changed l2"
+      expect(t1.changes).to eq({
+        name: 'Changed t1',
+        mid: {
+          m1: { name: 'Changed m1', low: { l1: { name: 'Changed l1' }, l2: { name: 'Changed l2' } } },
+          m2: {                     low: { l1: { name: 'Changed l1' }, l2: { name: 'Changed l2' } } }
+        }
+      })
     end
 
   end
