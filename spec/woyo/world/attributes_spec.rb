@@ -243,21 +243,25 @@ describe Woyo::Attributes do
 
     it 'are notified of attribute changes' do
       expect(lat.say).to eq "Hello"
-      lat.attributes.add_listener :say, lat
-      expect{ lat.say "Bye" }.to raise_exception RuntimeError, '#notify not implemented'
+      listener = listener_class.new
+      lat.attributes.add_listener :say, listener
+      lat.say "Bye"
+      expect(listener.changed_attribute).to eq :say
     end
 
     it 'are not notified if value does not change' do
       expect(lat.say).to eq "Hello"
-      lat.attributes.add_listener :say, lat
-      expect{ lat.say "Hello" }.to_not raise_exception
+      listener = listener_class.new
+      lat.attributes.add_listener :say, listener
+      lat.say "Hello"
+      expect(listener.changed_attribute).to be_nil  
     end
 
     it 'are notified with attribute and value' do
       expect(lat.say).to eq "Hello"
       listener = listener_class.new
       lat.attributes.add_listener :say, listener
-      expect{ lat.say "Bye" }.to_not raise_exception
+      lat.say "Bye"
       expect(listener.changed_attribute).to eq :say
       expect(listener.changed_value).to eq "Bye"
     end
@@ -268,43 +272,11 @@ describe Woyo::Attributes do
       lat.attributes.add_listener :say, listener1
       listener2 = listener_class.new
       lat.attributes.add_listener :say, listener2
-      expect{ lat.say "Bye" }.to_not raise_exception
+      lat.say "Bye"
       expect(listener1.changed_attribute).to eq :say
       expect(listener1.changed_value).to eq "Bye"
       expect(listener2.changed_attribute).to eq :say
       expect(listener2.changed_value).to eq "Bye"
-    end
-
-  end
-
-  context 'tracker' do
-
-    let(:tat) { AttrTest.new }
-
-    before :each do
-      tat.attributes :one, :two, :three
-    end
-
-    it 'can track changes' do
-      expect(tat.changes).to eq nil
-      tat.track_changes
-      expect(tat.changes).to be_instance_of Woyo::Attributes::ChangesHash
-      expect(tat.changes).to be_empty
-      tat.one = 1
-      tat.two = 2
-      expect(tat.changes.count).to eq 2
-      expect(tat.changes[:one]).to eq 1
-      expect(tat.changes[:two]).to eq 2
-    end
-
-    it 'can clear changes' do
-      tat.track_changes
-      tat.three = 3
-      expect(tat.changes[:three]).to eq 3
-      tat.changes.clear
-      expect(tat.changes).to be_empty
-      tat.one = 1
-      expect(tat.changes[:one]).to eq 1
     end
 
   end
@@ -502,6 +474,51 @@ describe Woyo::Attributes do
     it 'returns empty list if no keys are truthy attributes' do
       hat.reaction hot: 'Sweat', warm: 'Relax', cool: 'Huddle', cold: 'Shiver' 
       expect(hat.reaction).to eq [ ]
+    end
+
+  end
+
+  context 'changes' do
+
+    let(:cat) { AttrTest.new }
+
+    before :each do
+      cat.attributes :one, :two, :three
+    end
+
+    it 'can be tracked' do
+      expect(cat.changes).to eq nil
+      cat.track_changes
+      expect(cat.changes).to be_instance_of Woyo::Attributes::ChangesHash
+      expect(cat.changes).to be_empty
+      cat.one = 1
+      cat.two = 2
+      expect(cat.changes.count).to eq 2
+      expect(cat.changes[:one]).to eq 1
+      expect(cat.changes[:two]).to eq 2
+    end
+
+    it 'tracking can be cleared' do
+      cat.track_changes
+      cat.three = 3
+      expect(cat.changes[:three]).to eq 3
+      cat.changes.clear
+      expect(cat.changes).to be_empty
+      cat.one = 1
+      expect(cat.changes[:one]).to eq 1
+    end
+
+    it 'tracking includes dependent attributes (hashes with attribute keys)' do
+      cat.attributes :reaction, :hot, :warm, :cool, :cold
+      cat.hot = true
+      cat.reaction hot: 'Sweat', warm: 'Relax', cool: 'Huddle', cold: 'Shiver'
+      cat.track_changes
+      cat.cold = true
+      cat.hot = false
+      puts cat.reaction
+      puts cat.changes.inspect
+      expect(cat.changes).to include :reaction
+      expect(cat.changes[:reaction]).to eq "Shiver"
     end
 
   end

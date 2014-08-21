@@ -147,10 +147,6 @@ module Attributes
     send "#{attr}=", true
   end
 
-  def notify attr, value
-    raise '#notify not implemented'
-  end
-
 end
 
 end
