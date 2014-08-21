@@ -50,6 +50,16 @@ module Attributes
     @changes
   end
 
+  def dependent_changes
+    remaining_attrs = @attributes.names - @changes.names
+    dependent_attrs = remaining_attrs.select do |attr|
+      @attributes[attr].kind_of?( Hash ) && ! ( @attributes[attr].keys & @changes.names ).empty?
+    end
+    dependent_attrs.each_with_object({}) do |attr,hash|
+      hash[attr] = send attr
+    end
+  end
+
   def track_changes
     @changes = ChangesHash.new
     @attributes ||= Woyo::Attributes::AttributesHash.new

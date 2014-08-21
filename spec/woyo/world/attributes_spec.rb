@@ -517,8 +517,8 @@ describe Woyo::Attributes do
       cat.hot = false
       puts cat.reaction
       puts cat.changes.inspect
-      expect(cat.changes).to include :reaction
-      expect(cat.changes[:reaction]).to eq "Shiver"
+      expect(cat.dependent_changes.keys).to include :reaction
+      expect(cat.dependent_changes[:reaction]).to eq "Shiver"
     end
 
   end
