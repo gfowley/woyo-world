@@ -24,18 +24,18 @@ class WorldObject
 
   def initialize_object ; end
 
+  alias_method :attribute_changes, :changes  
   def changes
-    # re-define changes method in Attributes to return changes for children too
-    @changes ||= {}
+    all_changes = attribute_changes
     children.each do |child_type,type_children|
       child_type_changes = {}
       type_children.each do |child_id,child|
         child_changes = child.changes
         child_type_changes[child_id] = child_changes unless child_changes.empty?
       end
-      @changes[child_type] = child_type_changes unless child_type_changes.empty?
+      all_changes[child_type] = child_type_changes unless child_type_changes.empty?
     end
-    @changes
+    all_changes
   end
 
 end

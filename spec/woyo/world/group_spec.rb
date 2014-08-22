@@ -97,6 +97,11 @@ describe Woyo::Attributes::Group do
     expect(@group.values).to eq %w( dumb bald smart )
   end
 
+  it 'change tracking includes group as dependent'# do
+    # # simliar method as attributes with hash for value
+    # pending
+  # end
+
 end
 
 describe Woyo::Attributes::Exclusion do
@@ -160,5 +165,10 @@ describe Woyo::Attributes::Exclusion do
     @group[:cold] = true
     expect(@group.value).to eq :cold
   end
+
+  it 'change tracking includes group and other changed members as dependent'# do
+    # # simliar method as attributes with hash for value
+    # pending
+  # end
 
 end

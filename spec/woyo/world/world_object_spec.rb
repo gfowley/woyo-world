@@ -103,14 +103,26 @@ describe Woyo::WorldObject do
 
   context 'changes' do
     
-    it 'tracked for own attributes' do
+    it 'listed for own attributes' do
       wo = Woyo::WorldObject.new( :thing )
       expect(wo.changes).to be_empty
       wo.name = 'Other'
       expect(wo.changes[:name]).to eq 'Other'
     end
 
-    it 'accessed recursively for children' do
+    it 'list includes dependent changes' do
+      wo = Woyo::WorldObject.new( :thing )
+      wo.exclusion :color, :red, :blue
+      wo.description red: 'Red thing', blue: 'Blue thing'
+      wo.changes.clear
+      expect(wo.changes).to be_empty
+      wo.blue = true
+      expect(wo.changes.names).to include :blue
+      expect(wo.changes.names).to include :description
+      expect(wo.changes[:description]).to eq 'Blue thing'
+    end
+
+    it 'list recursively includes changes for children' do
       class Low < Woyo::WorldObject ; end
       class Mid < Woyo::WorldObject ; children :low ; end
       class Top < Woyo::WorldObject ; children :mid ; end
@@ -118,20 +130,29 @@ describe Woyo::WorldObject do
         mid(:m1) { low :l1 ; low :l2 ; low :l3 } 
         mid(:m2) { low :l1 ; low :l2 ; low :l3 }
         mid(:m3) { low :l1 ; low :l2 ; low :l3 }
+        mid(:m4) do
+          low :l1
+          low :l2 do
+            exclusion :make_change, :no, :yes
+            name no: 'Unchanged l2', yes: 'Changed l2'
+          end
+        end
       end
       t1.name = 'Changed t1'
       m1 = t1.mid(:m1)
       m2 = t1.mid(:m2)
+      m4 = t1.mid(:m4)
       m1.name = 'Changed m1'
       m1.low(:l1).name = "Changed l1"
       m1.low(:l2).name = "Changed l2"
-      m2.low(:l1).name = "Changed l1"
       m2.low(:l2).name = "Changed l2"
-      expect(t1.changes).to eq({
+      m4.low(:l2).yes = true
+      expect(t1.changes).to eq ({
         name: 'Changed t1',
-        mid: {
+        mid: { 
           m1: { name: 'Changed m1', low: { l1: { name: 'Changed l1' }, l2: { name: 'Changed l2' } } },
-          m2: {                     low: { l1: { name: 'Changed l1' }, l2: { name: 'Changed l2' } } }
+          m2: {                     low: { l2: { name: 'Changed l2' }                             } },
+          m4: {                     low: { l2: { name: 'Changed l2', yes: true }                  } }
         }
       })
     end
