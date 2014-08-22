@@ -515,10 +515,13 @@ describe Woyo::Attributes do
       cat.track_changes
       cat.cold = true
       cat.hot = false
+      changes = cat.changes
       puts cat.reaction
-      puts cat.changes.inspect
-      expect(cat.dependent_changes.keys).to include :reaction
-      expect(cat.dependent_changes[:reaction]).to eq "Shiver"
+      expect(changes.keys).to include :reaction
+      expect(changes[:reaction]).to eq "Shiver"
+      expect(changes[:cold]).to eq true
+      expect(changes[:hot]).to eq false
+      expect(changes.count).to eq 3
     end
 
   end

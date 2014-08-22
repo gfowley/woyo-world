@@ -47,7 +47,7 @@ module Attributes
   end
 
   def changes
-    @changes
+    @changes ? @changes.merge!( dependent_changes ) : nil 
   end
 
   def dependent_changes
