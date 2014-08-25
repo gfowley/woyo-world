@@ -82,15 +82,37 @@ describe Woyo::Location do
 
   end
 
-  # it '#characters' do
-  #   home = Woyo::Location.new :home do
-  #     character :peter do
-  #     end
-  #   end
-  #   home.characters.size.should eq 1
-  #   peter = home.characters[:peter]
-  #   peter.should be_instance_of Woyo::Character
-  #   peter.location.should be home
-  # end
+  context 'actions' do
+
+    it 'execute returns changes for location' do
+      home = Woyo::Location.new :home do
+        item :thing do
+          action :make_changes do
+            execution do |action|
+              name 'Changed item'
+              action.name 'Changed action'
+              location.name 'Changed location'
+            end
+          end
+        end
+      end
+      results = home.item(:thing).action(:make_changes).execute
+      puts results.inspect
+      expect(results[:changes]).to eq( {
+        name: "Changed location",
+        item: {
+          thing: {
+            name: "Changed item",
+            action: {
+              make_changes: {
+                name: "Changed action"
+              }
+            }
+          }
+        }
+      })
+    end
+
+  end
 
 end

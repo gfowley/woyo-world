@@ -101,9 +101,9 @@ describe Woyo::WorldObject do
 
   end
 
-  context 'changes' do
+  context 'attribute changes' do
     
-    it 'listed for own attributes' do
+    it 'listed for self' do
       wo = Woyo::WorldObject.new( :thing )
       expect(wo.changes).to be_empty
       wo.name = 'Other'
