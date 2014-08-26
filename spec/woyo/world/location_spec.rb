@@ -96,9 +96,7 @@ describe Woyo::Location do
           end
         end
       end
-      results = home.item(:thing).action(:make_changes).execute
-      puts results.inspect
-      expect(results[:changes]).to eq( {
+      expect(home.item(:thing).action(:make_changes).execute[:changes]).to eq( {
         name: "Changed location",
         item: {
           thing: {
@@ -113,6 +111,37 @@ describe Woyo::Location do
       })
     end
 
+    it 'execute returns changes for location for this execution only' do
+      home = Woyo::Location.new :home do
+        item :thing do
+          action :make_changes do
+            attribute count: 0
+            execution do |action|
+              action.count += 1
+              name "Changed item #{action.count}"
+              action.name "Changed action #{action.count}"
+              location.name "Changed location #{action.count}"
+            end
+          end
+          action :more_changes do
+            execution do |action|
+              name "Changed item more"
+              action.name "Changed action more"
+              location.name "Changed location more"
+            end
+          end
+        end
+      end
+      expect(home.item(:thing).action(:make_changes).execute[:changes]).to eq( {
+        name: "Changed location 1", item: { thing: { name: "Changed item 1", action: { make_changes: { count: 1, name: "Changed action 1" } } } }
+      })
+      expect(home.item(:thing).action(:make_changes).execute[:changes]).to eq( {
+        name: "Changed location 2", item: { thing: { name: "Changed item 2", action: { make_changes: { count: 2, name: "Changed action 2" } } } }
+      })
+      expect(home.item(:thing).action(:more_changes).execute[:changes]).to eq( {
+        name: "Changed location more", item: { thing: { name: "Changed item more", action: { more_changes: { name: "Changed action more" } } } }
+      })
+    end
   end
 
 end

@@ -59,17 +59,6 @@ describe Woyo::Action do
 
       end
 
-      context 'with changes' do
-
-        it 'returns hash of changed attributes' do
-          action.attributes :a, :b ,:c
-          action.changes.clear
-          action.execution { |action| action.a true ; action.b false }
-          expect(action.execute).to eq( { result: nil, describe: nil, execution: false, changes: { a: true, b: false } } )
-        end
-
-      end
-
       context 'with result group' do
 
         it 'returns result hash with single value for single truthy result' do
@@ -93,6 +82,30 @@ describe Woyo::Action do
           action.group :result, a: false, b: false, c: false
           action.describe "Empty"
           expect(action.execute).to eq( { result: nil, describe: "Empty", execution: nil, changes: {} } )
+        end
+
+      end
+
+      context 'with changes' do
+
+        it 'returns changed attributes' do
+          action.attributes :a, :b ,:c
+          action.execution { |action| action.a true ; action.b false }
+          expect(action.execute).to eq( { result: nil, describe: nil, execution: false, changes: { a: true, b: false } } )
+        end
+
+        it 'returns changed attributes for this execution only' do
+          action.attributes :a, :b ,:count
+          action.execution do |action|
+            action.count ||= 0
+            action.count += 1
+            case action.count
+            when 1 then action.a true
+            when 2 then action.b true
+            end
+          end
+          expect(action.execute).to eq( { result: nil, describe: nil, execution: true, changes: { count: 1, a: true } } )
+          expect(action.execute).to eq( { result: nil, describe: nil, execution: true, changes: { count: 2, b: true } } )
         end
 
       end

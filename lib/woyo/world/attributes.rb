@@ -66,6 +66,10 @@ module Attributes
     @attributes.add_listener :*, @changes  # :* indicates listener for changes to all attributes
   end
 
+  def clear_changes
+    @changes.clear
+  end
+
   def attribute *attrs, &block
     attributes *attrs, &block
   end

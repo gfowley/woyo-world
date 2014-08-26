@@ -19,10 +19,24 @@ class WorldObject
     attributes :description, name: proc { id.to_s.capitalize }
     initialize_object
     evaluate &block
-    track_changes  # begin tracking attribute changes *after* world objects are initially evaluated
+    # todo:
+    #   creating attributes should register with change listener
+    #   this will catch all attributes anytime they are created
+    #   instead of just after initialize->evaluate
+    track_changes
   end
 
   def initialize_object ; end
+
+  alias_method :attribute_clear_changes, :clear_changes
+  def clear_changes
+    attribute_clear_changes
+    children.each do |child_type,type_children|
+      type_children.each do |child_id,child|
+        child.clear_changes
+      end
+    end
+  end
 
   alias_method :attribute_changes, :changes  
   def changes

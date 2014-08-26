@@ -502,7 +502,7 @@ describe Woyo::Attributes do
       cat.track_changes
       cat.three = 3
       expect(cat.changes[:three]).to eq 3
-      cat.changes.clear
+      cat.clear_changes
       expect(cat.changes).to be_empty
       cat.one = 1
       expect(cat.changes[:one]).to eq 1
@@ -516,7 +516,6 @@ describe Woyo::Attributes do
       cat.cold = true
       cat.hot = false
       changes = cat.changes
-      puts cat.reaction
       expect(changes.keys).to include :reaction
       expect(changes[:reaction]).to eq "Shiver"
       expect(changes[:cold]).to eq true
