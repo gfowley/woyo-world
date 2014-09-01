@@ -8,7 +8,21 @@ class Way < WorldObject
     super
     attribute :going 
     exclusion :passable, :closed, :open  # defaults to closed: true 
+    action :go do
+      execution do
+        {
+          go:       open?,
+          going:    self.going,
+          describe: self.going,
+          location: open? ? self.to : nil
+        }
+      end
+    end
   end
+
+  # def go
+  #   { go: open?, going: self.going }
+  # end
 
   def world
     from ? from.world : nil
@@ -48,10 +62,6 @@ class Way < WorldObject
     end
   end
   
-  def go
-    { go: open?, going: self.going }
-  end
-
 end
 
 end
