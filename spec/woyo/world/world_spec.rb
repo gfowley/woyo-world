@@ -22,5 +22,15 @@ describe Woyo::World do
     expect(world.items).to be_empty
   end
 
+  it 'has no context' do
+    expect(world.context).to be_nil
+  end
+
+  it 'has optional id' do
+    expect(world.id).to be_nil
+    my_world = Woyo::World.new :my_id
+    expect(my_world.id).to eq :my_id
+  end
+
 end
 

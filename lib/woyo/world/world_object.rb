@@ -14,9 +14,9 @@ class WorldObject
   children :action
 
   def initialize id, context: nil, &block
-    @id = id.to_s.downcase.to_sym
+    @id = id ? id.to_s.downcase.to_sym : nil
     @context = context
-    attributes :description, name: proc { id.to_s.capitalize }
+    attributes :description, name: proc { id.to_s.capitalize.gsub('_',' ') }
     initialize_object
     evaluate &block
     # todo:
@@ -27,6 +27,14 @@ class WorldObject
   end
 
   def initialize_object ; end
+
+  def uid
+    if @context
+      @context.uid + '-' + id.to_s
+    else
+      id.to_s
+    end
+  end
 
   alias_method :attribute_clear_changes, :clear_changes
   def clear_changes

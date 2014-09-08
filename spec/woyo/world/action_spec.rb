@@ -5,21 +5,21 @@ describe Woyo::Action do
 
   let( :action ) { Woyo::Action.new :test }
 
-  context 'has exclusions' do
+  # context 'has exclusions' do
 
-    context ':result' do
+  #   context ':result' do
 
-      it 'exists' do
-        expect(action.exclusions.names).to include :result
-      end
+  #     it 'exists' do
+  #       expect(action.exclusions.names).to include :result
+  #     end
 
-      it 'has no members' do
-        expect(action.result.members).to be_empty 
-      end
+  #     it 'has no members' do
+  #       expect(action.result.members).to be_empty 
+  #     end
 
-    end
+  #   end
 
-  end
+  # end
 
   context "execution may be defined" do
 
@@ -91,7 +91,7 @@ describe Woyo::Action do
         it 'returns changed attributes' do
           action.attributes :a, :b ,:c
           action.execution { |action| action.a true ; action.b false }
-          expect(action.execute).to eq( { result: nil, describe: nil, execution: false, changes: { a: true, b: false } } )
+          expect(action.execute[:changes]).to eq( { a: true, b: false } )
         end
 
         it 'returns changed attributes for this execution only' do
@@ -104,8 +104,8 @@ describe Woyo::Action do
             when 2 then action.b true
             end
           end
-          expect(action.execute).to eq( { result: nil, describe: nil, execution: true, changes: { count: 1, a: true } } )
-          expect(action.execute).to eq( { result: nil, describe: nil, execution: true, changes: { count: 2, b: true } } )
+          expect(action.execute[:changes]).to eq( { count: 1, a: true } )
+          expect(action.execute[:changes]).to eq( { count: 2, b: true } )
         end
 
       end

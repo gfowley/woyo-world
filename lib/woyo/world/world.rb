@@ -16,8 +16,8 @@ class World < WorldObject
     attributes :start
   end
 
-  def initialize &block
-    super nil, context: nil, &block
+  def initialize id = nil, &block
+    super id, context: nil, &block
   end
 
 end

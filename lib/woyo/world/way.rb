@@ -9,12 +9,12 @@ class Way < WorldObject
     attribute :going 
     exclusion :passable, :closed, :open  # defaults to closed: true 
     action :go do
+      describe proc { self.context.going }
+      #result   proc { self.context.passable } 
       execution do
         {
           go:       open?,
-          going:    self.going,
-          describe: self.going,
-          location: open? ? self.to : nil
+          location: open? ? self.to.id : nil
         }
       end
     end

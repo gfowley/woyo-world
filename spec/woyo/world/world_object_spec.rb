@@ -44,9 +44,40 @@ describe Woyo::WorldObject do
 
   end
 
-  it 'provides access to context' do
-    wo = Woyo::WorldObject.new(:my_id, context: :just_a_test )
-    expect(wo.context).to eq :just_a_test
+  context '#context' do
+
+    it 'returns parent' do
+      class Thing < Woyo::WorldObject ; children :thing ; end
+      thing1 = Thing.new :thing1 do
+        thing :thing2 do
+          thing :thing3
+        end
+      end
+      thing2 = thing1.thing :thing2
+      thing3 = thing2.thing :thing3
+      expect(thing1.context).to eq nil
+      expect(thing2.context).to eq thing1
+      expect(thing3.context).to eq thing2
+    end
+
+  end
+
+  context "#uid" do
+
+    it 'is object path' do
+      class Thing < Woyo::WorldObject ; children :thing ; end
+      thing1 = Thing.new :thing1 do
+        thing :thing2 do
+          thing :thing3
+        end
+      end
+      thing2 = thing1.thing :thing2
+      thing3 = thing2.thing :thing3
+      expect(thing1.uid).to eq 'thing1'
+      expect(thing2.uid).to eq 'thing1-thing2'
+      expect(thing3.uid).to eq 'thing1-thing2-thing3'
+    end
+
   end
 
   it 'lists children' do

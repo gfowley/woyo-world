@@ -160,12 +160,12 @@ describe Woyo::Way do
     end
 
     it 'when open' do
-      expect(@door.go).to eq ( { go: true, going: 'Swings open' } )
+      expect(@door.action(:go).execute).to eq ( { describe: 'Swings open', result: { go: true, location: :someplace }, changes: {} } )
     end
 
     it 'when closed' do
       @door.close!
-      expect(@door.go).to eq ( { go: false, going: 'Slams shut' } )
+      expect(@door.action(:go).execute).to eq ( { describe: 'Slams shut', result: { go: false, location: nil }, changes: {} } )
     end
 
   end

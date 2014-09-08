@@ -8,7 +8,6 @@ class Action < WorldObject
   def initialize_object
     super
     attribute :describe
-    exclusion :result
     @proc = proc { nil }
   end
 
@@ -19,10 +18,8 @@ class Action < WorldObject
     else
       @context.instance_exec self, &@proc
     end
-    true_members = result.members.select { |member| result[member] }
-    true_members = true_members[0] if true_members.count == 1
-    true_members = nil if true_members.empty?
-    { result: true_members, describe: describe, execution: proc_result, changes: location_or_context.changes }
+    # result: { location: :place } signals change of location (like going a way!)
+    { describe: describe, result: proc_result, changes: location_or_context.changes }
   end
 
   def execution &block
