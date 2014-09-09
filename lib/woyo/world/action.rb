@@ -13,13 +13,17 @@ class Action < WorldObject
 
   def execute
     location_or_context.clear_changes
-    proc_result = if @proc.arity < 1
+    result = if @proc.arity < 1
       @context.instance_eval &@proc
     else
       @context.instance_exec self, &@proc
     end
+    unless result.kind_of? Hash
+      result = { return: execution_result }
+    end
     # result: { location: :place } signals change of location (like going a way!)
-    { describe: describe, result: proc_result, changes: location_or_context.changes }
+    # todo: fill return hash with action attributes, groups, exclusions ? ...
+    { describe: describe, result: result, changes: location_or_context.changes }
   end
 
   def execution &block
