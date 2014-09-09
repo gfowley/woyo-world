@@ -19,7 +19,7 @@ class Action < WorldObject
       @context.instance_exec self, &@proc
     end
     unless result.kind_of? Hash
-      result = { return: execution_result }
+      result = { return: result }
     end
     # result: { location: :place } signals change of location (like going a way!)
     # todo: fill return hash with action attributes, groups, exclusions ? ...
