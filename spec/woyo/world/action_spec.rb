@@ -5,22 +5,6 @@ describe Woyo::Action do
 
   let( :action ) { Woyo::Action.new :test }
 
-  # context 'has exclusions' do
-
-  #   context ':result' do
-
-  #     it 'exists' do
-  #       expect(action.exclusions.names).to include :result
-  #     end
-
-  #     it 'has no members' do
-  #       expect(action.result.members).to be_empty 
-  #     end
-
-  #   end
-
-  # end
-
   context "execution may be defined" do
 
     it "as a block" do
@@ -30,84 +14,64 @@ describe Woyo::Action do
 
   end
 
-  context "executed" do
+  context "calling #execution directly" do
 
-    it 'by calling #execution directly' do
+    it 'returns result' do
       action.execution { :answer } 
       expect(action.execution.call).to eq :answer 
     end
 
-    it 'calling #execution returns nil by default' do
+    it 'returns nil by default' do
       expect(action.execution.call).to be_nil
     end
 
-    context 'by calling #execute wrapper' do
+  end
 
-      context 'with result exclusion' do
+  context "calling #execute" do
 
-        it 'returns result hash with single values for single truthy result' do
-          action.exclusion :result, :success, :failure
-          action.execution { |action| action.success! } 
-          action.describe success: "Succeeded"
-          expect(action.execute).to eq( { result: :success, describe: "Succeeded", execution: true, changes: {} } )
-        end
+    it 'returns a hash' do
+      expect(action.execute).to eq( { describe: nil, result: { return: nil }, changes: {} } )
+    end
 
-        it 'returns result hash with empty results for empty result exclusion' do
-          action.describe "Empty"
-          expect(action.execute).to eq( { result: nil, describe: "Empty", execution: nil, changes: {} } )
-        end
+    it 'describes execution' do
+      action.describe "It works"
+      expect(action.execute[:describe]).to eq( "It works" )
+    end
 
+    context 'result hash is' do
+
+      it 'hash returned from execution' do
+        action.execution { { answer: 42 } } 
+        expect(action.execute[:result]).to eq( { answer: 42 } )
       end
 
-      context 'with result group' do
-
-        it 'returns result hash with single value for single truthy result' do
-          action.group :result, a: false, b: true, c: false
-          action.describe a: 'aaa', b: 'bbb', c: 'ccc'
-          expect(action.execute).to eq( { result: :b, describe: 'bbb', execution: nil, changes: {} } )
-        end
-
-        it 'returns result hash with multiple values for multiple truthy results' do
-          action.group :result, a: true, b: false, c: true
-          action.describe a: 'aaa', b: 'bbb', c: 'ccc'
-          expect(action.execute).to eq( { result: [ :a, :c ], describe: [ 'aaa', 'ccc' ], execution: nil, changes: {} } )
-        end
-
-        it 'returns result hash with empty results for empty result group' do
-          action.describe "Empty"
-          expect(action.execute).to eq( { result: nil, describe: "Empty", execution: nil, changes: {} } )
-        end
-
-        it 'returns result hash with empty results for no truthy results' do
-          action.group :result, a: false, b: false, c: false
-          action.describe "Empty"
-          expect(action.execute).to eq( { result: nil, describe: "Empty", execution: nil, changes: {} } )
-        end
-
+      it 'hash with return from execution at key :return' do
+        action.execution { :answer } 
+        expect(action.execute[:result]).to eq( { return: :answer } )
       end
 
-      context 'with changes' do
+    end
 
-        it 'returns changed attributes' do
-          action.attributes :a, :b ,:c
-          action.execution { |action| action.a true ; action.b false }
-          expect(action.execute[:changes]).to eq( { a: true, b: false } )
-        end
+    context 'changes hash is' do
 
-        it 'returns changed attributes for this execution only' do
-          action.attributes :a, :b ,:count
-          action.execution do |action|
-            action.count ||= 0
-            action.count += 1
-            case action.count
-            when 1 then action.a true
-            when 2 then action.b true
-            end
+      it 'changed attributes' do
+        action.attributes :a, :b ,:c
+        action.execution { |action| action.a true ; action.b false }
+        expect(action.execute[:changes]).to eq( { a: true, b: false } )
+      end
+
+      it 'changed attributes for this execution only' do
+        action.attributes :a, :b ,:count
+        action.execution do |action|
+          action.count ||= 0
+          action.count += 1
+          case action.count
+          when 1 then action.a true
+          when 2 then action.b true
           end
-          expect(action.execute[:changes]).to eq( { count: 1, a: true } )
-          expect(action.execute[:changes]).to eq( { count: 2, b: true } )
         end
-
+        expect(action.execute[:changes]).to eq( { count: 1, a: true } )
+        expect(action.execute[:changes]).to eq( { count: 2, b: true } )
       end
 
     end
