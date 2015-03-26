@@ -1,6 +1,57 @@
 
 World featutes...
 
+
+# characters
+
+# dialog
+
+  location :bar do
+    character :barman
+  end
+
+  charcter :barman do
+
+    description "A burly barman stands behind the bar busily cleaning and stocking."
+
+    exclusion :feeling, :happy, :grumpy    # :default is :happy
+
+    dialog :welcome do
+      text   "The barman looks up from his work."
+      dialog happy:  :happy_welcome,
+             grumpy: :grumpy_welcome
+    end
+
+    dialog :happy_welcome do
+      text "Welcome stranger."
+      say( :greet  ) { text "Howdy!"       ; reply :serve    } 
+      say( :demand ) { text "Whiskey now!" ; reply :no_serve }
+    end
+
+    dialog :grumpy_welcome do
+      text "We're closed!"
+      say( :demand ) { text "Whiskey now!"          ; reply :no_serve }
+      say( :pay    ) { text "I'll buy you one too." ; reply :serve    }
+       
+
+    dialog :serve do
+      text "What can I get you?"
+      say( :scot  ) { text "Whiskey, Scottish." ; reply :no_serve }
+      say :irish do
+        text "Whiskey, Irish."
+        reply dialog :enjoy do
+          text "This is good stuff, enjoy!" 
+        end
+      end
+    end
+
+    dialog( :serve ) { text "We're all out, feck off!"   }
+
+  end
+
+
+
+
 # actions
 
   action.execute #=> { 
